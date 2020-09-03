@@ -13,6 +13,7 @@ from helping_hands_rl_envs.simulators.pybullet.robots.kuka import Kuka
 from helping_hands_rl_envs.simulators.pybullet.robots.ur5_robotiq import UR5_Robotiq
 import helping_hands_rl_envs.simulators.pybullet.utils.object_generation as pb_obj_generation
 from helping_hands_rl_envs.simulators import constants
+from helping_hands_rl_envs.simulators.pybullet.objects.pybullet_object import PybulletObject
 
 import pickle
 import os
@@ -390,7 +391,7 @@ class PyBulletEnv(BaseEnv):
                            min_distance=None, padding=None, random_orientation=False, z_scale=1):
     ''''''
     if padding is None:
-      if shape_type in (constants.CUBE, constants.TRIANGLE, constants.RANDOM):
+      if shape_type in (constants.CUBE, constants.TRIANGLE, constants.RANDOM, constants.CYLINDER):
         padding = self.max_block_size * 1.5
       elif shape_type == constants.BRICK:
         padding = self.max_block_size * 3.4
@@ -398,7 +399,7 @@ class PyBulletEnv(BaseEnv):
         padding = self.max_block_size * 3.4
 
     if min_distance is None:
-      if shape_type in (constants.CUBE, constants.TRIANGLE, constants.RANDOM):
+      if shape_type in (constants.CUBE, constants.TRIANGLE, constants.RANDOM, constants.CYLINDER):
         min_distance = self.max_block_size * 2.4
       elif shape_type == constants.BRICK:
         min_distance = self.max_block_size * 3.4
@@ -435,6 +436,8 @@ class PyBulletEnv(BaseEnv):
         handle = pb_obj_generation.generateTriangle(position, orientation, scale)
       elif shape_type == constants.ROOF:
         handle = pb_obj_generation.generateRoof(position, orientation, scale)
+      elif shape_type == constants.CYLINDER:
+        handle = pb_obj_generation.generateCylinder(position, orientation, scale)
       elif shape_type == constants.RANDOM:
         handle = pb_obj_generation.generateRandomObj(position, orientation, scale, z_scale)
       else:
@@ -557,7 +560,7 @@ class PyBulletEnv(BaseEnv):
       if i == 0:
         continue
       #TODO: not 100% sure about this
-      if not obj.isTouching(objects[i-1]):
+      if not obj.isTouching(objects[i-1]) or obj.isTouching(PybulletObject(-1, self.table_id)):
         return False
     return True
 
