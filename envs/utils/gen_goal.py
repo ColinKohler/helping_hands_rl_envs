@@ -269,7 +269,8 @@ class GenGoal:
                     try:
                         if num > 0:
                             self.env._generateShapes(
-                                obj_id, num, random_orientation=self.env.random_orientation
+                                obj_id, num, random_orientation=self.env.random_orientation,
+                                small_random_orientation=self.env.small_random_orientation
                             )
                     except Exception as e:
                         continue

@@ -17,6 +17,7 @@ def createHouseBuildingXEnv(simulator_base_env, config):
         raise ValueError('Bad simulator base env specified.')
       self.simulator_base_env = simulator_base_env
       self.random_orientation = config['random_orientation'] if 'random_orientation' in config else False
+      self.small_random_orientation = config['small_random_orientation'] if 'small_random_orientation' in config else False
       self.num_obj = config['num_objects'] if 'num_objects' in config else 1
       self.reward_type = config['reward_type'] if 'reward_type' in config else 'sparse'
       self.get_custom_labels = config['get_custom_labels'] if 'get_custom_labels' in config else False
@@ -81,10 +82,22 @@ def createHouseBuildingXEnv(simulator_base_env, config):
         super(HouseBuildingXEnv, self).reset()
         try:
           # order matters!
-          self._generateShapes(constants.ROOF, self.gen_roofs, random_orientation=self.random_orientation)
-          self._generateShapes(constants.BRICK, self.gen_bricks, random_orientation=self.random_orientation)
-          self._generateShapes(constants.CUBE, self.gen_blocks, random_orientation=self.random_orientation)
-          self._generateShapes(constants.TRIANGLE, self.gen_triangles, random_orientation=self.random_orientation)
+          self._generateShapes(
+            constants.ROOF, self.gen_roofs, random_orientation=self.random_orientation,
+            small_random_orientation=self.small_random_orientation
+          )
+          self._generateShapes(
+            constants.BRICK, self.gen_bricks, random_orientation=self.random_orientation,
+            small_random_orientation=self.small_random_orientation
+          )
+          self._generateShapes(
+            constants.CUBE, self.gen_blocks, random_orientation=self.random_orientation,
+            small_random_orientation=self.small_random_orientation
+          )
+          self._generateShapes(
+            constants.TRIANGLE, self.gen_triangles, random_orientation=self.random_orientation,
+            small_random_orientation=self.small_random_orientation
+          )
         except Exception as e:
           continue
         else:

@@ -381,8 +381,10 @@ class PyBulletEnv(BaseEnv):
       raise NoValidPositionException
 
   def _generateShapes(self, shape_type=0, num_shapes=1, scale=None, pos=None, rot=None,
-                           min_distance=None, padding=None, random_orientation=False, z_scale=1):
-    ''''''
+                      min_distance=None, padding=None, random_orientation=False, z_scale=1,
+                      small_random_orientation=False):
+    # small random orientation: blocks can still be grasped by the gripper with fixed orientation,
+    # but they deviate from their default orientation a bit
     if padding is None:
       if shape_type in (constants.CUBE, constants.TRIANGLE, constants.RANDOM, constants.CYLINDER):
         padding = self.max_block_size * 1.5
@@ -410,6 +412,10 @@ class PyBulletEnv(BaseEnv):
       position.append(0.05)
       if random_orientation:
         orientation = pb.getQuaternionFromEuler([0., 0., 2*np.pi*np.random.random_sample()])
+      elif small_random_orientation:
+        tmp_zero_one = np.random.random_sample()
+        tmp_plus_minus = np.random.choice([-1.0, 1.0])
+        orientation = pb.getQuaternionFromEuler([0., 0., tmp_plus_minus * (1/16) * np.pi * tmp_zero_one])
       else:
         orientation = pb.getQuaternionFromEuler([0., 0., 0])
       if not scale:
