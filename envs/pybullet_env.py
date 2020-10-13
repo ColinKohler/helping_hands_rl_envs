@@ -97,10 +97,13 @@ class PyBulletEnv(BaseEnv):
     # Setup camera parameters
     workspace_x_offset = (workspace[0][1] - workspace[0][0])/2
     workspace_y_offset = (workspace[1][1] - workspace[1][0])/2
-    self.view_matrix = pb.computeViewMatrixFromYawPitchRoll([workspace[0].mean(), workspace[1].mean(), 0], 10, -90, -90, 0, 2)
-    self.proj_matrix = pb.computeProjectionMatrix(-workspace_x_offset, workspace_x_offset, -workspace_y_offset, workspace_y_offset, -10.0, 100.0)
-    # self.view_matrix = pb.computeViewMatrixFromYawPitchRoll([workspace[0].mean(), workspace[1].mean(), 0], 3, -90, -90, 0, 2)
-    # self.proj_matrix = pb.computeProjectionMatrixFOV(5.7, 1, 2, 3.01)
+    # self.view_matrix = pb.computeViewMatrixFromYawPitchRoll([workspace[0].mean(), workspace[1].mean(), 0], 10, -90, -90, 0, 2)
+    # self.proj_matrix = pb.computeProjectionMatrix(-workspace_x_offset, workspace_x_offset, -workspace_y_offset, workspace_y_offset, -10.0, 100.0)
+    self.view_matrix = pb.computeViewMatrixFromYawPitchRoll([workspace[0].mean(), workspace[1].mean(), 0], 3, -90, -90, 0, 2)
+    self.proj_matrix = pb.computeProjectionMatrixFOV(5.7, 1, 2, 3.01)
+    self.far = 3.01
+    self.near = 2
+    self.fov = 5.7
 
     # Rest pose for arm
     rot = pb.getQuaternionFromEuler([0, np.pi, 0])
@@ -311,12 +314,24 @@ class PyBulletEnv(BaseEnv):
     image_arr = pb.getCameraImage(width=self.heightmap_size, height=self.heightmap_size,
                                   viewMatrix=self.view_matrix, projectionMatrix=self.proj_matrix)
     depthImg = image_arr[3]
-    # far = 3.01
-    # near = 2
-    far = 100
-    near = -10
-    depth = far * near / (far - (far - near) * depthImg)
+    depth = self.far * self.near / (self.far - (self.far - self.near) * depthImg)
     return depth.max() - depth
+
+  def _getPointCloud(self):
+    image_arr = pb.getCameraImage(width=self.heightmap_size, height=self.heightmap_size,
+                                  viewMatrix=self.view_matrix, projectionMatrix=self.proj_matrix)
+    depthImg = image_arr[3]
+    depth = self.far * self.near / (self.far - (self.far - self.near) * depthImg)
+    fx = (self.heightmap_size/2) / np.tan(np.deg2rad(self.fov/2))
+    fy = (self.heightmap_size/2) / np.tan(np.deg2rad(self.fov/2))
+
+    pixel_depth = np.mgrid[0:self.heightmap_size, 0:self.heightmap_size]
+    pixel_depth = np.concatenate((pixel_depth, depth.reshape(1, self.heightmap_size, self.heightmap_size)))
+    pixel_depth = pixel_depth.reshape(3, -1).T
+    points = np.copy(pixel_depth)
+    points[:, 0] = ((points[:, 0] - self.heightmap_size/2) * points[:, 2]) / fx
+    points[:, 1] = ((points[:, 1] - self.heightmap_size/2) * points[:, 2]) / fy
+    return points
 
   def _getObservation(self, action=None):
     ''''''
