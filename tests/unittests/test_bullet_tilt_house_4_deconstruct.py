@@ -27,7 +27,7 @@ class TestBulletHouse4Deconstruct(unittest.TestCase):
     total = 0
     s = 0
     step_times = []
-    env.reset()
+    states, in_hands, obs = env.reset()
     pbar = tqdm(total=1000)
     steps = [0 for i in range(num_processes)]
     while total < 1000:

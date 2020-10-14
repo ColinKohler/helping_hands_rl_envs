@@ -43,6 +43,8 @@ class PyBulletEnv(BaseEnv):
       config['num_random_objects'] = 0
     if 'check_random_obj_valid' not in config:
       config['check_random_obj_valid'] = False
+    if 'obs' not in config:
+      config['obs'] = 'point'
 
     seed = config['seed']
     workspace = config['workspace']
@@ -61,9 +63,10 @@ class PyBulletEnv(BaseEnv):
     in_hand_mode = config['in_hand_mode']
     num_random_objects = config['num_random_objects']
     check_random_obj_valid = config['check_random_obj_valid']
+    obs = config['obs']
     super(PyBulletEnv, self).__init__(seed, workspace, max_steps, obs_size, action_sequence, pos_candidate,
                                       in_hand_size, in_hand_mode)
-
+    self.obs = obs
     # Connect to pybullet and add data files to path
     if render:
       self.client = pb.connect(pb.GUI)
@@ -331,6 +334,20 @@ class PyBulletEnv(BaseEnv):
     points = np.copy(pixel_depth)
     points[:, 0] = ((points[:, 0] - self.heightmap_size/2) * points[:, 2]) / fx
     points[:, 1] = ((points[:, 1] - self.heightmap_size/2) * points[:, 2]) / fy
+
+    points[:, 0] += self.workspace[0].mean()
+    points[:, 2] = self.far - points[:, 2]
+
+    # bTc = np.identity(4)
+    # bTc[:3, 3] = [self.workspace[0].mean(), self.workspace[1].mean(), self.far]
+    #
+    # n = points.shape[0]
+    # points = points.T
+    # augment = np.ones((1, n))
+    # points = np.concatenate((points, augment), axis=0)
+    # points = np.dot(np.linalg.inv(bTc), points)
+    # points = points[0:3, :].T
+
     return points
 
   def _getObservation(self, action=None):
@@ -344,8 +361,13 @@ class PyBulletEnv(BaseEnv):
       motion_primative, x, y, z, rot = self._decodeAction(action)
       in_hand_img = self.getInHandImage(old_heightmap, x, y, z, rot, self.heightmap)
 
+    if self.obs == 'point':
+      obs = self._getPointCloud()
+    else:
+      obs = self.heightmap.reshape([self.heightmap_size, self.heightmap_size, 1])
 
-    return self._isHolding(), in_hand_img, self.heightmap.reshape([self.heightmap_size, self.heightmap_size, 1])
+
+    return self._isHolding(), in_hand_img, obs
 
   def _getValidPositions(self, padding, min_distance, existing_positions, num_shapes, sample_range=None):
     existing_positions_copy = copy.deepcopy(existing_positions)

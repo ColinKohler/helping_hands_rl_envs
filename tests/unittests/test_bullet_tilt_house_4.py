@@ -26,6 +26,6 @@ class TestBulletHouse1Deconstruct(unittest.TestCase):
     env = env_factory.createEnvs(num_processes, 'rl', 'pybullet', 'tilt_house_building_4', self.env_config, {})
     i = 0
     while True:
-      env.reset()
+      states, in_hands, obs = env.reset()
       i += 20
       print(i)
