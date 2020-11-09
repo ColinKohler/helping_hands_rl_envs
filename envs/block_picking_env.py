@@ -40,8 +40,14 @@ def createBlockPickingEnv(simulator_base_env, config):
 
     def reset(self):
       ''''''
-      super(BlockPickingEnv, self).reset()
-      self._generateShapes(0, self.num_obj, random_orientation=self.random_orientation)
+      while True:
+        super(BlockPickingEnv, self).reset()
+        try:
+          self._generateShapes(0, self.num_obj, random_orientation=self.random_orientation)
+        except Exception as e:
+          continue
+        else:
+          break
       self.obj_grasped = 0
       return self._getObservation()
 
