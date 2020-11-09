@@ -102,7 +102,7 @@ class PyBulletEnv(BaseEnv):
     workspace_y_offset = (workspace[1][1] - workspace[1][0])/2
     # self.view_matrix = pb.computeViewMatrixFromYawPitchRoll([workspace[0].mean(), workspace[1].mean(), 0], 10, -90, -90, 0, 2)
     # self.proj_matrix = pb.computeProjectionMatrix(-workspace_x_offset, workspace_x_offset, -workspace_y_offset, workspace_y_offset, -10.0, 100.0)
-    self.view_matrix = pb.computeViewMatrixFromYawPitchRoll([workspace[0].mean(), workspace[1].mean(), 0], 3, -90, -90, 0, 2)
+    self.view_matrix = pb.computeViewMatrixFromYawPitchRoll([workspace[0].mean(), workspace[1].mean(), 0], 3, 90, -90, 0, 2)
     self.proj_matrix = pb.computeProjectionMatrixFOV(5.7, 1, 2, 3.01)
     self.far = 3.01
     self.near = 2
