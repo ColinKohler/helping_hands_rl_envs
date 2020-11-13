@@ -73,6 +73,8 @@ class BaseEnv(object):
 
     self.offset = 0.01
 
+    self.in_hand_point_cloud_padding = 640
+
   def _decodeAction(self, action):
     """
     decode input action base on self.action_sequence
@@ -321,8 +323,31 @@ class BaseEnv(object):
     # fig.show()
     return projection
 
+  def getInHandPointCloud(self, point_cloud, x, y, z, rot):
+    rx, ry, rz = rot
+    max_dist = self.in_hand_size / 2 * self.heightmap_resolution
+    mask = ((x - max_dist) < point_cloud[:, 0]) & (point_cloud[:, 0] < (x + max_dist)) & \
+           ((y - max_dist) < point_cloud[:, 1]) & (point_cloud[:, 1] < (y + max_dist)) & \
+           ((z - max_dist) < point_cloud[:, 2]) & (point_cloud[:, 2] < (z + max_dist))
+    local_point = point_cloud[mask]
+    local_point[:, 0] -= x
+    local_point[:, 1] -= y
+    local_point[:, 2] -= z
+    if local_point.shape[0] == 0:
+      local_point = np.zeros((self.in_hand_point_cloud_padding, 3))
+    elif local_point.shape[0] > self.in_hand_point_cloud_padding:
+      local_point = local_point[np.random.choice(local_point.shape[0], self.in_hand_point_cloud_padding)]
+    else:
+      padding = np.repeat(local_point[np.random.choice(local_point.shape[0], 1)], self.in_hand_point_cloud_padding - local_point.shape[0], axis=0)
+      local_point = np.concatenate((local_point, padding))
+    R = transformations.euler_matrix(rx, ry, rz)[:3, :3].T
+    local_point = R.dot(local_point.T).T
+    return local_point
+
   def getEmptyInHand(self):
     if self.in_hand_mode.find('proj') > -1:
       return np.zeros((self.in_hand_size, self.in_hand_size, 3))
+    elif self.in_hand_mode.find('point') > -1:
+      return np.zeros((self.in_hand_point_cloud_padding, 3))
     else:
       return np.zeros((self.in_hand_size, self.in_hand_size, 1))

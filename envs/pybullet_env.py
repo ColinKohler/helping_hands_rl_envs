@@ -123,6 +123,7 @@ class PyBulletEnv(BaseEnv):
 
     self.table_id = None
     self.heightmap = None
+    self.point_cloud = None
     self.current_episode_steps = 1
     self.last_action = None
     self.last_obj = None
@@ -354,20 +355,23 @@ class PyBulletEnv(BaseEnv):
     ''''''
     old_heightmap = self.heightmap
     self.heightmap = self._getHeightmap()
+    old_pc = self.point_cloud
+    self.point_cloud = self._getPointCloud()
 
     if action is None or self._isHolding() == False:
-      in_hand_img = self.getEmptyInHand()
+      in_hand = self.getEmptyInHand()
     else:
       motion_primative, x, y, z, rot = self._decodeAction(action)
-      in_hand_img = self.getInHandImage(old_heightmap, x, y, z, rot, self.heightmap)
+      if self.in_hand_mode.find('point') > -1:
+        in_hand = self.getInHandPointCloud(old_pc, x, y, z, rot)
+      else:
+        in_hand = self.getInHandImage(old_heightmap, x, y, z, rot, self.heightmap)
 
     if self.obs == 'point':
-      obs = self._getPointCloud()
+      return self._isHolding(), in_hand, self.point_cloud
     else:
       obs = self.heightmap.reshape([self.heightmap_size, self.heightmap_size, 1])
-
-
-    return self._isHolding(), in_hand_img, obs
+      return self._isHolding(), in_hand, obs
 
   def _getValidPositions(self, padding, min_distance, existing_positions, num_shapes, sample_range=None):
     existing_positions_copy = copy.deepcopy(existing_positions)
