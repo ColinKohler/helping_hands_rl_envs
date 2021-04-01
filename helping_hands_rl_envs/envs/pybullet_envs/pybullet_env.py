@@ -322,6 +322,9 @@ class PyBulletEnv(BaseEnv):
     else:
       return False
 
+  def getValidSpace(self):
+    return self.workspace
+
   def _isPointInWorkspace(self, p):
     '''
     Checks if the given point is within the workspace
@@ -357,29 +360,29 @@ class PyBulletEnv(BaseEnv):
     valid_positions = list()
     for i in range(num_shapes):
       # Generate random drop config
-      x_extents = self.workspace[0][1] - self.workspace[0][0]
-      y_extents = self.workspace[1][1] - self.workspace[1][0]
+      x_extents = self.getValidSpace()[0][1] - self.getValidSpace()[0][0]
+      y_extents = self.getValidSpace()[1][1] - self.getValidSpace()[1][0]
 
       is_position_valid = False
       for j in range(100):
         if is_position_valid:
           break
         if sample_range:
-          sample_range[0][0] = max(sample_range[0][0], self.workspace[0][0]+border_padding/2)
-          sample_range[0][1] = min(sample_range[0][1], self.workspace[0][1]-border_padding/2)
-          sample_range[1][0] = max(sample_range[1][0], self.workspace[1][0]+border_padding/2)
-          sample_range[1][1] = min(sample_range[1][1], self.workspace[1][1]-border_padding/2)
+          sample_range[0][0] = max(sample_range[0][0], self.getValidSpace()[0][0]+border_padding/2)
+          sample_range[0][1] = min(sample_range[0][1], self.getValidSpace()[0][1]-border_padding/2)
+          sample_range[1][0] = max(sample_range[1][0], self.getValidSpace()[1][0]+border_padding/2)
+          sample_range[1][1] = min(sample_range[1][1], self.getValidSpace()[1][1]-border_padding/2)
           position = [(sample_range[0][1] - sample_range[0][0]) * npr.random_sample() + sample_range[0][0],
                       (sample_range[1][1] - sample_range[1][0]) * npr.random_sample() + sample_range[1][0]]
         else:
-          position = [(x_extents - border_padding) * npr.random_sample() + self.workspace[0][0] + border_padding / 2,
-                      (y_extents - border_padding) * npr.random_sample() + self.workspace[1][0] +  border_padding / 2]
+          position = [(x_extents - border_padding) * npr.random_sample() + self.getValidSpace()[0][0] + border_padding / 2,
+                      (y_extents - border_padding) * npr.random_sample() + self.getValidSpace()[1][0] +  border_padding / 2]
 
         if self.pos_candidate is not None:
           position[0] = self.pos_candidate[0][np.abs(self.pos_candidate[0] - position[0]).argmin()]
           position[1] = self.pos_candidate[1][np.abs(self.pos_candidate[1] - position[1]).argmin()]
-          if not (self.workspace[0][0]+border_padding/2 < position[0] < self.workspace[0][1]-border_padding/2 and
-                  self.workspace[1][0]+border_padding/2 < position[1] < self.workspace[1][1]-border_padding/2):
+          if not (self.getValidSpace()[0][0]+border_padding/2 < position[0] < self.getValidSpace()[0][1]-border_padding/2 and
+                  self.getValidSpace()[1][0]+border_padding/2 < position[1] < self.getValidSpace()[1][1]-border_padding/2):
             continue
 
         if existing_positions_copy:
@@ -406,7 +409,7 @@ class PyBulletEnv(BaseEnv):
     return orientation
 
   def _getDefaultBoarderPadding(self, shape_type):
-    if shape_type in (constants.CUBE, constants.TRIANGLE, constants.RANDOM, constants.CYLINDER):
+    if shape_type in (constants.CUBE, constants.TRIANGLE, constants.RANDOM, constants.CYLINDER, constants.RANDOM_BLOCK):
       padding = self.max_block_size * 2.4
     elif shape_type == constants.BRICK:
       padding = self.max_block_size * 3.4
@@ -417,7 +420,7 @@ class PyBulletEnv(BaseEnv):
     return padding
 
   def _getDefaultMinDistance(self, shape_type):
-    if shape_type in (constants.CUBE, constants.TRIANGLE, constants.RANDOM, constants.CYLINDER):
+    if shape_type in (constants.CUBE, constants.TRIANGLE, constants.RANDOM, constants.CYLINDER, constants.RANDOM_BLOCK):
       min_distance = self.max_block_size * 2.4
     elif shape_type == constants.BRICK:
       min_distance = self.max_block_size * 3.4
@@ -480,6 +483,8 @@ class PyBulletEnv(BaseEnv):
         handle = pb_obj_generation.generateCylinder(position, orientation, scale)
       elif shape_type == constants.RANDOM:
         handle = pb_obj_generation.generateRandomObj(position, orientation, scale, z_scale)
+      elif shape_type == constants.RANDOM_BLOCK:
+        handle = pb_obj_generation.generateRandomBlock(position, orientation, scale)
       else:
         raise NotImplementedError
       if self.physic_mode == 'slow':
