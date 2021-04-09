@@ -13,6 +13,7 @@ from helping_hands_rl_envs.simulators.pybullet.objects.roof import Roof
 from helping_hands_rl_envs.simulators.pybullet.objects.random_object import RandomObject
 from helping_hands_rl_envs.simulators.pybullet.objects.random_brick import RandomBrick
 from helping_hands_rl_envs.simulators.pybullet.objects.random_block import RandomBlock
+from helping_hands_rl_envs.simulators.pybullet.objects.random_household_object import RandomHouseHoldObject
 
 def generateCube(pos, rot, scale):
   ''''''
@@ -38,3 +39,6 @@ def generateRandomBrick(pos, rot, x_scale, y_scale, z_scale):
 
 def generateRandomBlock(pos, rot, scale):
   return RandomBlock(pos, rot, scale)
+
+def generateRandomHouseHoldObj(pos, rot, scale):
+  return RandomHouseHoldObject(pos, rot, scale)

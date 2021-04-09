@@ -50,4 +50,6 @@ PLANNERS = {
   'ramp_improvise_house_building_2_deconstruct': RampDeconstructPlanner,
   'ramp_improvise_house_building_3_deconstruct': RampDeconstructPlanner,
   'block_bin_packing': BlockBinPackingPlanner,
+  'random_block_picking': BlockPickingPlanner,
+  'random_household_picking': BlockPickingPlanner,
 }

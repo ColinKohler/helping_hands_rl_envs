@@ -40,6 +40,8 @@ from helping_hands_rl_envs.envs.pybullet_envs.random_picking_env import createRa
 from helping_hands_rl_envs.envs.pybullet_envs.random_stacking_env import createRandomStackingEnv
 from helping_hands_rl_envs.envs.pybullet_envs.multi_task_env import createMultiTaskEnv
 from helping_hands_rl_envs.envs.pybullet_envs.block_bin_packing_env import createBlockBinPackingEnv
+from helping_hands_rl_envs.envs.pybullet_envs.random_block_picking_env import createRandomBlockPickingEnv
+from helping_hands_rl_envs.envs.pybullet_envs.random_household_picking_env import createRandomHouseholdPickingEnv
 
 CREATE_NUMPY_ENV_FNS = {
   'block_picking' : createBlockPickingEnv,
@@ -97,4 +99,6 @@ CREATE_PYBULLET_ENV_FNS = {
   'ramp_improvise_house_building_2_deconstruct': createRampImproviseHouseBuilding2DeconstructEnv,
   'ramp_improvise_house_building_3_deconstruct': createRampImproviseHouseBuilding3DeconstructEnv,
   'block_bin_packing': createBlockBinPackingEnv,
+  'random_block_picking': createRandomBlockPickingEnv,
+  'random_household_picking': createRandomHouseholdPickingEnv,
 }

@@ -409,11 +409,9 @@ class PyBulletEnv(BaseEnv):
     return orientation
 
   def _getDefaultBoarderPadding(self, shape_type):
-    if shape_type in (constants.CUBE, constants.TRIANGLE, constants.RANDOM, constants.CYLINDER, constants.RANDOM_BLOCK):
+    if shape_type in (constants.CUBE, constants.TRIANGLE, constants.RANDOM, constants.CYLINDER, constants.RANDOM_BLOCK, constants.RANDOM_HOUSEHOLD):
       padding = self.max_block_size * 2.4
-    elif shape_type == constants.BRICK:
-      padding = self.max_block_size * 3.4
-    elif shape_type == constants.ROOF:
+    elif shape_type in (constants.BRICK, constants.ROOF):
       padding = self.max_block_size * 3.4
     else:
       raise ValueError('Attempted to generate invalid shape.')
@@ -422,9 +420,7 @@ class PyBulletEnv(BaseEnv):
   def _getDefaultMinDistance(self, shape_type):
     if shape_type in (constants.CUBE, constants.TRIANGLE, constants.RANDOM, constants.CYLINDER, constants.RANDOM_BLOCK):
       min_distance = self.max_block_size * 2.4
-    elif shape_type == constants.BRICK:
-      min_distance = self.max_block_size * 3.4
-    elif shape_type == constants.ROOF:
+    elif shape_type in (constants.BRICK, constants.ROOF, constants.RANDOM_HOUSEHOLD):
       min_distance = self.max_block_size * 3.4
     else:
       raise ValueError('Attempted to generate invalid shape.')
@@ -485,6 +481,9 @@ class PyBulletEnv(BaseEnv):
         handle = pb_obj_generation.generateRandomObj(position, orientation, scale, z_scale)
       elif shape_type == constants.RANDOM_BLOCK:
         handle = pb_obj_generation.generateRandomBlock(position, orientation, scale)
+      elif shape_type == constants.RANDOM_HOUSEHOLD:
+        handle = pb_obj_generation.generateRandomHouseHoldObj(position, orientation, scale)
+
       else:
         raise NotImplementedError
       if self.physic_mode == 'slow':
