@@ -51,5 +51,7 @@ PLANNERS = {
   'ramp_improvise_house_building_3_deconstruct': RampDeconstructPlanner,
   'block_bin_packing': BlockBinPackingPlanner,
   'random_block_picking': BlockPickingPlanner,
+  'random_block_picking_clutter': BlockPickingPlanner,
   'random_household_picking': BlockPickingPlanner,
+  'random_household_picking_clutter': BlockPickingPlanner,
 }
