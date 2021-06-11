@@ -19,7 +19,7 @@ class BlockBinPackingEnv(PyBulletEnv):
     self.box = ContainerBox()
     self.box_rz = 0
     self.box_pos = [0.60, 0.12, 0]
-    self.box_size = [0.22*self.block_scale_range[1], 0.18*self.block_scale_range[1], 0.1]
+    self.box_size = [0.18, 0.15, 0.1]
     self.box_placeholder_pos = []
     self.z_threshold = self.box_size[-1]
 
