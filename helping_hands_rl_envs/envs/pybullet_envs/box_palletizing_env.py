@@ -2,6 +2,7 @@ import pybullet as pb
 import numpy as np
 
 from helping_hands_rl_envs.envs.pybullet_envs.pybullet_env import PyBulletEnv
+from helping_hands_rl_envs.simulators.pybullet.utils.renderer import Renderer
 from helping_hands_rl_envs.simulators import constants
 from helping_hands_rl_envs.simulators.pybullet.utils import transformations
 from helping_hands_rl_envs.simulators.constants import NoValidPositionException
@@ -27,6 +28,13 @@ class BoxPalletizingEnv(PyBulletEnv):
     self.even_place_pos_candidate = []
 
     self.place_rz_valid = True
+
+    self.renderer = Renderer(self.workspace)
+
+  def _getHeightmap(self):
+    self.renderer.getNewPointCloud()
+    topdown_heightmap = self.renderer.getTopDownHeightmap(self.heightmap_size)
+    return topdown_heightmap
 
   def _getExistingXYPositions(self):
     positions = []
