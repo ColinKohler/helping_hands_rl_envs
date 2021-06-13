@@ -136,10 +136,10 @@ class BoxPalletizingEnv(PyBulletEnv):
       return n_level1 == 6 and n_level2 == 6 and n_level3 == (self.num_obj - n_level1 - n_level2)
 
   def getObjEachLevel(self):
-    level1_threshold = self.pallet_height + 0.5 * self.box_height - 0.01
-    level2_threshold = self.pallet_height + 1.5 * self.box_height - 0.01
-    level3_threshold = self.pallet_height + 2.5 * self.box_height - 0.01
-    level4_threshold = self.pallet_height + 3.5 * self.box_height - 0.01
+    level1_threshold = self.pallet_height + 0.25 * self.box_height - 0.01
+    level2_threshold = self.pallet_height + 1.25 * self.box_height - 0.01
+    level3_threshold = self.pallet_height + 2.25 * self.box_height - 0.01
+    level4_threshold = self.pallet_height + 3.25 * self.box_height - 0.01
     level1_objs = list(filter(lambda o: level1_threshold < o.getZPosition() < level2_threshold, self.objects))
     level2_objs = list(filter(lambda o: level2_threshold < o.getZPosition() < level3_threshold, self.objects))
     level3_objs = list(filter(lambda o: level3_threshold < o.getZPosition() < level4_threshold, self.objects))
