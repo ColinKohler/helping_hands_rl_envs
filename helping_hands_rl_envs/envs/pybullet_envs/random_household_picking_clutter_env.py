@@ -58,8 +58,8 @@ class RandomHouseholdPickingClutterEnv(PyBulletEnv):
         :return: image patch
         """
         img_size = self.heightmap_size
-        x_pixel, y_pixel = self._getPixelsFromPos(x, y)
-        center_pixel = np.array([y_pixel, x_pixel])
+        row_pixel, column_pixel = self._getPixelsFromPos(x, y)
+        center_pixel = np.array([row_pixel, column_pixel])
         transition = center_pixel - np.array([self.heightmap_size / 2, self.heightmap_size / 2])
         R = np.asarray([[np.cos(rz), np.sin(rz)],
                         [-np.sin(rz), np.cos(rz)]])
@@ -77,14 +77,16 @@ class RandomHouseholdPickingClutterEnv(PyBulletEnv):
         z = (np.min(patch) + np.max(patch)) / 2
         gripper_depth = 0.015
         gripper_reach = 0.02
-        safe_z_pos = max(z, np.max(patch) - gripper_depth, np.min(patch) + gripper_reach)
+        safe_z_pos = max(z, np.max(patch) - gripper_depth, np.min(patch) + gripper_reach, gripper_reach)
         return safe_z_pos
 
+  def _checkPerfectGrasp(self, x, y, z, rot, objects):
+      return True
 
   def step(self, action):
     pre_obj_grasped = self.obj_grasped
     self.takeAction(action)
-    self.wait(200)
+    self.wait(100)
     # remove obj that above a threshold hight
     # for obj in self.objects:
     #   if obj.getPosition()[2] > self.pick_pre_offset:
@@ -131,6 +133,7 @@ class RandomHouseholdPickingClutterEnv(PyBulletEnv):
         continue
       else:
         break
+    self.wait(100)
     self.obj_grasped = 0
     self.num_in_tray_obj = self.num_obj
     return self._getObservation()
