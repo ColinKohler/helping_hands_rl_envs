@@ -59,24 +59,20 @@ class RandomHouseholdPickingClutterEnv(PyBulletEnv):
         """
         img_size = self.heightmap_size
         row_pixel, column_pixel = self._getPixelsFromPos(x, y)
-        center_pixel = np.array([row_pixel, column_pixel])
-        transition = center_pixel - np.array([self.heightmap_size / 2, self.heightmap_size / 2])
-        R = np.asarray([[np.cos(rz), np.sin(rz)],
-                        [-np.sin(rz), np.cos(rz)]])
+        center_coordinate = np.array([column_pixel, row_pixel])
+        transition = center_coordinate - np.array([self.heightmap_size / 2, self.heightmap_size / 2])
+        R = np.asarray([[np.cos(-rz), np.sin(-rz)],
+                        [-np.sin(-rz), np.cos(-rz)]])
         rotated_transition = R.dot(transition) + np.array([self.heightmap_size / 2, self.heightmap_size / 2])
-
-        rotated_heightmap = rotate(self.heightmap, angle=rz * 180 / np.pi, reshape=False)
-        # patch = rotated_heightmap[int(rotated_transition[0] - patch_size / 2):
-        #                           int(rotated_transition[0] + patch_size / 2),
-        #                           int(rotated_transition[1] - patch_size / 2):
-        #                           int(rotated_transition[1] + patch_size / 2)]
-        patch = rotated_heightmap[int(rotated_transition[0] - 6):
-                                  int(rotated_transition[0] + 6),
-                                  int(rotated_transition[1] - patch_size / 2):
-                                  int(rotated_transition[1] + patch_size / 2)]
+        rotated_row_column = np.flip(rotated_transition)
+        rotated_heightmap = rotate(self.heightmap, angle=-rz * 180 / np.pi, reshape=False)
+        patch = rotated_heightmap[int(max(rotated_row_column[0] - patch_size / 2, 0)):
+                                  int(min(rotated_row_column[0] + patch_size / 2, self.heightmap_size)),
+                                  int(max(rotated_row_column[1] - 6, 0)):
+                                  int(min(rotated_row_column[1] + 6, self.heightmap_size))]
         z = (np.min(patch) + np.max(patch)) / 2
-        gripper_depth = 0.015
-        gripper_reach = 0.02
+        gripper_depth = 0.02
+        gripper_reach = 0.01
         safe_z_pos = max(z, np.max(patch) - gripper_depth, np.min(patch) + gripper_reach, gripper_reach)
         return safe_z_pos
 
@@ -133,7 +129,7 @@ class RandomHouseholdPickingClutterEnv(PyBulletEnv):
         continue
       else:
         break
-    self.wait(100)
+    self.wait(500)
     self.obj_grasped = 0
     self.num_in_tray_obj = self.num_obj
     return self._getObservation()
