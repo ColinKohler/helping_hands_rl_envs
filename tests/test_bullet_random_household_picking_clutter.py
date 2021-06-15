@@ -39,7 +39,6 @@ class TestBulletBlockStacking(unittest.TestCase):
       t_plan = time.time() - t0
       (states_, in_hands_, obs_), rewards, dones = env.step(action, auto_reset=True)
       s += rewards.sum()
-      print(rewards)
       total += dones.sum()
       steps += num_processes
       t_action = time.time() - t0 - t_plan

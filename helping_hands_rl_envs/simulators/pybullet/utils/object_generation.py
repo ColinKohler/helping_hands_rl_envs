@@ -61,8 +61,8 @@ def generateRandomBrick(pos, rot, x_scale, y_scale, z_scale):
 def generateRandomBlock(pos, rot, scale):
   return RandomBlock(pos, rot, scale)
 
-def generateRandomHouseHoldObj(pos, rot, scale):
-  return RandomHouseHoldObject(pos, rot, scale)
+def generateRandomHouseHoldObj(pos, rot, scale, index):
+  return RandomHouseHoldObject(pos, rot, scale, index)
 
 def generateSpoon(pos, rot, scale):
   return Spoon(pos, rot, scale)

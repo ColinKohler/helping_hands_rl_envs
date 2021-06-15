@@ -513,7 +513,7 @@ class PyBulletEnv(BaseEnv):
       elif shape_type == constants.RANDOM_BLOCK:
         handle = pb_obj_generation.generateRandomBlock(position, orientation, scale)
       elif shape_type == constants.RANDOM_HOUSEHOLD:
-        handle = pb_obj_generation.generateRandomHouseHoldObj(position, orientation, scale)
+        handle = pb_obj_generation.generateRandomHouseHoldObj(position, orientation, scale, model_id)
       elif shape_type == constants.SPOON:
         handle = pb_obj_generation.generateSpoon(position, orientation, scale)
       elif shape_type == constants.TEST_TUBE:

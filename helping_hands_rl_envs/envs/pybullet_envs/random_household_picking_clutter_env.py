@@ -1,5 +1,9 @@
+import math
 from copy import deepcopy
 import numpy as np
+import os
+import glob
+import helping_hands_rl_envs
 from helping_hands_rl_envs.envs.pybullet_envs.pybullet_env import PyBulletEnv
 from helping_hands_rl_envs.simulators import constants
 from helping_hands_rl_envs.simulators.constants import NoValidPositionException
@@ -17,6 +21,7 @@ class RandomHouseholdPickingClutterEnv(PyBulletEnv):
     self.object_init_z = 0.1
     self.obj_grasped = 0
     self.tray = Tray()
+    self.exhibit_env_obj = False
 
   def initialize(self):
     super().initialize()
@@ -63,13 +68,15 @@ class RandomHouseholdPickingClutterEnv(PyBulletEnv):
         transition = center_coordinate - np.array([self.heightmap_size / 2, self.heightmap_size / 2])
         R = np.asarray([[np.cos(-rz), np.sin(-rz)],
                         [-np.sin(-rz), np.cos(-rz)]])
-        rotated_transition = R.dot(transition) + np.array([self.heightmap_size / 2, self.heightmap_size / 2])
+        rotated_heightmap = rotate(self.heightmap, angle=-rz * 180 / np.pi, reshape=True)
+        rotated_transition = R.dot(transition)\
+                             + np.array([rotated_heightmap.shape[0] / 2, rotated_heightmap.shape[1] / 2])
         rotated_row_column = np.flip(rotated_transition)
-        rotated_heightmap = rotate(self.heightmap, angle=-rz * 180 / np.pi, reshape=False)
         patch = rotated_heightmap[int(max(rotated_row_column[0] - patch_size / 2, 0)):
-                                  int(min(rotated_row_column[0] + patch_size / 2, self.heightmap_size)),
+                                  int(min(rotated_row_column[0] + patch_size / 2, rotated_heightmap.shape[0])),
                                   int(max(rotated_row_column[1] - 6, 0)):
-                                  int(min(rotated_row_column[1] + 6, self.heightmap_size))]
+                                  int(min(rotated_row_column[1] + 6, rotated_heightmap.shape[1]))]
+        # print(patch.shape, rotated_row_column)
         z = (np.min(patch) + np.max(patch)) / 2
         gripper_depth = 0.02
         gripper_reach = 0.01
@@ -112,19 +119,39 @@ class RandomHouseholdPickingClutterEnv(PyBulletEnv):
     while True:
       self.resetPybulletEnv()
       try:
-        # self.trayUid = pb.loadURDF(os.path.join(pybullet_data.getDataPath(), "tray/tray.urdf"),
-        #                            self.workspace[0].mean(), self.workspace[1].mean(), 0,
-        #                            0.000000, 0.000000, 1.000000, 0.000000)
-        for i in range(self.num_obj):
-          x = (np.random.rand() - 0.5) * 0.1
-          x += self.workspace[0].mean()
-          y = (np.random.rand() - 0.5) * 0.1
-          y += self.workspace[1].mean()
-          randpos = [x, y, 0.20]
-          obj = self._generateShapes(constants.RANDOM_HOUSEHOLD, 1, random_orientation=self.random_orientation,
-                                     pos=[randpos], padding=self.min_boarder_padding,
-                                     min_distance=self.min_object_distance)
-          pb.changeDynamics(obj[0].object_id, -1, lateralFriction=0.6)
+        if not self.exhibit_env_obj:
+            for i in range(self.num_obj):
+              x = (np.random.rand() - 0.5) * 0.1
+              x += self.workspace[0].mean()
+              y = (np.random.rand() - 0.5) * 0.1
+              y += self.workspace[1].mean()
+              randpos = [x, y, 0.20]
+              obj = self._generateShapes(constants.RANDOM_HOUSEHOLD, 1, random_orientation=self.random_orientation,
+                                         pos=[randpos], padding=self.min_boarder_padding,
+                                         min_distance=self.min_object_distance, model_id=-1)
+              pb.changeDynamics(obj[0].object_id, -1, lateralFriction=0.6)
+        else:  # exhibit all random objects in this environment
+            root_dir = os.path.dirname(helping_hands_rl_envs.__file__)
+            urdf_pattern = os.path.join(root_dir, constants.URDF_PATH, 'random_household_object/*/*.urdf')
+            found_object_directories = glob.glob(urdf_pattern)
+            total_num_objects = len(found_object_directories)
+
+            display_size = 0.4
+            columns = math.ceil(math.sqrt(total_num_objects))
+            distance = display_size / (columns - 1)
+
+            for i in range(total_num_objects):
+                x = (i // columns) * distance
+                x += self.workspace[0].mean() + 0.8 - display_size/2
+                y = (i % columns) * distance
+                y += self.workspace[1].mean() - display_size/2
+                display_pos = [x, y, 0.1]
+                obj = self._generateShapes(constants.RANDOM_HOUSEHOLD, 1, random_orientation=self.random_orientation,
+                                           pos=[display_pos], padding=self.min_boarder_padding,
+                                           min_distance=self.min_object_distance, model_id=i)
+                print('Total number of random objects: ', total_num_objects)
+
+            self.wait(10000)
       except NoValidPositionException:
         continue
       else:
