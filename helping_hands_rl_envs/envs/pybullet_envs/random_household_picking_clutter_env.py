@@ -13,6 +13,30 @@ import pybullet as pb
 import os
 import pybullet_data
 
+def creat_duck(pos):
+    shift = [0, -0.02, 0]
+    scale = 0.08
+    meshScale = [scale, scale, scale]
+    #the visual shape and collision shape can be re-used by all createMultiBody instances (instancing)
+    visualShapeId = pb.createVisualShape(shapeType=pb.GEOM_MESH,
+                                        fileName="duck.obj",
+                                        rgbaColor=[1, 1, 1, 1],
+                                        specularColor=[0.4, .4, 0],
+                                        visualFramePosition=shift,
+                                        meshScale=meshScale)
+    collisionShapeId = pb.createCollisionShape(shapeType=pb.GEOM_MESH,
+                                              fileName="duck_vhacd.obj",
+                                              collisionFramePosition=shift,
+                                              meshScale=meshScale)
+
+    pb.createMultiBody(baseMass=1,
+                      baseInertialFramePosition=[0, 0, 0],
+                      baseCollisionShapeIndex=collisionShapeId,
+                      baseVisualShapeIndex=visualShapeId,
+                      basePosition=pos,
+                      useMaximalCoordinates=True)
+
+
 class RandomHouseholdPickingClutterEnv(PyBulletEnv):
   '''
   '''
@@ -78,7 +102,7 @@ class RandomHouseholdPickingClutterEnv(PyBulletEnv):
                                   int(min(rotated_row_column[1] + 6, rotated_heightmap.shape[1]))]
         # print(patch.shape, rotated_row_column)
         z = (np.min(patch) + np.max(patch)) / 2
-        gripper_depth = 0.02
+        gripper_depth = 0.04
         gripper_reach = 0.01
         safe_z_pos = max(z, np.max(patch) - gripper_depth, np.min(patch) + gripper_reach, gripper_reach)
         return safe_z_pos
@@ -125,38 +149,53 @@ class RandomHouseholdPickingClutterEnv(PyBulletEnv):
               x += self.workspace[0].mean()
               y = (np.random.rand() - 0.5) * 0.1
               y += self.workspace[1].mean()
-              randpos = [x, y, 0.20]
+              randpos = [x, y, 0.40]
               obj = self._generateShapes(constants.RANDOM_HOUSEHOLD, 1, random_orientation=self.random_orientation,
                                          pos=[randpos], padding=self.min_boarder_padding,
                                          min_distance=self.min_object_distance, model_id=-1)
+              # obj = self._generateShapes(constants.RANDOM_HOUSEHOLD200, 1, random_orientation=self.random_orientation,
+              #                            pos=[randpos], padding=self.min_boarder_padding,
+              #                            min_distance=self.min_object_distance, model_id=-1)
               pb.changeDynamics(obj[0].object_id, -1, lateralFriction=0.6)
-        else:  # exhibit all random objects in this environment
+              self.wait(100)
+        # elif True:
+        # #create ducks
+        #     for i in range(15):
+        #         x = (np.random.rand() - 0.5) * 0.1
+        #         x += self.workspace[0].mean()
+        #         y = (np.random.rand() - 0.5) * 0.1
+        #         y += self.workspace[1].mean()
+        #         randpos = [x, y, 0.20]
+        #         creat_duck(randpos)
+        #         self.wait(100)
+        elif self.exhibit_env_obj:  # exhibit all random objects in this environment
             root_dir = os.path.dirname(helping_hands_rl_envs.__file__)
-            urdf_pattern = os.path.join(root_dir, constants.URDF_PATH, 'random_household_object/*/*.urdf')
+            # urdf_pattern = os.path.join(root_dir, constants.URDF_PATH, 'random_household_object/*/*.urdf')
+            urdf_pattern = os.path.join(root_dir, constants.URDF_PATH, 'random_household_object_200/*/*/*.obj')
             found_object_directories = glob.glob(urdf_pattern)
             total_num_objects = len(found_object_directories)
 
-            display_size = 0.4
+            display_size = 2
             columns = math.ceil(math.sqrt(total_num_objects))
             distance = display_size / (columns - 1)
 
             for i in range(total_num_objects):
                 x = (i // columns) * distance
-                x += self.workspace[0].mean() + 0.8 - display_size/2
+                x += self.workspace[0].mean() + 0.6
                 y = (i % columns) * distance
                 y += self.workspace[1].mean() - display_size/2
                 display_pos = [x, y, 0.1]
-                obj = self._generateShapes(constants.RANDOM_HOUSEHOLD, 1, random_orientation=self.random_orientation,
+                obj = self._generateShapes(constants.RANDOM_HOUSEHOLD200, 1,
+                                           rot=[pb.getQuaternionFromEuler([0., 0., -np.pi/4])],
                                            pos=[display_pos], padding=self.min_boarder_padding,
                                            min_distance=self.min_object_distance, model_id=i)
-                print('Total number of random objects: ', total_num_objects)
 
             self.wait(10000)
       except NoValidPositionException:
         continue
       else:
         break
-    self.wait(500)
+    self.wait(200)
     self.obj_grasped = 0
     self.num_in_tray_obj = self.num_obj
     return self._getObservation()
@@ -180,19 +219,19 @@ class RandomHouseholdPickingClutterEnv(PyBulletEnv):
   def _checkTermination(self):
     ''''''
     for obj in self.objects:
-      if self._isObjectHeld(obj):
+      # if self._isObjectHeld(obj):
+      #   self.obj_grasped += 1
+      #   self._removeObject(obj)
+      #   if self.obj_grasped == self.num_obj:
+      #     return True
+      #   return False
+      if obj.getPosition()[2] >= 0.35:  #ZXP getPos z > threshold is more robust than _isObjectHeld()
         self.obj_grasped += 1
         self._removeObject(obj)
         if self.obj_grasped == self.num_obj:
           return True
         return False
     return False
-
-  # def _checkTermination(self):
-  #   ''''''
-  #   self.num_in_tray_obj = len(self.InBoxObj([self.workspace[0].mean(), self.workspace[1].mean(), 0],
-  #                                      [self.workspace_size+0.02, self.workspace_size+0.02, 0.02]))
-  #   return self.num_in_tray_obj == 0
 
   def _getObservation(self, action=None):
     state, in_hand, obs = super(RandomHouseholdPickingClutterEnv, self)._getObservation()
