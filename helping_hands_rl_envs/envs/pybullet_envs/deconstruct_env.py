@@ -40,11 +40,11 @@ class DeconstructEnv(PyBulletEnv):
     old_heightmap = self.heightmap
     self.heightmap = self._getHeightmap()
 
-    if action is None or self._isHolding() == True:
+    if action is None or self._isHolding() == False:
       in_hand_img = self.getEmptyInHand()
     else:
       motion_primative, x, y, z, rot = self._decodeAction(action)
-      in_hand_img = self.getInHandImage(self.heightmap, x, y, z, rot, old_heightmap)
+      in_hand_img = self.getInHandImage(old_heightmap, x, y, z, rot, self.heightmap)
 
     return self._isHolding(), in_hand_img, self.heightmap.reshape([1, self.heightmap_size, self.heightmap_size])
 

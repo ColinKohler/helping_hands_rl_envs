@@ -463,10 +463,10 @@ class PyBulletEnv(BaseEnv):
     else:
       orientations = rot
 
-
     for position, orientation in zip(valid_positions, orientations):
       if not scale:
         scale = npr.choice(np.arange(self.block_scale_range[0], self.block_scale_range[1]+0.01, 0.02))
+        scale = npr.choice([0.6, 0.75])
 
       if shape_type == constants.CUBE:
         handle = pb_obj_generation.generateCube(position, orientation, scale)
