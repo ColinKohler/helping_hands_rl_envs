@@ -13,7 +13,7 @@ from helping_hands_rl_envs.simulators import constants
 
 root_dir = os.path.dirname(helping_hands_rl_envs.__file__)
 obj_pattern = os.path.join(root_dir, constants.URDF_PATH, 'random_household_object_200/3dnet/*/*.obj')
-found_object_directories = glob.glob(obj_pattern)
+found_object_directories = sorted(glob.glob(obj_pattern))
 total_num_objects = len(found_object_directories)
 
 def get_immediate_subdirectories(a_dir):
@@ -51,7 +51,7 @@ class RandomHouseHoldObject200(PybulletObject):
       obj_filepath = found_object_directories[np.random.choice(np.arange(total_num_objects), 1)[0]]
     # object_id = pb.loadURDF(obj_filepath, basePosition=pos, baseOrientation=rot, globalScaling=scale)
 
-    color = np.random.uniform(0.5, 1, (4,))
+    color = np.random.uniform(0.6, 1, (4,))
     color[-1] = 1
     obj_visual = pb.createVisualShape(pb.GEOM_MESH, fileName=obj_filepath,
                                       meshScale=[1, 1, 1], rgbaColor=color)
@@ -74,14 +74,21 @@ class RandomHouseHoldObject200(PybulletObject):
     real_scale = (real_scale1 + real_scale2) / 2
     pb.removeBody(object_id)
 
-    obj_visual = pb.createVisualShape(pb.GEOM_MESH, fileName=obj_filepath,
-                                      meshScale=[real_scale, real_scale, real_scale], rgbaColor=color)
-    obj_collision = pb.createCollisionShape(pb.GEOM_MESH, fileName=obj_filepath, meshScale=[real_scale, real_scale, real_scale])
-
     center = (bbox[0] + bbox[1]) / 2
-    center[-1] -= 5
+    center[-1] -= 1.5
     center = center * real_scale
-    real_pos = np.array(pos).copy() - center
+
+    obj_visual = pb.createVisualShape(pb.GEOM_MESH,
+                                      fileName=obj_filepath,
+                                      meshScale=[real_scale, real_scale, real_scale],
+                                      rgbaColor=color,
+                                      visualFramePosition=center)
+    obj_collision = pb.createCollisionShape(pb.GEOM_MESH,
+                                            fileName=obj_filepath,
+                                            meshScale=[real_scale, real_scale, real_scale],
+                                            collisionFramePosition=center)
+
+    real_pos = np.array(pos).copy()
     real_pos = real_pos.tolist()
 
     object_id = pb.createMultiBody(baseMass=0.5,

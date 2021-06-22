@@ -344,9 +344,13 @@ class PyBulletEnv(BaseEnv):
 
     Returns: True in point is within workspace, False otherwise
     '''
+    # return self.workspace[0][0] < p[0] < self.workspace[0][1] and \
+    #        self.workspace[1][0] < p[1] < self.workspace[1][1] and \
+    #        self.workspace[2][0] < p[2] < self.workspace[2][1]
+    # if self.workspace[2][0] < p[2] < self.workspace[2][1]:
+    #   pass
     return self.workspace[0][0] < p[0] < self.workspace[0][1] and \
-           self.workspace[1][0] < p[1] < self.workspace[1][1] and \
-           self.workspace[2][0] < p[2] < self.workspace[2][1]
+           self.workspace[1][0] < p[1] < self.workspace[1][1]
 
   def _getObservation(self, action=None):
     ''''''

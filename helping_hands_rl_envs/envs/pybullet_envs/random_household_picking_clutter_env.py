@@ -138,6 +138,24 @@ class RandomHouseholdPickingClutterEnv(PyBulletEnv):
 
     return obs, reward, done
 
+  def isSimValid(self):
+    for obj in self.objects:
+      p = obj.getPosition()
+      if not self.check_random_obj_valid and self.object_types[obj] == constants.RANDOM:
+        continue
+      if obj.getPosition()[2] >= 0.35 or self._isObjectHeld(obj):
+        continue
+      if self.workspace_check == 'point':
+        if not self._isPointInWorkspace(p):
+          return False
+      else:
+        if not self._isObjectWithinWorkspace(obj):
+          return False
+      if self.pos_candidate is not None:
+        if np.abs(self.pos_candidate[0] - p[0]).min() > 0.02 or np.abs(self.pos_candidate[1] - p[1]).min() > 0.02:
+          return False
+    return True
+
   def reset(self):
     ''''''
     while True:
@@ -150,12 +168,12 @@ class RandomHouseholdPickingClutterEnv(PyBulletEnv):
               y = (np.random.rand() - 0.5) * 0.1
               y += self.workspace[1].mean()
               randpos = [x, y, 0.40]
-              obj = self._generateShapes(constants.RANDOM_HOUSEHOLD, 1, random_orientation=self.random_orientation,
-                                         pos=[randpos], padding=self.min_boarder_padding,
-                                         min_distance=self.min_object_distance, model_id=-1)
-              # obj = self._generateShapes(constants.RANDOM_HOUSEHOLD200, 1, random_orientation=self.random_orientation,
+              # obj = self._generateShapes(constants.RANDOM_HOUSEHOLD, 1, random_orientation=self.random_orientation,
               #                            pos=[randpos], padding=self.min_boarder_padding,
               #                            min_distance=self.min_object_distance, model_id=-1)
+              obj = self._generateShapes(constants.RANDOM_HOUSEHOLD200, 1, random_orientation=self.random_orientation,
+                                         pos=[randpos], padding=self.min_boarder_padding,
+                                         min_distance=self.min_object_distance, model_id=-1)
               pb.changeDynamics(obj[0].object_id, -1, lateralFriction=0.6)
               self.wait(100)
         # elif True:
@@ -184,7 +202,11 @@ class RandomHouseholdPickingClutterEnv(PyBulletEnv):
                 x += self.workspace[0].mean() + 0.6
                 y = (i % columns) * distance
                 y += self.workspace[1].mean() - display_size/2
-                display_pos = [x, y, 0.1]
+                display_pos = [x, y, 0.05]
+                # obj = self._generateShapes(constants.RANDOM_HOUSEHOLD, 1,
+                #                            rot=[pb.getQuaternionFromEuler([0., 0., -np.pi/4])],
+                #                            pos=[display_pos], padding=self.min_boarder_padding,
+                #                            min_distance=self.min_object_distance, model_id=i)
                 obj = self._generateShapes(constants.RANDOM_HOUSEHOLD200, 1,
                                            rot=[pb.getQuaternionFromEuler([0., 0., -np.pi/4])],
                                            pos=[display_pos], padding=self.min_boarder_padding,
@@ -225,7 +247,7 @@ class RandomHouseholdPickingClutterEnv(PyBulletEnv):
       #   if self.obj_grasped == self.num_obj:
       #     return True
       #   return False
-      if obj.getPosition()[2] >= 0.35:  #ZXP getPos z > threshold is more robust than _isObjectHeld()
+      if obj.getPosition()[2] >= 0.35 or self._isObjectHeld(obj):  #ZXP getPos z > threshold is more robust than _isObjectHeld()
         self.obj_grasped += 1
         self._removeObject(obj)
         if self.obj_grasped == self.num_obj:
