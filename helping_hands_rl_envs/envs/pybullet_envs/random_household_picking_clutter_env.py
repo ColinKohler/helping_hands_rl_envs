@@ -104,7 +104,7 @@ class RandomHouseholdPickingClutterEnv(PyBulletEnv):
         z = (np.min(patch) + np.max(patch)) / 2
         gripper_depth = 0.04
         gripper_reach = 0.01
-        safe_z_pos = max(z, np.max(patch) - gripper_depth, np.min(patch) + gripper_reach, gripper_reach)
+        safe_z_pos = max(np.max(patch) - gripper_depth, np.min(patch) + gripper_reach, gripper_reach)
         return safe_z_pos
 
   def _checkPerfectGrasp(self, x, y, z, rot, objects):
@@ -175,7 +175,7 @@ class RandomHouseholdPickingClutterEnv(PyBulletEnv):
                                          pos=[randpos], padding=self.min_boarder_padding,
                                          min_distance=self.min_object_distance, model_id=-1)
               pb.changeDynamics(obj[0].object_id, -1, lateralFriction=0.6)
-              self.wait(100)
+              self.wait(10)
         # elif True:
         # #create ducks
         #     for i in range(15):
@@ -197,12 +197,15 @@ class RandomHouseholdPickingClutterEnv(PyBulletEnv):
             columns = math.ceil(math.sqrt(total_num_objects))
             distance = display_size / (columns - 1)
 
+            obj_centers = []
+            obj_scales = []
+
             for i in range(total_num_objects):
                 x = (i // columns) * distance
                 x += self.workspace[0].mean() + 0.6
                 y = (i % columns) * distance
                 y += self.workspace[1].mean() - display_size/2
-                display_pos = [x, y, 0.05]
+                display_pos = [x, y, 0.08]
                 # obj = self._generateShapes(constants.RANDOM_HOUSEHOLD, 1,
                 #                            rot=[pb.getQuaternionFromEuler([0., 0., -np.pi/4])],
                 #                            pos=[display_pos], padding=self.min_boarder_padding,
@@ -211,7 +214,12 @@ class RandomHouseholdPickingClutterEnv(PyBulletEnv):
                                            rot=[pb.getQuaternionFromEuler([0., 0., -np.pi/4])],
                                            pos=[display_pos], padding=self.min_boarder_padding,
                                            min_distance=self.min_object_distance, model_id=i)
+                obj_centers.append(obj[0].center)
+                obj_scales.append(obj[0].real_scale)
 
+            obj_centers = np.array(obj_centers)
+            obj_scales = np.array(obj_scales)
+            print('Number of all objects: ', total_num_objects)
             self.wait(10000)
       except NoValidPositionException:
         continue
