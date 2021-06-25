@@ -38,16 +38,18 @@ def creat_duck(pos):
                        useMaximalCoordinates=True)
 
 
-class RandomHouseholdPickingClutterEnv(PyBulletEnv):
+class RandomHouseholdPickingIndividualEnv(PyBulletEnv):
     '''
   '''
 
     def __init__(self, config):
-        super(RandomHouseholdPickingClutterEnv, self).__init__(config)
+        super(RandomHouseholdPickingIndividualEnv, self).__init__(config)
         self.object_init_z = 0.1
         self.obj_grasped = 0
         self.tray = Tray()
         self.exhibit_env_obj = False
+        self.steps = 0
+        self.num_test_each_obj = 100
 
     def initialize(self):
         super().initialize()
@@ -103,7 +105,7 @@ class RandomHouseholdPickingClutterEnv(PyBulletEnv):
                 int(max(rotated_row_column[1] - 6, 0)):
                 int(min(rotated_row_column[1] + 6, rotated_heightmap.shape[1]))]
         # print(patch.shape, rotated_row_column)
-        # z = (np.min(patch) + np.max(patch)) / 2
+        z = (np.min(patch) + np.max(patch)) / 2
         gripper_depth = 0.04
         gripper_reach = 0.01
         safe_z_pos = max(np.max(patch) - gripper_depth, np.min(patch) + gripper_reach, gripper_reach)
@@ -159,27 +161,33 @@ class RandomHouseholdPickingClutterEnv(PyBulletEnv):
                     return False
         return True
 
+    def getNumTotalObj(self):
+        root_dir = os.path.dirname(helping_hands_rl_envs.__file__)
+        # urdf_pattern = os.path.join(root_dir, constants.URDF_PATH, 'random_household_object/*/*.urdf')
+        urdf_pattern = os.path.join(root_dir, constants.URDF_PATH, 'random_household_object_200/*/*/*.obj')
+        found_object_directories = glob.glob(urdf_pattern)
+        total_num_objects = len(found_object_directories)
+        return total_num_objects
+
     def reset(self):
         ''''''
+        obj_id = max(self.steps - 2, 0) // self.num_test_each_obj  # haven't debug
         while True:
             self.resetPybulletEnv()
             try:
                 if not self.exhibit_env_obj:
-                    for i in range(self.num_obj):
-                        x = (np.random.rand() - 0.5) * 0.1
-                        x += self.workspace[0].mean()
-                        y = (np.random.rand() - 0.5) * 0.1
-                        y += self.workspace[1].mean()
-                        randpos = [x, y, 0.40]
-                        # obj = self._generateShapes(constants.RANDOM_HOUSEHOLD, 1, random_orientation=self.random_orientation,
-                        #                            pos=[randpos], padding=self.min_boarder_padding,
-                        #                            min_distance=self.min_object_distance, model_id=-1)
-                        obj = self._generateShapes(constants.RANDOM_HOUSEHOLD200, 1,
-                                                   random_orientation=self.random_orientation,
-                                                   pos=[randpos], padding=self.min_boarder_padding,
-                                                   min_distance=self.min_object_distance, model_id=-1)
-                        pb.changeDynamics(obj[0].object_id, -1, lateralFriction=0.6)
-                        self.wait(10)
+                    x = (np.random.rand() - 0.5) * 0.1
+                    x += self.workspace[0].mean()
+                    y = (np.random.rand() - 0.5) * 0.1
+                    y += self.workspace[1].mean()
+                    randpos = [x, y, 0.40]
+                    obj = self._generateShapes(constants.RANDOM_HOUSEHOLD200, 1,
+                                               random_orientation=self.random_orientation,
+                                               rot=[pb.getQuaternionFromEuler(np.random.rand(3) * 2 * np.pi)],
+                                               pos=[randpos], padding=self.min_boarder_padding,
+                                               min_distance=self.min_object_distance, model_id=obj_id)
+                    pb.changeDynamics(obj[0].object_id, -1, lateralFriction=0.6)
+                    self.wait(10)
                 # elif True:
                 # #create ducks
                 #     for i in range(15):
@@ -191,12 +199,7 @@ class RandomHouseholdPickingClutterEnv(PyBulletEnv):
                 #         creat_duck(randpos)
                 #         self.wait(100)
                 elif self.exhibit_env_obj:  # exhibit all random objects in this environment
-                    root_dir = os.path.dirname(helping_hands_rl_envs.__file__)
-                    # urdf_pattern = os.path.join(root_dir, constants.URDF_PATH, 'random_household_object/*/*.urdf')
-                    urdf_pattern = os.path.join(root_dir, constants.URDF_PATH, 'random_household_object_200/*/*/*.obj')
-                    found_object_directories = glob.glob(urdf_pattern)
-                    total_num_objects = len(found_object_directories)
-
+                    total_num_objects = self.getNumTotalObj()
                     display_size = 2
                     columns = math.ceil(math.sqrt(total_num_objects))
                     distance = display_size / (columns - 1)
@@ -232,6 +235,7 @@ class RandomHouseholdPickingClutterEnv(PyBulletEnv):
         self.wait(200)
         self.obj_grasped = 0
         self.num_in_tray_obj = self.num_obj
+        self.steps += 1
         return self._getObservation()
 
     def isObjInBox(self, obj_pos, tray_pos, tray_size):
@@ -269,9 +273,9 @@ class RandomHouseholdPickingClutterEnv(PyBulletEnv):
         return False
 
     def _getObservation(self, action=None):
-        state, in_hand, obs = super(RandomHouseholdPickingClutterEnv, self)._getObservation()
+        state, in_hand, obs = super(RandomHouseholdPickingIndividualEnv, self)._getObservation()
         return 0, np.zeros_like(in_hand), obs
 
 
-def createRandomHouseholdPickingClutterEnv(config):
-    return RandomHouseholdPickingClutterEnv(config)
+def createRandomHouseholdPickingIndividualEnv(config):
+    return RandomHouseholdPickingIndividualEnv(config)

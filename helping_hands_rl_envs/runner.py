@@ -4,8 +4,9 @@ import os
 import git
 import helping_hands_rl_envs
 
+
 def worker(remote, parent_remote, env_fn, planner_fn=None):
-  '''
+    '''
   Worker function which interacts with the environment over remote
 
   Args:
@@ -13,157 +14,160 @@ def worker(remote, parent_remote, env_fn, planner_fn=None):
     - parent_remote: MultiRunner remote connection
     - env_fn: Function which creates a deictic environment
   '''
-  parent_remote.close()
+    parent_remote.close()
 
-  env = env_fn()
-  if planner_fn:
-    planner = planner_fn(env)
-  else:
-    planner = None
+    env = env_fn()
+    if planner_fn:
+        planner = planner_fn(env)
+    else:
+        planner = None
 
-  try:
-    while True:
-      cmd, data = remote.recv()
-      if cmd == 'step':
-        res = env.step(data)
-        remote.send(res)
-      elif cmd == 'step_auto_reset':
-        res = env.step(data)
-        done = res[2]
-        if done:
-          # get observation after reset (res index 0), the rest stays the same
-          res = (env.reset(), *res[1:])
-        remote.send(res)
-      elif cmd == 'reset':
-        obs = env.reset()
-        remote.send(obs)
-      elif cmd == 'get_obs':
-        action = data
-        if action is None:
-          action = env.last_action
-        obs = env._getObservation(action)
-        remote.send(obs)
-      elif cmd == 'get_spaces':
-        remote.send((env.obs_shape, env.action_space, env.action_shape))
-      elif cmd == 'get_object_positions':
-        remote.send(env.getObjectPositions())
-      elif cmd == 'get_object_poses':
-        remote.send(env.getObjectPoses())
-      elif cmd == 'set_pos_candidate':
-        env.setPosCandidate(data)
-      elif cmd == 'did_block_fall':
-        remote.send(env.didBlockFall())
-      elif cmd == 'are_objects_in_workspace':
-        remote.send(env.areObjectsInWorkspace())
-      elif cmd == 'is_sim_valid':
-        remote.send(env.isSimValid())
-      elif cmd == 'get_value':
-        remote.send(planner.getValue())
-      elif cmd == 'get_step_left':
-        remote.send(planner.getStepLeft())
-      elif cmd == 'get_active_env_id':
-        remote.send(env.active_env_id)
-      elif cmd == 'get_empty_in_hand':
-        remote.send(env.getEmptyInHand())
-      # TODO: Might remove this
-      elif cmd == 'get_env_id':
-        remote.send(env.active_env_id)
-      elif cmd == 'get_next_action':
-        if planner:
-          remote.send(planner.getNextAction())
-        else:
-          raise ValueError('Attempting to use a planner which was not initialized.')
-      elif cmd == 'get_random_action':
-        if planner:
-          remote.send(planner.getRandomAction())
-        else:
-          raise ValueError('Attempting to use a planner which was not initialized.')
-      elif cmd == 'get_value':
-        if planner:
-          remote.send(planner.getValue())
-        else:
-          raise ValueError('Attempting to use a planner which was not initialized.')
-      elif cmd == 'get_steps_left':
-        if planner:
-          remote.send(planner.getStepsLeft())
-        else:
-          raise ValueError('Attempting to use a planner which was not initialized.')
-      elif cmd == 'save':
-        env.saveState()
-      elif cmd == 'restore':
-        env.restoreState()
-      elif cmd == 'save_to_file':
-        path = data
-        env.saveEnvToFile(path)
-      elif cmd == 'load_from_file':
-        try:
-          path = data
-          env.loadEnvFromFile(path)
-        except Exception as e:
-          print('MultiRunner worker load failed: {}'.format(e))
-          remote.send(False)
-        else:
-          remote.send(True)
-      elif cmd == 'close':
-        remote.close()
-        break
-      else:
-        raise NotImplementerError
-  except KeyboardInterrupt:
-    print('MultiRunner worker: caught keyboard interrupt')
+    try:
+        while True:
+            cmd, data = remote.recv()
+            if cmd == 'step':
+                res = env.step(data)
+                remote.send(res)
+            elif cmd == 'step_auto_reset':
+                res = env.step(data)
+                done = res[2]
+                if done:
+                    # get observation after reset (res index 0), the rest stays the same
+                    res = (env.reset(), *res[1:])
+                remote.send(res)
+            elif cmd == 'reset':
+                obs = env.reset()
+                remote.send(obs)
+            elif cmd == 'get_obs':
+                action = data
+                if action is None:
+                    action = env.last_action
+                obs = env._getObservation(action)
+                remote.send(obs)
+            elif cmd == 'get_spaces':
+                remote.send((env.obs_shape, env.action_space, env.action_shape))
+            elif cmd == 'get_object_positions':
+                remote.send(env.getObjectPositions())
+            elif cmd == 'get_object_poses':
+                remote.send(env.getObjectPoses())
+            elif cmd == 'set_pos_candidate':
+                env.setPosCandidate(data)
+            elif cmd == 'did_block_fall':
+                remote.send(env.didBlockFall())
+            elif cmd == 'are_objects_in_workspace':
+                remote.send(env.areObjectsInWorkspace())
+            elif cmd == 'is_sim_valid':
+                remote.send(env.isSimValid())
+            elif cmd == 'get_value':
+                remote.send(planner.getValue())
+            elif cmd == 'get_step_left':
+                remote.send(planner.getStepLeft())
+            elif cmd == 'get_active_env_id':
+                remote.send(env.active_env_id)
+            elif cmd == 'get_empty_in_hand':
+                remote.send(env.getEmptyInHand())
+            # TODO: Might remove this
+            elif cmd == 'get_env_id':
+                remote.send(env.active_env_id)
+            elif cmd == 'get_next_action':
+                if planner:
+                    remote.send(planner.getNextAction())
+                else:
+                    raise ValueError('Attempting to use a planner which was not initialized.')
+            elif cmd == 'get_random_action':
+                if planner:
+                    remote.send(planner.getRandomAction())
+                else:
+                    raise ValueError('Attempting to use a planner which was not initialized.')
+            elif cmd == 'get_value':
+                if planner:
+                    remote.send(planner.getValue())
+                else:
+                    raise ValueError('Attempting to use a planner which was not initialized.')
+            elif cmd == 'get_steps_left':
+                if planner:
+                    remote.send(planner.getStepsLeft())
+                else:
+                    raise ValueError('Attempting to use a planner which was not initialized.')
+            elif cmd == 'save':
+                env.saveState()
+            elif cmd == 'restore':
+                env.restoreState()
+            elif cmd == 'save_to_file':
+                path = data
+                env.saveEnvToFile(path)
+            elif cmd == 'load_from_file':
+                try:
+                    path = data
+                    env.loadEnvFromFile(path)
+                except Exception as e:
+                    print('MultiRunner worker load failed: {}'.format(e))
+                    remote.send(False)
+                else:
+                    remote.send(True)
+            elif cmd == 'close':
+                remote.close()
+                break
+            else:
+                raise NotImplementerError
+    except KeyboardInterrupt:
+        print('MultiRunner worker: caught keyboard interrupt')
+
 
 class MultiRunner(object):
-  '''
+    '''
   Runner which runs mulitple environemnts in parallel in subprocesses
   and communicates with them via pipe
 
   Args:
   '''
-  def __init__(self, env_fns, planner_fns):
-    self.waiting = False
-    self.closed = False
 
-    num_envs = len(env_fns)
-    self.remotes, self.worker_remotes = zip(*[Pipe() for _ in range(num_envs)])
-    self.processes = [Process(target=worker, args=(worker_remote, remote, env_fn, planner_fn))
-                      for (worker_remote, remote, env_fn, planner_fn) in zip(self.worker_remotes, self.remotes, env_fns, planner_fns)]
-    self.num_processes = len(self.processes)
+    def __init__(self, env_fns, planner_fns):
+        self.waiting = False
+        self.closed = False
 
-    for process in self.processes:
-      process.daemon = True
-      process.start()
-    for remote in self.worker_remotes:
-      remote.close()
+        num_envs = len(env_fns)
+        self.remotes, self.worker_remotes = zip(*[Pipe() for _ in range(num_envs)])
+        self.processes = [Process(target=worker, args=(worker_remote, remote, env_fn, planner_fn))
+                          for (worker_remote, remote, env_fn, planner_fn) in
+                          zip(self.worker_remotes, self.remotes, env_fns, planner_fns)]
+        self.num_processes = len(self.processes)
 
-    #self.remotes[0].send(('get_spaces', None))
-    #self.obs_shape, self.action_space, self.action_shape = self.remotes[0].recv()
+        for process in self.processes:
+            process.daemon = True
+            process.start()
+        for remote in self.worker_remotes:
+            remote.close()
 
-  def step(self, actions, auto_reset=False):
-    '''
+        # self.remotes[0].send(('get_spaces', None))
+        # self.obs_shape, self.action_space, self.action_shape = self.remotes[0].recv()
+
+    def step(self, actions, auto_reset=False):
+        '''
     Step the environments synchronously.
 
     Args:
       - actions: Numpy variable of environment actions
     '''
-    self.stepAsync(actions, auto_reset)
-    return self.stepWait()
+        self.stepAsync(actions, auto_reset)
+        return self.stepWait()
 
-  def stepAsync(self, actions, auto_reset=False):
-    '''
+    def stepAsync(self, actions, auto_reset=False):
+        '''
     Step each environment in a async fashion
 
     Args:
       - actions: Numpy variable of environment actions
     '''
-    for remote, action in zip(self.remotes, actions):
-      if auto_reset:
-        remote.send(('step_auto_reset', action))
-      else:
-        remote.send(('step', action))
-    self.waiting = True
+        for remote, action in zip(self.remotes, actions):
+            if auto_reset:
+                remote.send(('step_auto_reset', action))
+            else:
+                remote.send(('step', action))
+        self.waiting = True
 
-  def stepWait(self):
-    '''
+    def stepWait(self):
+        '''
     Wait until each environment has completed its next step
 
     Returns: (obs, rewards, dones)
@@ -171,253 +175,255 @@ class MultiRunner(object):
       - rewards: Numpy vector of rewards
       - dones: Numpy vector of 0/1 flags indicating if episode is done
     '''
-    results = [remote.recv() for remote in self.remotes]
-    self.waiting = False
+        results = [remote.recv() for remote in self.remotes]
+        self.waiting = False
 
-    res = tuple(zip(*results))
+        res = tuple(zip(*results))
 
-    if len(res) == 3:
-      metadata = None
-      obs, rewards, dones = res
-    else:
-      obs, rewards, dones, metadata = res
+        if len(res) == 3:
+            metadata = None
+            obs, rewards, dones = res
+        else:
+            obs, rewards, dones, metadata = res
 
-    states, hand_obs, obs = zip(*obs)
+        states, hand_obs, obs = zip(*obs)
 
-    states = np.stack(states).astype(float)
-    hand_obs = np.stack(hand_obs)
-    obs = np.stack(obs)
-    rewards = np.stack(rewards)
-    dones = np.stack(dones).astype(np.float32)
+        states = np.stack(states).astype(float)
+        hand_obs = np.stack(hand_obs)
+        obs = np.stack(obs)
+        rewards = np.stack(rewards)
+        dones = np.stack(dones).astype(np.float32)
 
-    if metadata:
-      return (states, hand_obs, obs), rewards, dones, metadata
-    else:
-      return (states, hand_obs, obs), rewards, dones
+        if metadata:
+            return (states, hand_obs, obs), rewards, dones, metadata
+        else:
+            return (states, hand_obs, obs), rewards, dones
 
-  def reset(self):
-    '''
+    def reset(self):
+        '''
     Reset each environment
 
     Returns: Numpy vector of observations
     '''
-    for remote in self.remotes:
-      remote.send(('reset', None))
+        for remote in self.remotes:
+            remote.send(('reset', None))
 
-    obs = [remote.recv() for remote in self.remotes]
-    states, hand_obs, obs = zip(*obs)
+        obs = [remote.recv() for remote in self.remotes]
+        states, hand_obs, obs = zip(*obs)
 
-    states = np.stack(states).astype(float)
-    hand_obs = np.stack(hand_obs)
-    obs = np.stack(obs)
+        states = np.stack(states).astype(float)
+        hand_obs = np.stack(hand_obs)
+        obs = np.stack(obs)
 
-    return (states, hand_obs, obs)
+        return (states, hand_obs, obs)
 
-  def reset_envs(self, env_nums):
-    for env_num in env_nums:
-      self.remotes[env_num].send(('reset', None))
+    def reset_envs(self, env_nums):
+        for env_num in env_nums:
+            self.remotes[env_num].send(('reset', None))
 
-    obs = [self.remotes[env_num].recv() for env_num in env_nums]
-    states, hand_obs, obs = zip(*obs)
+        obs = [self.remotes[env_num].recv() for env_num in env_nums]
+        states, hand_obs, obs = zip(*obs)
 
-    states = np.stack(states).astype(float)
-    hand_obs = np.stack(hand_obs)
-    obs = np.stack(obs)
+        states = np.stack(states).astype(float)
+        hand_obs = np.stack(hand_obs)
+        obs = np.stack(obs)
 
-    return (states, hand_obs, obs)
+        return (states, hand_obs, obs)
 
-  def getActiveEnvId(self):
-    for remote in self.remotes:
-      remote.send(('get_active_env_id', None))
-    active_env_id = [remote.recv() for remote in self.remotes]
-    active_env_id = np.stack(active_env_id)
-    return active_env_id
+    def getActiveEnvId(self):
+        for remote in self.remotes:
+            remote.send(('get_active_env_id', None))
+        active_env_id = [remote.recv() for remote in self.remotes]
+        active_env_id = np.stack(active_env_id)
+        return active_env_id
 
-  def close(self):
-    '''
+    def close(self):
+        '''
     Close all worker processes
     '''
-    self.closed = True
-    if self.waiting:
-      [remote.recv() for remote in self.remotes]
-    [remote.send(('close', None)) for remote in self.remotes]
-    [process.join() for process in self.processes]
+        self.closed = True
+        if self.waiting:
+            [remote.recv() for remote in self.remotes]
+        [remote.send(('close', None)) for remote in self.remotes]
+        [process.join() for process in self.processes]
 
-  def save(self):
-    '''
-
-    '''
-    for remote in self.remotes:
-      remote.send(('save', None))
-
-  def restore(self):
-    '''
+    def save(self):
+        '''
 
     '''
-    for remote in self.remotes:
-      remote.send(('restore', None))
+        for remote in self.remotes:
+            remote.send(('save', None))
 
-  def saveToFile(self, path):
-    '''
-
-    '''
-    for i, remote in enumerate(self.remotes):
-      p = os.path.join(path, str(i))
-      if not os.path.exists(p):
-        os.makedirs(p)
-      remote.send(('save_to_file', os.path.join(path, str(i))))
-
-  def loadFromFile(self, path):
-    '''
+    def restore(self):
+        '''
 
     '''
-    for i, remote in enumerate(self.remotes):
-      remote.send(('load_from_file', os.path.join(path, str(i))))
-    return np.array([remote.recv() for remote in self.remotes]).all()
+        for remote in self.remotes:
+            remote.send(('restore', None))
 
-  def getObjectPositions(self):
-    '''
-
-    '''
-    for remote in self.remotes:
-      remote.send(('get_object_positions', None))
-
-    positions = [remote.recv() for remote in self.remotes]
-    return np.array(positions)
-
-  def getObjectPoses(self):
-    '''
+    def saveToFile(self, path):
+        '''
 
     '''
-    for remote in self.remotes:
-      remote.send(('get_object_poses', None))
+        for i, remote in enumerate(self.remotes):
+            p = os.path.join(path, str(i))
+            if not os.path.exists(p):
+                os.makedirs(p)
+            remote.send(('save_to_file', os.path.join(path, str(i))))
 
-    poses = [remote.recv() for remote in self.remotes]
-    return np.array(poses)
-
-  def getNextAction(self):
-    '''
-
-    '''
-    for remote in self.remotes:
-      remote.send(('get_next_action', None))
-    action = [remote.recv() for remote in self.remotes]
-    action = np.stack(action)
-    return action
-
-  def getRandomAction(self):
-    '''
+    def loadFromFile(self, path):
+        '''
 
     '''
-    for remote in self.remotes:
-      remote.send(('get_random_action', None))
-    action = [remote.recv() for remote in self.remotes]
-    action = np.stack(action)
-    return action
+        for i, remote in enumerate(self.remotes):
+            remote.send(('load_from_file', os.path.join(path, str(i))))
+        return np.array([remote.recv() for remote in self.remotes]).all()
 
-  def getValue(self):
-    '''
+    def getObjectPositions(self):
+        '''
 
     '''
-    for remote in self.remotes:
-      remote.send(('get_value', None))
-    values = [remote.recv() for remote in self.remotes]
-    values = np.stack(values)
-    return values
+        for remote in self.remotes:
+            remote.send(('get_object_positions', None))
 
-  def getStepsLeft(self):
-    '''
+        positions = [remote.recv() for remote in self.remotes]
+        return np.array(positions)
 
-    '''
-    for remote in self.remotes:
-      remote.send(('get_steps_left', None))
-    values = [remote.recv() for remote in self.remotes]
-    values = np.stack(values)
-    return values
-
-  def getObs(self, action=None):
-    '''
+    def getObjectPoses(self):
+        '''
 
     '''
-    for remote in self.remotes:
-      remote.send(('get_obs', action))
+        for remote in self.remotes:
+            remote.send(('get_object_poses', None))
 
-    obs = [remote.recv() for remote in self.remotes]
-    states, hand_obs, obs = zip(*obs)
+        poses = [remote.recv() for remote in self.remotes]
+        return np.array(poses)
 
-    states = np.stack(states).astype(float)
-    hand_obs = np.stack(hand_obs)
-    obs = np.stack(obs)
-
-    return states, hand_obs, obs
-
-  def areObjectsInWorkspace(self):
-    '''
+    def getNextAction(self):
+        '''
 
     '''
-    for remote in self.remotes:
-      remote.send(('are_objects_in_workspace', None))
-    in_workspace = [remote.recv() for remote in self.remotes]
-    in_workspace = np.stack(in_workspace)
-    return in_workspace
+        for remote in self.remotes:
+            remote.send(('get_next_action', None))
+        action = [remote.recv() for remote in self.remotes]
+        action = np.stack(action)
+        return action
 
-  def isSimValid(self):
-    '''
-
-    '''
-    for remote in self.remotes:
-      remote.send(('is_sim_valid', None))
-    valid = [remote.recv() for remote in self.remotes]
-    valid = np.stack(valid)
-    return valid
-
-  def didBlockFall(self):
-    '''
+    def getRandomAction(self):
+        '''
 
     '''
-    for remote in self.remotes:
-      remote.send(('did_block_fall', None))
-    did_block_fall = [remote.recv() for remote in self.remotes]
-    did_block_fall = np.stack(did_block_fall)
-    return did_block_fall
+        for remote in self.remotes:
+            remote.send(('get_random_action', None))
+        action = [remote.recv() for remote in self.remotes]
+        action = np.stack(action)
+        return action
 
-  def setPosCandidate(self, pos_candidate):
-    '''
-
-    '''
-    for remote in self.remotes:
-      remote.send(('set_pos_candidate', pos_candidate))
-
-  def getEmptyInHand(self):
-    '''
+    def getValue(self):
+        '''
 
     '''
-    for remote in self.remotes:
-      remote.send(('get_empty_in_hand', None))
-    hand_obs = [remote.recv() for remote in self.remotes]
-    hand_obs = np.stack(hand_obs)
-    return hand_obs
+        for remote in self.remotes:
+            remote.send(('get_value', None))
+        values = [remote.recv() for remote in self.remotes]
+        values = np.stack(values)
+        return values
 
-  @staticmethod
-  def getEnvGitHash():
-    '''
+    def getStepsLeft(self):
+        '''
 
     '''
-    repo = git.Repo(helping_hands_rl_envs.__path__[0])
-    return repo.head.object.hexsha
+        for remote in self.remotes:
+            remote.send(('get_steps_left', None))
+        values = [remote.recv() for remote in self.remotes]
+        values = np.stack(values)
+        return values
+
+    def getObs(self, action=None):
+        '''
+
+    '''
+        for remote in self.remotes:
+            remote.send(('get_obs', action))
+
+        obs = [remote.recv() for remote in self.remotes]
+        states, hand_obs, obs = zip(*obs)
+
+        states = np.stack(states).astype(float)
+        hand_obs = np.stack(hand_obs)
+        obs = np.stack(obs)
+
+        return states, hand_obs, obs
+
+    def areObjectsInWorkspace(self):
+        '''
+
+    '''
+        for remote in self.remotes:
+            remote.send(('are_objects_in_workspace', None))
+        in_workspace = [remote.recv() for remote in self.remotes]
+        in_workspace = np.stack(in_workspace)
+        return in_workspace
+
+    def isSimValid(self):
+        '''
+
+    '''
+        for remote in self.remotes:
+            remote.send(('is_sim_valid', None))
+        valid = [remote.recv() for remote in self.remotes]
+        valid = np.stack(valid)
+        return valid
+
+    def didBlockFall(self):
+        '''
+
+    '''
+        for remote in self.remotes:
+            remote.send(('did_block_fall', None))
+        did_block_fall = [remote.recv() for remote in self.remotes]
+        did_block_fall = np.stack(did_block_fall)
+        return did_block_fall
+
+    def setPosCandidate(self, pos_candidate):
+        '''
+
+    '''
+        for remote in self.remotes:
+            remote.send(('set_pos_candidate', pos_candidate))
+
+    def getEmptyInHand(self):
+        '''
+
+    '''
+        for remote in self.remotes:
+            remote.send(('get_empty_in_hand', None))
+        hand_obs = [remote.recv() for remote in self.remotes]
+        hand_obs = np.stack(hand_obs)
+        return hand_obs
+
+    @staticmethod
+    def getEnvGitHash():
+        '''
+
+    '''
+        repo = git.Repo(helping_hands_rl_envs.__path__[0])
+        return repo.head.object.hexsha
+
 
 class SingleRunner(object):
-  '''
+    '''
   RL environment runner which runs a single environment
 
   Args:
   '''
-  def __init__(self, env, planner=None):
-    self.env = env
-    self.planner = planner
 
-  def step(self, action, auto_reset=True):
-    '''
+    def __init__(self, env, planner=None):
+        self.env = env
+        self.planner = planner
+
+    def step(self, action, auto_reset=True):
+        '''
     Step the environment
 
     Args:
@@ -425,147 +431,146 @@ class SingleRunner(object):
 
     Returns:
     '''
-    results = self.env.step(action)
+        results = self.env.step(action)
 
-    if len(results) == 3:
-      metadata = None
-      obs, rewards, dones = results
-    else:
-      obs, rewards, dones, metadata = results
-    states, hand_obs, obs = obs
+        if len(results) == 3:
+            metadata = None
+            obs, rewards, dones = results
+        else:
+            obs, rewards, dones, metadata = results
+        states, hand_obs, obs = obs
 
-    if metadata:
-      return (states, hand_obs, obs), rewards, dones, metadata
-    else:
-      return (states, hand_obs, obs), rewards, dones
+        if metadata:
+            return (states, hand_obs, obs), rewards, dones, metadata
+        else:
+            return (states, hand_obs, obs), rewards, dones
 
-  def reset(self):
-    '''
+    def reset(self):
+        '''
     Reset the environment
 
     Returns: Numpy vector of observations
     '''
-    return self.env.reset()
+        return self.env.reset()
 
-  def save(self):
-    '''
-
-    '''
-    self.env.save()
-
-  def restore(self):
-    '''
+    def save(self):
+        '''
 
     '''
-    self.env.restore()
+        self.env.save()
 
-  def saveToFile(self, path):
-    '''
-
-    '''
-    self.env.saveToFile(path)
-
-  def loadFromFile(self, path):
-    '''
+    def restore(self):
+        '''
 
     '''
-    return self.env.loadFromFile(path)
+        self.env.restore()
 
-  def getObjectPositions(self):
-    '''
-
-    '''
-    return self.env.getObjectPositions()
-
-  def getObjectPoses(self):
-    '''
+    def saveToFile(self, path):
+        '''
 
     '''
-    return self.env.getObjectPoses()
+        self.env.saveToFile(path)
 
-  def getNextAction(self):
-    '''
-
-    '''
-    if self.planner:
-      return self.planner.getNextAction()
-    else:
-      raise ValueError('Attempting to use a planner which was not initialized.')
-
-  def getRandomAction(self):
-    '''
+    def loadFromFile(self, path):
+        '''
 
     '''
-    if self.planner:
-      return self.planner.getRandomAction()
-    else:
-      raise ValueError('Attempting to use a planner which was not initialized.')
+        return self.env.loadFromFile(path)
 
-  def getValue(self):
-    '''
+    def getObjectPositions(self):
+        '''
 
     '''
-    if self.planner:
-      return self.planner.getValue()
-    else:
-      raise ValueError('Attempting to use a planner which was not initialized.')
+        return self.env.getObjectPositions()
 
-  def getStepsLeft(self):
-    '''
+    def getObjectPoses(self):
+        '''
 
     '''
-    if self.planner:
-      return self.planner.getStepsLeft()
-    else:
-      raise ValueError('Attempting to use a planner which was not initialized.')
+        return self.env.getObjectPoses()
 
-  def getActiveEnvId(self):
-    '''
+    def getNextAction(self):
+        '''
 
     '''
-    return self.env.active_env_id
+        if self.planner:
+            return self.planner.getNextAction()
+        else:
+            raise ValueError('Attempting to use a planner which was not initialized.')
 
-  def areObjectsInWorkspace(self):
-    '''
-
-    '''
-    if self.planner:
-      return self.planner.areObjectsInWorkspace()
-    else:
-      raise ValueError('Attempting to use a planner which was not initialized.')
-
-  def isSimValid(self):
-    '''
+    def getRandomAction(self):
+        '''
 
     '''
-    return self.env.isSimValid()
+        if self.planner:
+            return self.planner.getRandomAction()
+        else:
+            raise ValueError('Attempting to use a planner which was not initialized.')
 
-
-  def getObs(self, action=None):
-    '''
-
-    '''
-    return self.env._getObservation(action if action else self.env.last_action)
-
-  def didBlockFall(self):
-    '''
+    def getValue(self):
+        '''
 
     '''
-    self.env.didBlockFall()
+        if self.planner:
+            return self.planner.getValue()
+        else:
+            raise ValueError('Attempting to use a planner which was not initialized.')
 
-  def setPosCandidate(self, pos_candidate):
-    '''
-
-    '''
-    self.env.setPosCandidate(pos_candidate)
-
-  def getEmptyInHand(self):
-    '''
+    def getStepsLeft(self):
+        '''
 
     '''
-    return self.env.getEmptyInHand()
+        if self.planner:
+            return self.planner.getStepsLeft()
+        else:
+            raise ValueError('Attempting to use a planner which was not initialized.')
 
-  @staticmethod
-  def getEnvGitHash():
-    repo = git.Repo(helping_hands_rl_envs.__path__[0])
-    return repo.head.object.hexsha
+    def getActiveEnvId(self):
+        '''
+
+    '''
+        return self.env.active_env_id
+
+    def areObjectsInWorkspace(self):
+        '''
+
+    '''
+        if self.planner:
+            return self.planner.areObjectsInWorkspace()
+        else:
+            raise ValueError('Attempting to use a planner which was not initialized.')
+
+    def isSimValid(self):
+        '''
+
+    '''
+        return self.env.isSimValid()
+
+    def getObs(self, action=None):
+        '''
+
+    '''
+        return self.env._getObservation(action if action else self.env.last_action)
+
+    def didBlockFall(self):
+        '''
+
+    '''
+        self.env.didBlockFall()
+
+    def setPosCandidate(self, pos_candidate):
+        '''
+
+    '''
+        self.env.setPosCandidate(pos_candidate)
+
+    def getEmptyInHand(self):
+        '''
+
+    '''
+        return self.env.getEmptyInHand()
+
+    @staticmethod
+    def getEnvGitHash():
+        repo = git.Repo(helping_hands_rl_envs.__path__[0])
+        return repo.head.object.hexsha

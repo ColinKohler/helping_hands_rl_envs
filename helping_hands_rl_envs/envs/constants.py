@@ -51,6 +51,7 @@ from helping_hands_rl_envs.envs.pybullet_envs.random_block_picking_env import cr
 from helping_hands_rl_envs.envs.pybullet_envs.random_household_picking_env import createRandomHouseholdPickingEnv
 from helping_hands_rl_envs.envs.pybullet_envs.random_block_picking_clutter_env import createRandomBlockPickingClutterEnv
 from helping_hands_rl_envs.envs.pybullet_envs.random_household_picking_clutter_env import createRandomHouseholdPickingClutterEnv
+from helping_hands_rl_envs.envs.pybullet_envs.random_household_picking_individual_env import createRandomHouseholdPickingIndividualEnv
 from helping_hands_rl_envs.envs.pybullet_envs.bowl_spoon_cup_env import BowlSpoonCupEnv
 from helping_hands_rl_envs.envs.pybullet_envs.medical_envs.covid_test_env import createCovidTestEnv
 
@@ -121,6 +122,7 @@ CREATE_PYBULLET_ENV_FNS = {
   'random_household_picking': createRandomHouseholdPickingEnv,
   'random_block_picking_clutter': createRandomBlockPickingClutterEnv,
   'random_household_picking_clutter': createRandomHouseholdPickingClutterEnv,
+  'random_household_picking_individual': createRandomHouseholdPickingIndividualEnv,
   'bowl_spoon_cup': BowlSpoonCupEnv,
   'covid_test': createCovidTestEnv
 }

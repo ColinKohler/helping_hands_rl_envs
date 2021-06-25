@@ -14,7 +14,7 @@ class TestBulletBlockStacking(unittest.TestCase):
                             [0 - workspace_size / 2, 0 + workspace_size / 2],
                             [0, 0 + workspace_size]])
     env_config = {'workspace': workspace, 'max_steps': 30, 'obs_size': 128, 'render': False, 'fast_mode': True,
-                  'seed': 0, 'action_sequence': 'pxyr', 'num_objects': 15, 'random_orientation': True,
+                  'seed': 0, 'action_sequence': 'pxyr', 'num_objects': 1, 'random_orientation': True,
                   'reward_type': 'dense', 'simulate_grasp': True, 'perfect_grasp': True, 'robot': 'kuka',
                   'workspace_check': 'point', 'object_scale_range': (0.8, 0.8),
                   'min_object_distance': 0., 'min_boarder_padding': 0.15, 'adjust_gripper_after_lift': True
@@ -27,7 +27,7 @@ class TestBulletBlockStacking(unittest.TestCase):
         self.env_config['random_orientation'] = True
         self.env_config['seed'] = 0
         num_processes = 1
-        env = env_factory.createEnvs(num_processes, 'pybullet', 'random_household_picking_clutter', self.env_config,
+        env = env_factory.createEnvs(num_processes, 'pybullet', 'random_household_picking_individual', self.env_config,
                                      self.planner_config)
         total = 0
         s = 0
