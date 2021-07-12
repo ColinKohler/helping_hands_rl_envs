@@ -52,7 +52,7 @@ class RandomHouseholdPickingClutterEnv(PyBulletEnv):
     def initialize(self):
         super().initialize()
         self.tray.initialize(pos=[self.workspace[0].mean(), self.workspace[1].mean(), 0],
-                             size=[self.workspace_size + 0.015, self.workspace_size + 0.015, 0.1])
+                             size=[self.workspace_size + 0.03, self.workspace_size + 0.03, 0.1])
 
     def _decodeAction(self, action):
         """
@@ -231,7 +231,7 @@ class RandomHouseholdPickingClutterEnv(PyBulletEnv):
                 break
         self.wait(200)
         self.obj_grasped = 0
-        self.num_in_tray_obj = self.num_obj
+        # self.num_in_tray_obj = self.num_obj
         return self._getObservation()
 
     def isObjInBox(self, obj_pos, tray_pos, tray_size):
@@ -259,11 +259,11 @@ class RandomHouseholdPickingClutterEnv(PyBulletEnv):
             #   if self.obj_grasped == self.num_obj:
             #     return True
             #   return False
-            if obj.getPosition()[2] >= 0.35 or self._isObjectHeld(
-                    obj):  # ZXP getPos z > threshold is more robust than _isObjectHeld()
+            if obj.getPosition()[2] >= 0.35 or self._isObjectHeld(obj):
+                # ZXP getPos z > threshold is more robust than _isObjectHeld()
                 self.obj_grasped += 1
                 self._removeObject(obj)
-                if self.obj_grasped == self.num_obj:
+                if self.obj_grasped == self.num_obj or len(self.objects) == 0:
                     return True
                 return False
         return False
