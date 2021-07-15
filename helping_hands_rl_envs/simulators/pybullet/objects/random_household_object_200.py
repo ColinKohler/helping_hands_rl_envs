@@ -50,7 +50,11 @@ class RandomHouseHoldObject200(PybulletObject):
         if index < 0:
             while True:
                 index = np.random.choice(np.arange(total_num_objects), 1)[0]
-                if obj_avg_sr[index] >= 0.8:  # sr > 0.8: 143 objs; sr > 0.9:134 objs
+                if obj_avg_sr[index] > 0.97:  # sr > 0.8:  143 objs; sr > 0.9: 134 objs;
+                                              # sr > 0.95: 105 objs; sr > 0.99: 41 objs;
+                                              # sr > 0.97: 76 objs
+                                              # avg sr = 0.923; avg sr > 0.8 = 0.968
+                                              # avg sr > 0.97 = 0.9938
                     break
         else:
             sorted_obj_sr_indx = np.argsort(obj_avg_sr)[::-1]
@@ -60,30 +64,7 @@ class RandomHouseHoldObject200(PybulletObject):
 
         color = np.random.uniform(0.6, 1, (4,))
         color[-1] = 1
-        # obj_visual = pb.createVisualShape(pb.GEOM_MESH, fileName=obj_filepath,
-        #                                   meshScale=[1, 1, 1], rgbaColor=color)
-        # obj_collision = pb.createCollisionShape(pb.GEOM_MESH, fileName=obj_filepath, meshScale=[1, 1, 1])
-        #
-        # # pos_in_air = pos.copy()
-        # # pos_in_air[2] += 1.5
-        # object_id = pb.createMultiBody(baseMass=0.15,
-        #                                baseCollisionShapeIndex=obj_collision,
-        #                                baseVisualShapeIndex=obj_visual,
-        #                                basePosition=[0, 0, 1.5],
-        #                                baseOrientation=rot)
-        #
-        # bbox = np.array(pb.getAABB(object_id)).copy()
-        # size = bbox[0] - bbox[1]
-        # lenth = np.max(np.abs(size)).copy()
-        # real_scale1 = 0.1 * scale * (1 / lenth)
-        # volue = np.abs(size[0] * size[1] * size[2]).copy()
-        # real_scale2 = 0.1 * scale * np.cbrt(1 / volue)
-        # real_scale = (real_scale1 + real_scale2) / 2
-        # pb.removeBody(object_id)
-        #
-        # center = (bbox[0] + bbox[1]) / 2
-        # center[-1] -= 1.5
-        # center = center * real_scale
+
         real_scale = obj_scales[index]
         center = obj_centers[index]
         obj_visual = pb.createVisualShape(pb.GEOM_MESH,
