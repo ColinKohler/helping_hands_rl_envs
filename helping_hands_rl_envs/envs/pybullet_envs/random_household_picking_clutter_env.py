@@ -86,7 +86,7 @@ class RandomHouseholdPickingClutterEnv(PyBulletEnv):
         :param obs: BxCxHxW
         :param center_pixel: Bx2
         :param rz: B
-        :return: image patch
+        :return: safe z
         """
         img_size = self.heightmap_size
         row_pixel, column_pixel = self._getPixelsFromPos(x, y)
@@ -100,8 +100,8 @@ class RandomHouseholdPickingClutterEnv(PyBulletEnv):
         rotated_row_column = np.flip(rotated_transition)
         patch = rotated_heightmap[int(max(rotated_row_column[0] - patch_size / 2, 0)):
                                   int(min(rotated_row_column[0] + patch_size / 2, rotated_heightmap.shape[0])),
-                int(max(rotated_row_column[1] - 6, 0)):
-                int(min(rotated_row_column[1] + 6, rotated_heightmap.shape[1]))]
+                                  int(max(rotated_row_column[1] - 6, 0)):
+                                  int(min(rotated_row_column[1] + 6, rotated_heightmap.shape[1]))]
         # print(patch.shape, rotated_row_column)
         # z = (np.min(patch) + np.max(patch)) / 2
         gripper_depth = 0.04

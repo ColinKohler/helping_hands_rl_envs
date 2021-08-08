@@ -56,7 +56,17 @@ class RobotBase:
       return None
     for obj in objects:
       if len(pb.getContactPoints(self.id, obj.object_id)) >= 2:
-        return obj
+          return obj
+        # finger_link10, finger_link13 = 0, 0  # more realistic but SR drop
+        # for point in pb.getContactPoints(self.id, obj.object_id):
+        #   if point[3] == 10:
+        #     finger_link10 += 1
+        #   elif point[3] == 13:
+        #     finger_link13 += 1
+        # if finger_link10 > 0 and finger_link13 > 0:
+        #   return obj
+
+    return None
 
     # end_pos = self._getEndEffectorPosition()
     # sorted_obj = sorted(objects, key=lambda o: np.linalg.norm(end_pos-o.getGraspPosition()))

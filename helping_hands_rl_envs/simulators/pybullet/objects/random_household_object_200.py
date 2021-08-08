@@ -65,8 +65,8 @@ class RandomHouseHoldObject200(PybulletObject):
         color = np.random.uniform(0.6, 1, (4,))
         color[-1] = 1
 
-        real_scale = obj_scales[index]
-        center = obj_centers[index]
+        real_scale = obj_scales[index] * scale
+        center = obj_centers[index] * scale
         obj_visual = pb.createVisualShape(pb.GEOM_MESH,
                                           fileName=obj_filepath,
                                           meshScale=[real_scale, real_scale, real_scale],
