@@ -33,20 +33,20 @@ class DeconstructEnv(PyBulletEnv):
       dist = np.linalg.norm(curr_obj_pos - self.prev_obj_pos, axis=1)
       return (dist > 0.005).sum() == 1 and PyBulletEnv.isSimValid(self)
 
-  def _getObservation(self, action=None):
-    '''
-    In deconstruct, get the in-hand image after placing an object since deconstruction is the reverse of construction
-    '''
-    old_heightmap = self.heightmap
-    self.heightmap = self._getHeightmap()
+  #def _getObservation(self, action=None):
+  #  '''
+  #  In deconstruct, get the in-hand image after placing an object since deconstruction is the reverse of construction
+  #  '''
+  #  old_heightmap = self.heightmap
+  #  self.heightmap = self._getHeightmap()
 
-    if action is None or self._isHolding() == True:
-      in_hand_img = self.getEmptyInHand()
-    else:
-      motion_primative, x, y, z, rot = self._decodeAction(action)
-      in_hand_img = self.getInHandImage(self.heightmap, x, y, z, rot, old_heightmap)
+  #  if action is None or self._isHolding() == True:
+  #    in_hand_img = self.getEmptyInHand()
+  #  else:
+  #    motion_primative, x, y, z, rot = self._decodeAction(action)
+  #    in_hand_img = self.getInHandImage(self.heightmap, x, y, z, rot, old_heightmap)
 
-    return self._isHolding(), in_hand_img, self.heightmap.reshape([1, self.heightmap_size, self.heightmap_size])
+  #  return self._isHolding(), in_hand_img, self.heightmap.reshape([1, self.heightmap_size, self.heightmap_size])
 
   def resetDeconstructEnv(self):
     self.resetPybulletEnv()
