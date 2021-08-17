@@ -48,6 +48,7 @@ class RandomHouseholdPickingClutterEnv(PyBulletEnv):
         self.obj_grasped = 0
         self.tray = Tray()
         self.exhibit_env_obj = False
+        self.z_heuristic = config['z_heuristic']
 
     def initialize(self):
         super().initialize()
@@ -83,9 +84,9 @@ class RandomHouseholdPickingClutterEnv(PyBulletEnv):
     def getPatch_z(self, patch_size, x, y, rz):
         """
         get the image patch in heightmap, centered at center_pixel, rotated by rz
-        :param obs: BxCxHxW
-        :param center_pixel: Bx2
-        :param rz: B
+        :param obs:
+        :param center_pixel
+        :param rz:
         :return: safe z
         """
         img_size = self.heightmap_size
@@ -98,15 +99,28 @@ class RandomHouseholdPickingClutterEnv(PyBulletEnv):
         rotated_transition = R.dot(transition) \
                              + np.array([rotated_heightmap.shape[0] / 2, rotated_heightmap.shape[1] / 2])
         rotated_row_column = np.flip(rotated_transition)
-        patch = rotated_heightmap[int(max(rotated_row_column[0] - patch_size / 2, 0)):
-                                  int(min(rotated_row_column[0] + patch_size / 2, rotated_heightmap.shape[0])),
-                                  int(max(rotated_row_column[1] - 6, 0)):
-                                  int(min(rotated_row_column[1] + 6, rotated_heightmap.shape[1]))]
-        # print(patch.shape, rotated_row_column)
-        # z = (np.min(patch) + np.max(patch)) / 2
         gripper_depth = 0.04
         gripper_reach = 0.01
-        safe_z_pos = max(np.max(patch) - gripper_depth, np.min(patch) + gripper_reach, gripper_reach)
+        if self.z_heuristic == 'patch_all':
+            patch = rotated_heightmap[int(max(rotated_row_column[0] - patch_size / 2, 0)):
+                                      int(min(rotated_row_column[0] + patch_size / 2, rotated_heightmap.shape[0])),
+                                      int(max(rotated_row_column[1] - patch_size / 2, 0)):
+                                      int(min(rotated_row_column[1] + patch_size / 2, rotated_heightmap.shape[1]))]
+            safe_z_pos = max(np.max(patch) - gripper_depth, np.min(patch) + gripper_reach, gripper_reach)
+        elif self.z_heuristic == 'patch_center':
+            patch = rotated_heightmap[int(max(rotated_row_column[0] - patch_size / 8, 0)):
+                                      int(min(rotated_row_column[0] + patch_size / 8, rotated_heightmap.shape[0])),
+                                      int(max(rotated_row_column[1] - patch_size / 8, 0)):
+                                      int(min(rotated_row_column[1] + patch_size / 8, rotated_heightmap.shape[1]))]
+            safe_z_pos = max(np.max(patch) - gripper_depth, gripper_reach)
+        elif self.z_heuristic == 'patch_rectangular':
+            patch = rotated_heightmap[int(max(rotated_row_column[0] - patch_size / 2, 0)):
+                                      int(min(rotated_row_column[0] + patch_size / 2, rotated_heightmap.shape[0])),
+                                      int(max(rotated_row_column[1] - 6, 0)):
+                                      int(min(rotated_row_column[1] + 6, rotated_heightmap.shape[1]))]
+            safe_z_pos = max(np.max(patch) - gripper_depth, np.min(patch) + gripper_reach, gripper_reach)
+        # print(patch.shape, rotated_row_column)
+        # z = (np.min(patch) + np.max(patch)) / 2
         return safe_z_pos
 
     def _checkPerfectGrasp(self, x, y, z, rot, objects):
