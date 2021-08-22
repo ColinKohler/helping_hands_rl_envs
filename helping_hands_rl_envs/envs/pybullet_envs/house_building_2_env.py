@@ -13,7 +13,7 @@ class HouseBuilding2Env(PyBulletEnv):
     while True:
       self.resetPybulletEnv()
       try:
-        self._generateShapes(constants.CUBE, 2, random_orientation=self.random_orientation)
+        self._generateShapes(constants.CUBE, 2, random_orientation=self.random_orientation, min_distance=self.max_block_size * 4)
         self._generateShapes(constants.ROOF, 1, random_orientation=self.random_orientation)
       except NoValidPositionException:
         continue

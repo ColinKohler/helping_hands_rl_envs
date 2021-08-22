@@ -53,6 +53,7 @@ class PyBulletEnv(BaseEnv):
     # Environment specific variables
     self.dynamic = not config['fast_mode']
 
+    self.step_wait_time = 100
     self._timestep = 1. / 240.
 
     if config['robot'] == 'ur5':
@@ -201,7 +202,7 @@ class PyBulletEnv(BaseEnv):
 
   def step(self, action):
     self.takeAction(action)
-    self.wait(100)
+    self.wait(self.step_wait_time)
     obs = self._getObservation(action)
     done = self._checkTermination()
     reward = 1.0 if done else 0.0
@@ -326,7 +327,6 @@ class PyBulletEnv(BaseEnv):
     #   return
     [pb.stepSimulation() for _ in range(iteration)]
 
-  # TODO: This does not work w/cylinders
   def didBlockFall(self):
     if self.last_action is None:
       return False
@@ -782,13 +782,6 @@ class PyBulletEnv(BaseEnv):
 
   def convertQuaternionToEuler(self, rot):
     rot = list(pb.getEulerFromQuaternion(rot))
-
-    # TODO: This normalization should be improved
-    # while rot[2] < 0:
-    #   rot[2] += np.pi
-    # while rot[2] > np.pi:
-    #   rot[2] -= np.pi
-
     return rot
 
   def normalizeRot(self, rx, ry, rz):

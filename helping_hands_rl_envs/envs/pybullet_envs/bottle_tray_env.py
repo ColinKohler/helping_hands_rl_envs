@@ -17,7 +17,7 @@ class BottleTrayEnv(PyBulletEnv):
     self.box_size = [0.1*self.block_scale_range[1]*3, 0.1*self.block_scale_range[1]*2, 0.05]
     self.box_pos = [0.4, 0.2, 0]
     self.place_pos_candidate = []
-    pass
+    self.step_wait_time = 100
 
   def resetBox(self):
     self.box_rz = np.random.random_sample() * np.pi
@@ -49,7 +49,6 @@ class BottleTrayEnv(PyBulletEnv):
   def initialize(self):
     super().initialize()
     self.box.initialize(pos=self.box_pos, size=self.box_size)
-
 
   def reset(self):
     while True:
@@ -100,7 +99,7 @@ if __name__ == '__main__':
   env_config = {'workspace': workspace, 'max_steps': 10, 'obs_size': 128, 'render': True, 'fast_mode': True,
                 'seed': 2, 'action_sequence': 'pxyr', 'num_objects': 6, 'random_orientation': False,
                 'reward_type': 'step_left', 'simulate_grasp': True, 'perfect_grasp': False, 'robot': 'kuka',
-                'object_init_space_check': 'point', 'physics_mode': 'fast', 'object_scale_range': (1, 1)}
+                'object_init_space_check': 'point', 'physics_mode': 'fast', 'object_scale_range': (1.0, 1.0)}
   planner_config = {'random_orientation': True}
 
   env = BottleTrayEnv(env_config)
