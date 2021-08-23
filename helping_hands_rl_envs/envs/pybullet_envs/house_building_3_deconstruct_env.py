@@ -25,8 +25,8 @@ class HouseBuilding3DeconstructEnv(DeconstructEnv):
 
   def generateStructure(self):
     padding = self.max_block_size * 1.5
-    min_dist = 2.1 * self.max_block_size
-    max_dist = 2.2 * self.max_block_size
+    min_dist = 1.9 * self.max_block_size
+    max_dist = 2.0 * self.max_block_size
     pos1, pos2 = self.get2BaseXY(padding, min_dist, max_dist)
     rot1 = self._getValidOrientation(self.random_orientation)
     rot2 = self._getValidOrientation(self.random_orientation)
