@@ -264,12 +264,12 @@ class BaseEnv(object):
 
     # Crop both heightmaps
     crop = heightmap[x_min:x_max, y_min:y_max]
-    if self.in_hand_mode.find('sub') > -1:
-      next_crop = next_heightmap[x_min:x_max, y_min:y_max]
+    #if self.in_hand_mode.find('sub') > -1:
+    #  next_crop = next_heightmap[x_min:x_max, y_min:y_max]
 
-      # Adjust the in-hand image to remove background objects
-      next_max = np.max(next_crop)
-      crop[crop >= next_max] -= next_max
+    #  # Adjust the in-hand image to remove background objects
+    #  next_max = np.max(next_crop)
+    #  crop[crop >= next_max] -= next_max
 
     if self.in_hand_mode.find('proj') > -1:
       return self.getInHandOccupancyGridProj(crop, z, rot)
