@@ -41,6 +41,7 @@ from helping_hands_rl_envs.envs.pybullet_envs.ramp_envs.ramp_improvise_house_bui
 from helping_hands_rl_envs.envs.pybullet_envs.random_picking_env import createRandomPickingEnv
 from helping_hands_rl_envs.envs.pybullet_envs.random_stacking_env import createRandomStackingEnv
 from helping_hands_rl_envs.envs.pybullet_envs.multi_task_env import createMultiTaskEnv
+from helping_hands_rl_envs.envs.pybullet_envs.xarm_grasping_env import createXArmGraspingEnv
 
 CREATE_NUMPY_ENV_FNS = {
   'block_picking' : createBlockPickingEnv,
@@ -97,4 +98,5 @@ CREATE_PYBULLET_ENV_FNS = {
   'ramp_house_building_4_deconstruct': createRampHouseBuilding4DeconstructEnv,
   'ramp_improvise_house_building_2_deconstruct': createRampImproviseHouseBuilding2DeconstructEnv,
   'ramp_improvise_house_building_3_deconstruct': createRampImproviseHouseBuilding3DeconstructEnv,
+  'xarm_grasping_env' : createXArmGraspingEnv,
 }

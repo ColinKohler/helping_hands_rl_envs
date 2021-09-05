@@ -65,13 +65,12 @@ class RandomHouseHoldObject200:
     def getAABB(self):
         return np.array(pb.getAABB(self.id_, -1))
 
-    def let_fall(self, bounding_box, max_iters=50):
+    def let_fall(self, valid_position_checker, max_iters=50):
         for _ in range(max_iters):
             [pb.stepSimulation() for _ in range(10)]
             # COM = pb.getBasePositionAndOrientation(self.id_)[0][:2]
             COM = np.mean(self.getAABB()[:,:2], axis=0)
-            if ((COM < bounding_box[:2, 0]).any() \
-                or (COM > bounding_box[:2,1]).any()):
+            if not valid_position_checker(COM):
                 return False
             vel = np.concatenate(pb.getBaseVelocity(self.id_)[-2:])
             if (np.abs(vel) < 0.001).all():
