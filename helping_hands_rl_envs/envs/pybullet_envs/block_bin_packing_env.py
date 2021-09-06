@@ -74,7 +74,7 @@ class BlockBinPackingEnv(PyBulletEnv):
     if done:
       reward = self.getReward()
     else:
-      reward = 0
+      reward = 0.1 if self.robot.holding_obj is not None else 0
 
     if not done:
       done = self.current_episode_steps >= self.max_steps or not self.isSimValid()
