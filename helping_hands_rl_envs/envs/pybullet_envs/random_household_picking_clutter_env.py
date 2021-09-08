@@ -95,7 +95,7 @@ class RandomHouseholdPickingClutterEnv(PyBulletEnv):
         transition = center_coordinate - np.array([self.heightmap_size / 2, self.heightmap_size / 2])
         R = np.asarray([[np.cos(-rz), np.sin(-rz)],
                         [-np.sin(-rz), np.cos(-rz)]])
-        rotated_heightmap = rotate(self.heightmap, angle=-rz * 180 / np.pi, reshape=True)
+        rotated_heightmap = rotate(self.heightmap, angle=-rz * 180 / np.pi, reshape=False)
         rotated_transition = R.dot(transition) \
                              + np.array([rotated_heightmap.shape[0] / 2, rotated_heightmap.shape[1] / 2])
         rotated_row_column = np.flip(rotated_transition)

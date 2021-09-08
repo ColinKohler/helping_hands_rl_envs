@@ -36,6 +36,8 @@ from helping_hands_rl_envs.envs.pybullet_envs.ramp_envs.ramp_house_building_3_de
 from helping_hands_rl_envs.envs.pybullet_envs.ramp_envs.ramp_house_building_4_deconstruct_env import createRampHouseBuilding4DeconstructEnv
 from helping_hands_rl_envs.envs.pybullet_envs.ramp_envs.ramp_improvise_house_building_2_deconstruct_env import createRampImproviseHouseBuilding2DeconstructEnv
 from helping_hands_rl_envs.envs.pybullet_envs.ramp_envs.ramp_improvise_house_building_3_deconstruct_env import createRampImproviseHouseBuilding3DeconstructEnv
+from helping_hands_rl_envs.envs.pybullet_envs.random_household_picking_clutter_full_obs_env import \
+  createRandomHouseholdPickingClutterFullObsEnv
 from helping_hands_rl_envs.envs.pybullet_envs.random_picking_env import createRandomPickingEnv
 from helping_hands_rl_envs.envs.pybullet_envs.random_stacking_env import createRandomStackingEnv
 from helping_hands_rl_envs.envs.pybullet_envs.multi_task_env import createMultiTaskEnv
@@ -123,6 +125,7 @@ CREATE_PYBULLET_ENV_FNS = {
   'random_block_picking_clutter': createRandomBlockPickingClutterEnv,
   'random_household_picking_clutter': createRandomHouseholdPickingClutterEnv,
   'random_household_picking_individual': createRandomHouseholdPickingIndividualEnv,
+  'random_household_picking_clutter_full_obs': createRandomHouseholdPickingClutterFullObsEnv,
   'bowl_spoon_cup': BowlSpoonCupEnv,
   'covid_test': createCovidTestEnv
 }

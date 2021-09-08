@@ -38,23 +38,25 @@ def creat_duck(pos):
                        useMaximalCoordinates=True)
 
 
-class RandomHouseholdPickingIndividualEnv(PyBulletEnv):
+class RandomHouseholdPickingClutterFullObsEnv(PyBulletEnv):
     '''
   '''
 
     def __init__(self, config):
-        super(RandomHouseholdPickingIndividualEnv, self).__init__(config)
+        super(RandomHouseholdPickingClutterFullObsEnv, self).__init__(config)
         self.object_init_z = 0.1
         self.obj_grasped = 0
         self.tray = Tray()
         self.exhibit_env_obj = False
-        self.steps = 0
-        self.num_test_each_obj = 100
+        self.z_heuristic = config['z_heuristic']
+        self.bin_size = 0.25
+        self.gripper_depth = 0.05
+        self.gripper_clearance = 0.015
 
     def initialize(self):
         super().initialize()
         self.tray.initialize(pos=[self.workspace[0].mean(), self.workspace[1].mean(), 0],
-                             size=[self.workspace_size + 0.015, self.workspace_size + 0.015, 0.1])
+                             size=[self.bin_size + 0.03, self.bin_size + 0.03, 0.1])
 
     def _decodeAction(self, action):
         """
@@ -76,39 +78,79 @@ class RandomHouseholdPickingIndividualEnv(PyBulletEnv):
             raise NotImplementedError
         x = action[x_idx]
         y = action[y_idx]
-        z = action[z_idx] if z_idx != -1 else self.getPatch_z(24, x, y, rz)
+        # x += (self.workspace[0, 0] + self.workspace[0, 1]) / 2
+        # y += (self.workspace[1, 0] + self.workspace[1, 1]) / 2
+        z = action[z_idx] if z_idx != -1 else self.getPatch_z(x, y, rz)
 
         rot = (rx, ry, rz)
 
         return motion_primative, x, y, z, rot
 
-    def getPatch_z(self, patch_size, x, y, rz):
+    def _getPixelsFromPos(self, x, y):
+        row_pixel, col_pixel = super()._getPixelsFromPos(x, y)
+        row_pixel = min(row_pixel, self.heightmap_size - self.in_hand_size / 2 - 1)
+        row_pixel = max(row_pixel, self.in_hand_size / 2)
+        col_pixel = min(col_pixel, self.heightmap_size - self.in_hand_size / 2 - 1)
+        col_pixel = max(col_pixel, self.in_hand_size / 2)
+        return row_pixel, col_pixel
+
+    def getPatch_z(self, x, y, rz):
         """
         get the image patch in heightmap, centered at center_pixel, rotated by rz
-        :param obs: BxCxHxW
-        :param center_pixel: Bx2
-        :param rz: B
-        :return: image patch
+        :param obs:
+        :param center_pixel
+        :param rz:
+        :return: safe z
         """
-        img_size = self.heightmap_size
-        row_pixel, column_pixel = self._getPixelsFromPos(x, y)
-        center_coordinate = np.array([column_pixel, row_pixel])
-        transition = center_coordinate - np.array([self.heightmap_size / 2, self.heightmap_size / 2])
-        R = np.asarray([[np.cos(-rz), np.sin(-rz)],
-                        [-np.sin(-rz), np.cos(-rz)]])
-        rotated_heightmap = rotate(self.heightmap, angle=-rz * 180 / np.pi, reshape=False)
-        rotated_transition = R.dot(transition) \
-                             + np.array([rotated_heightmap.shape[0] / 2, rotated_heightmap.shape[1] / 2])
-        rotated_row_column = np.flip(rotated_transition)
-        patch = rotated_heightmap[int(max(rotated_row_column[0] - patch_size / 2, 0)):
-                                  int(min(rotated_row_column[0] + patch_size / 2, rotated_heightmap.shape[0])),
-                int(max(rotated_row_column[1] - 6, 0)):
-                int(min(rotated_row_column[1] + 6, rotated_heightmap.shape[1]))]
-        # print(patch.shape, rotated_row_column)
-        z = (np.min(patch) + np.max(patch)) / 2
-        gripper_depth = 0.04
-        gripper_reach = 0.01
-        safe_z_pos = max(np.max(patch) - gripper_depth, np.min(patch) + gripper_reach, gripper_reach)
+
+        row_pixel, col_pixel = self._getPixelsFromPos(x, y)
+        # local_region is as large as ih_img
+        local_region = self.heightmap[int(row_pixel - self.in_hand_size / 2): int(row_pixel + self.in_hand_size / 2),
+                                      int(col_pixel - self.in_hand_size / 2): int(col_pixel + self.in_hand_size / 2)]
+        local_region = rotate(local_region, angle=-rz * 180 / np.pi, reshape=False)
+        patch = local_region[int(self.in_hand_size / 2 - 16):int(self.in_hand_size / 2 + 16),
+                             int(self.in_hand_size / 2 - 4):int(self.in_hand_size / 2 + 4)]
+        edge = patch.copy()
+        edge[5:-5] = 0
+        safe_z_pos = max(np.mean(patch.flatten()[(-patch).flatten().argsort()[2:12]]) - self.gripper_depth,
+                         np.mean(edge.flatten()[(-edge).flatten().argsort()[2:12]]) - self.gripper_depth / 1.5)
+        safe_z_pos += self.workspace[2, 0]
+
+        # use clearance to prevent gripper colliding with ground
+        safe_z_pos = max(safe_z_pos, self.workspace[2, 0] + self.gripper_clearance)
+        safe_z_pos = min(safe_z_pos, self.workspace[2, 1])
+        assert self.workspace[2][0] <= safe_z_pos <= self.workspace[2][1]
+
+        # # img_size = self.heightmap_size
+        # row_pixel, column_pixel = self._getPixelsFromPos(x, y)
+        # center_coordinate = np.array([column_pixel, row_pixel])
+        # transition = center_coordinate - np.array([self.heightmap_size / 2, self.heightmap_size / 2])
+        # R = np.asarray([[np.cos(-rz), np.sin(-rz)],
+        #                 [-np.sin(-rz), np.cos(-rz)]])
+        # rotated_heightmap = rotate(self.heightmap, angle=-rz * 180 / np.pi, reshape=False)
+        # rotated_transition = R.dot(transition) \
+        #                      + np.array([rotated_heightmap.shape[0] / 2, rotated_heightmap.shape[1] / 2])
+        # rotated_row_column = np.flip(rotated_transition)
+        # if self.z_heuristic == 'patch_all':
+        #     patch = rotated_heightmap[int(max(rotated_row_column[0] - patch_size / 2, 0)):
+        #                               int(min(rotated_row_column[0] + patch_size / 2, rotated_heightmap.shape[0])),
+        #                               int(max(rotated_row_column[1] - patch_size / 2, 0)):
+        #                               int(min(rotated_row_column[1] + patch_size / 2, rotated_heightmap.shape[1]))]
+        #     safe_z_pos = max(np.max(patch) - gripper_depth, np.min(patch) + gripper_reach, gripper_reach)
+        # elif self.z_heuristic == 'patch_center':
+        #     patch = rotated_heightmap[int(max(rotated_row_column[0] - patch_size / 8, 0)):
+        #                               int(min(rotated_row_column[0] + patch_size / 8, rotated_heightmap.shape[0])),
+        #                               int(max(rotated_row_column[1] - patch_size / 8, 0)):
+        #                               int(min(rotated_row_column[1] + patch_size / 8, rotated_heightmap.shape[1]))]
+        #     safe_z_pos = max(np.max(patch) - gripper_depth, gripper_reach)
+        # elif self.z_heuristic == 'patch_rectangular':
+        #     patch = rotated_heightmap[int(max(rotated_row_column[0] - patch_size / 2, 0)):
+        #                               int(min(rotated_row_column[0] + patch_size / 2, rotated_heightmap.shape[0])),
+        #                               int(max(rotated_row_column[1] - 6, 0)):
+        #                               int(min(rotated_row_column[1] + 6, rotated_heightmap.shape[1]))]
+        #     safe_z_pos = max(np.max(patch) - gripper_depth, np.min(patch) + gripper_reach, gripper_reach)
+        # # print(patch.shape, rotated_row_column)
+        # # z = (np.min(patch) + np.max(patch)) / 2
         return safe_z_pos
 
     def _checkPerfectGrasp(self, x, y, z, rot, objects):
@@ -161,33 +203,27 @@ class RandomHouseholdPickingIndividualEnv(PyBulletEnv):
                     return False
         return True
 
-    def getNumTotalObj(self):
-        root_dir = os.path.dirname(helping_hands_rl_envs.__file__)
-        # urdf_pattern = os.path.join(root_dir, constants.URDF_PATH, 'random_household_object/*/*.urdf')
-        urdf_pattern = os.path.join(root_dir, constants.URDF_PATH, 'random_household_object_200/*/*/*.obj')
-        found_object_directories = glob.glob(urdf_pattern)
-        total_num_objects = len(found_object_directories)
-        return total_num_objects
-
     def reset(self):
         ''''''
-        obj_id = max(self.steps - 2, 0) // self.num_test_each_obj  # haven't debug
         while True:
             self.resetPybulletEnv()
             try:
                 if not self.exhibit_env_obj:
-                    x = (np.random.rand() - 0.5) * 0.1
-                    x += self.workspace[0].mean()
-                    y = (np.random.rand() - 0.5) * 0.1
-                    y += self.workspace[1].mean()
-                    randpos = [x, y, 0.40]
-                    obj = self._generateShapes(constants.RANDOM_HOUSEHOLD200, 1,
-                                               random_orientation=self.random_orientation,
-                                               rot=[pb.getQuaternionFromEuler(np.random.rand(3) * 2 * np.pi)],
-                                               pos=[randpos], padding=self.min_boarder_padding,
-                                               min_distance=self.min_object_distance, model_id=obj_id)
-                    pb.changeDynamics(obj[0].object_id, -1, lateralFriction=0.6)
-                    self.wait(10)
+                    for i in range(self.num_obj):
+                        x = (np.random.rand() - 0.5) * 0.1
+                        x += self.workspace[0].mean()
+                        y = (np.random.rand() - 0.5) * 0.1
+                        y += self.workspace[1].mean()
+                        randpos = [x, y, 0.40]
+                        # obj = self._generateShapes(constants.RANDOM_HOUSEHOLD, 1, random_orientation=self.random_orientation,
+                        #                            pos=[randpos], padding=self.min_boarder_padding,
+                        #                            min_distance=self.min_object_distance, model_id=-1)
+                        obj = self._generateShapes(constants.RANDOM_HOUSEHOLD200, 1,
+                                                   random_orientation=self.random_orientation,
+                                                   pos=[randpos], padding=self.min_boarder_padding,
+                                                   min_distance=self.min_object_distance, model_id=-1)
+                        pb.changeDynamics(obj[0].object_id, -1, lateralFriction=0.6)
+                        self.wait(10)
                 # elif True:
                 # #create ducks
                 #     for i in range(15):
@@ -199,7 +235,12 @@ class RandomHouseholdPickingIndividualEnv(PyBulletEnv):
                 #         creat_duck(randpos)
                 #         self.wait(100)
                 elif self.exhibit_env_obj:  # exhibit all random objects in this environment
-                    total_num_objects = self.getNumTotalObj()
+                    root_dir = os.path.dirname(helping_hands_rl_envs.__file__)
+                    # urdf_pattern = os.path.join(root_dir, constants.URDF_PATH, 'random_household_object/*/*.urdf')
+                    urdf_pattern = os.path.join(root_dir, constants.URDF_PATH, 'random_household_object_200/*/*/*.obj')
+                    found_object_directories = glob.glob(urdf_pattern)
+                    total_num_objects = len(found_object_directories)
+
                     display_size = 2
                     columns = math.ceil(math.sqrt(total_num_objects))
                     distance = display_size / (columns - 1)
@@ -234,8 +275,7 @@ class RandomHouseholdPickingIndividualEnv(PyBulletEnv):
                 break
         self.wait(200)
         self.obj_grasped = 0
-        self.num_in_tray_obj = self.num_obj
-        self.steps += 1
+        # self.num_in_tray_obj = self.num_obj
         return self._getObservation()
 
     def isObjInBox(self, obj_pos, tray_pos, tray_size):
@@ -263,19 +303,19 @@ class RandomHouseholdPickingIndividualEnv(PyBulletEnv):
             #   if self.obj_grasped == self.num_obj:
             #     return True
             #   return False
-            if obj.getPosition()[2] >= 0.35 or self._isObjectHeld(
-                    obj):  # ZXP getPos z > threshold is more robust than _isObjectHeld()
+            if obj.getPosition()[2] >= 0.35 or self._isObjectHeld(obj):
+                # ZXP getPos z > threshold is more robust than _isObjectHeld()
                 self.obj_grasped += 1
                 self._removeObject(obj)
-                if self.obj_grasped == self.num_obj:
+                if self.obj_grasped == self.num_obj or len(self.objects) == 0:
                     return True
                 return False
         return False
 
     def _getObservation(self, action=None):
-        state, in_hand, obs = super(RandomHouseholdPickingIndividualEnv, self)._getObservation()
+        state, in_hand, obs = super(RandomHouseholdPickingClutterFullObsEnv, self)._getObservation()
         return 0, np.zeros_like(in_hand), obs
 
 
-def createRandomHouseholdPickingIndividualEnv(config):
-    return RandomHouseholdPickingIndividualEnv(config)
+def createRandomHouseholdPickingClutterFullObsEnv(config):
+    return RandomHouseholdPickingClutterFullObsEnv(config)

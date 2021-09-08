@@ -69,6 +69,7 @@ PLANNERS = {
     'random_household_picking': BlockPickingPlanner,
     'random_household_picking_clutter': BlockPickingPlanner,
     'random_household_picking_individual': BlockPickingPlanner,
+    'random_household_picking_clutter_full_obs': BlockPickingPlanner,
     'bowl_spoon_cup': BowlSpoonCupPlanner,
     'covid_test': CovidTestPlanner
 }
