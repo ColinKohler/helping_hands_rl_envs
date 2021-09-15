@@ -49,7 +49,7 @@ class RandomHouseholdPickingClutterFullObsEnv(PyBulletEnv):
         self.tray = Tray()
         self.exhibit_env_obj = False
         self.z_heuristic = config['z_heuristic']
-        self.bin_size = 0.25
+        self.bin_size = config['bin_size']
         self.gripper_depth = 0.04
         self.gripper_clearance = 0.015
 
@@ -82,8 +82,10 @@ class RandomHouseholdPickingClutterFullObsEnv(PyBulletEnv):
         # y += (self.workspace[1, 0] + self.workspace[1, 1]) / 2
         if self.z_heuristic == 'residual' and z_idx != -1:
             z = self.getPatch_z(x, y, rz, z=action[z_idx])
-        else:
+        elif z_idx != -1:
             z = action[z_idx]
+        else:
+            z = self.getPatch_z(x, y, rz)
 
         rot = (rx, ry, rz)
 
