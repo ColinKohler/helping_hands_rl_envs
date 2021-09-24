@@ -51,7 +51,7 @@ class RandomHouseholdPickingClutterFullObsEnv(PyBulletEnv):
         self.z_heuristic = config['z_heuristic']
         self.bin_size = config['bin_size']
         self.gripper_depth = 0.04
-        self.gripper_clearance = 0.015
+        self.gripper_clearance = 0.01
 
     def initialize(self):
         super().initialize()

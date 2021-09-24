@@ -20,13 +20,13 @@ class Tray:
              Box: inclination 90
              Plate: inclination 0
     '''
-    inclination = np.pi * (45/180)
+    inclination = np.pi * (60/180)
     cos_offset = np.cos(inclination)
     sin_offset = np.sin(inclination)
-    half_wall_height = size[2] / (2 * sin_offset)
-    half_thickness = 0.005
-    size0 = size[0] / 2 + 2 * half_wall_height * cos_offset
-    size1 = size[1] / 2 + 2 * half_wall_height * cos_offset
+    half_wall_height = size[2] / (2 * cos_offset)
+    half_thickness = 0.001
+    size0 = size[0] / 2 + 2 * half_wall_height * sin_offset
+    size1 = size[1] / 2 + 2 * half_wall_height * sin_offset
     bottom_visual = pb.createVisualShape(pb.GEOM_BOX, halfExtents=[size0, size1, half_thickness], rgbaColor=color)
     bottom_collision = pb.createCollisionShape(pb.GEOM_BOX, halfExtents=[size0, size1, half_thickness])
 
@@ -51,10 +51,10 @@ class Tray:
                                  linkMasses=[1, 1, 1, 1],
                                  linkCollisionShapeIndices=[front_collision, back_collision, left_collision, right_collision],
                                  linkVisualShapeIndices=[front_visual, back_visual, left_visual, right_visual],
-                                 linkPositions=[[-size[0]/2 - cos_offset * size[2]/2, 0, size[2]/2],
-                                                [ size[0]/2 + cos_offset * size[2]/2, 0, size[2]/2],
-                                                [0, -size[1]/2 - cos_offset * size[2]/2, size[2]/2],
-                                                [0,  size[1]/2 + cos_offset * size[2]/2, size[2]/2]],
+                                 linkPositions=[[-size[0]/2 - sin_offset * half_wall_height, 0, size[2]/2],
+                                                [ size[0]/2 + sin_offset * half_wall_height, 0, size[2]/2],
+                                                [0, -size[1]/2 - sin_offset * half_wall_height, size[2]/2],
+                                                [0,  size[1]/2 + sin_offset * half_wall_height, size[2]/2]],
                                  linkOrientations=[pb.getQuaternionFromEuler([0., -inclination, 0.]),
                                                    pb.getQuaternionFromEuler([ 0., inclination, 0.]),
                                                    pb.getQuaternionFromEuler([ inclination, 0., 0.]),
