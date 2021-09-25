@@ -22,7 +22,7 @@ class Tray:
     '''
     size[0] -= 0.04
     size[1] -= 0.04
-    inclination = np.pi * (60/180)
+    inclination = np.pi * (50/180)
     cos_offset = np.cos(inclination)
     sin_offset = np.sin(inclination)
     half_wall_height = size[2] / (2 * cos_offset)
