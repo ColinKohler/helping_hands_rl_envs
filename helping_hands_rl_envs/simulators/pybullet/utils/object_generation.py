@@ -7,6 +7,7 @@ import numpy.random as npr
 import helping_hands_rl_envs
 from helping_hands_rl_envs.simulators.pybullet.objects.cube import Cube
 from helping_hands_rl_envs.simulators.pybullet.objects.cylinder import Cylinder
+from helping_hands_rl_envs.simulators.pybullet.objects.random_cylinder import RandomCylinder
 from helping_hands_rl_envs.simulators.pybullet.objects.brick import Brick
 from helping_hands_rl_envs.simulators.pybullet.objects.triangle import Triangle
 from helping_hands_rl_envs.simulators.pybullet.objects.roof import Roof
@@ -59,8 +60,8 @@ def generateRandomObj(pos, rot, scale, z_scale=1):
 def generateRandomBrick(pos, rot, x_scale, y_scale, z_scale):
   return RandomBrick(pos, rot, x_scale, y_scale, z_scale)
 
-def generateRandomBlock(pos, rot, scale):
-  return RandomBlock(pos, rot, scale)
+def generateRandomBlock(pos, rot, scale, index=None):
+  return RandomBlock(pos, rot, scale, index=index)
 
 def generateRandomHouseHoldObj(pos, rot, scale, index):
   return RandomHouseHoldObject(pos, rot, scale, index)
@@ -70,3 +71,6 @@ def generateRandomHouseHoldObj200(pos, rot, scale, index):
 
 def generateSpoon(pos, rot, scale):
   return Spoon(pos, rot, scale)
+
+def generateRandomCylinder(pos, rot, scale):
+  return RandomCylinder(pos, rot, scale)

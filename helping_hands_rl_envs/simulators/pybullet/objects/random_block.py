@@ -27,8 +27,11 @@ base_rotation_map = {
 }
 
 class RandomBlock(PybulletObject):
-  def __init__(self, pos, rot, scale):
-    obj_filepath = found_object_directories[np.random.choice(np.arange(total_num_objects), 1)[0]]
+  def __init__(self, pos, rot, scale, index=None):
+    if index is None:
+        obj_filepath = found_object_directories[np.random.choice(np.arange(total_num_objects), 1)[0]]
+    else:
+        obj_filepath = found_object_directories[index]
     model = obj_filepath.split('/')[-1]
     shape_rotation = pb.getQuaternionFromEuler(base_rotation_map[model]) if model in base_rotation_map.keys() else (0, 0, 0, 1)
     mesh_scale = [scale, scale, scale]

@@ -515,7 +515,7 @@ class PyBulletEnv(BaseEnv):
       elif shape_type == constants.PLATE:
         handle = pb_obj_generation.generatePlate(position, orientation, scale, model_id)
       elif shape_type == constants.RANDOM_BLOCK:
-        handle = pb_obj_generation.generateRandomBlock(position, orientation, scale)
+        handle = pb_obj_generation.generateRandomBlock(position, orientation, scale, model_id)
       elif shape_type == constants.RANDOM_HOUSEHOLD:
         handle = pb_obj_generation.generateRandomHouseHoldObj(position, orientation, scale, model_id)
       elif shape_type == constants.RANDOM_HOUSEHOLD200:
@@ -526,6 +526,8 @@ class PyBulletEnv(BaseEnv):
         handle = pb_obj_generation.generateTestTube(position, orientation, scale, model_id=None)
       elif shape_type == constants.SWAB:
         handle = pb_obj_generation.generateSwab(position, orientation, scale, model_id=None)
+      elif shape_type == constants.RANDOM_CYLINDER:
+        handle = pb_obj_generation.generateRandomCylinder(position, orientation, scale)
 
       else:
         raise NotImplementedError

@@ -195,11 +195,22 @@ class RandomHouseholdPickingClutterFullObsEnv(PyBulletEnv):
                         # obj = self._generateShapes(constants.RANDOM_HOUSEHOLD, 1, random_orientation=self.random_orientation,
                         #                            pos=[randpos], padding=self.min_boarder_padding,
                         #                            min_distance=self.min_object_distance, model_id=-1)
-                        obj = self._generateShapes(constants.RANDOM_HOUSEHOLD200, 1,
-                                                   random_orientation=self.random_orientation,
-                                                   pos=[randpos], padding=self.min_boarder_padding,
-                                                   min_distance=self.min_object_distance, model_id=-1)
-                        pb.changeDynamics(obj[0].object_id, -1, lateralFriction=0.6)
+                        # obj = self._generateShapes(constants.RANDOM_HOUSEHOLD200, 1,
+                        #                            random_orientation=self.random_orientation,
+                        #                            pos=[randpos], padding=self.min_boarder_padding,
+                        #                            min_distance=self.min_object_distance, model_id=-1)
+                        if np.random.rand() > 0.99:
+                            obj = self._generateShapes(constants.RANDOM_CYLINDER, 1,
+                                                       random_orientation=self.random_orientation,
+                                                       pos=[randpos], padding=self.min_boarder_padding,
+                                                       min_distance=self.min_object_distance, model_id=-1)
+                            pb.changeDynamics(obj[0].object_id, -1, lateralFriction=0.6)
+                        else:
+                            obj = self._generateShapes(constants.RANDOM_BLOCK, 1,
+                                                       random_orientation=self.random_orientation,
+                                                       pos=[randpos], padding=self.min_boarder_padding,
+                                                       min_distance=self.min_object_distance, model_id=2)
+                            pb.changeDynamics(obj[0].object_id, -1, lateralFriction=0.4)
                         self.wait(10)
                 # elif True:
                 # #create ducks
