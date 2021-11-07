@@ -30,7 +30,7 @@ class TestBulletBlockStacking(unittest.TestCase):
                   'reward_type': 'dense', 'simulate_grasp': True, 'perfect_grasp': True, 'robot': 'kuka',
                   'workspace_check': 'point', 'object_scale_range': (1, 1), 'z_heuristic': 'patch_center',
                   'min_object_distance': 0., 'min_boarder_padding': 0.15, 'adjust_gripper_after_lift': True,
-                  'in_hand_size': 32, 'bin_size': bin_size}
+                  'in_hand_size': 32, 'bin_size': bin_size, 'bin_type':'Normal'}
 
     planner_config = {'random_orientation': True}
 

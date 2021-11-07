@@ -8,6 +8,7 @@ from helping_hands_rl_envs.envs.pybullet_envs.pybullet_env import PyBulletEnv
 from helping_hands_rl_envs.simulators import constants
 from helping_hands_rl_envs.simulators.constants import NoValidPositionException
 from helping_hands_rl_envs.simulators.pybullet.equipments.tray import Tray
+from helping_hands_rl_envs.simulators.pybullet.equipments.tray_2slopes import Tray2
 from scipy.ndimage.interpolation import rotate
 import pybullet as pb
 import os
@@ -46,7 +47,8 @@ class RandomHouseholdPickingClutterFullObsEnv(PyBulletEnv):
         super(RandomHouseholdPickingClutterFullObsEnv, self).__init__(config)
         self.object_init_z = 0.1
         self.obj_grasped = 0
-        self.tray = Tray()
+        # self.tray = Tray()
+        self.tray = Tray2()
         self.exhibit_env_obj = False
         self.z_heuristic = config['z_heuristic']
         self.bin_size = config['bin_size']
