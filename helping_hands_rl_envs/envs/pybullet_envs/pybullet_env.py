@@ -135,6 +135,8 @@ class PyBulletEnv(BaseEnv):
     pb.resetSimulation()
     pb.setPhysicsEngineParameter(numSubSteps=0,
                                  numSolverIterations=self.num_solver_iterations,
+                                 useSplitImpulse=1,
+                                 splitImpulsePenetrationThreshold=1e-5,
                                  solverResidualThreshold=self.solver_residual_threshold,
                                  constraintSolverType=pb.CONSTRAINT_SOLVER_LCP_SI)
     pb.setTimeStep(self._timestep)
