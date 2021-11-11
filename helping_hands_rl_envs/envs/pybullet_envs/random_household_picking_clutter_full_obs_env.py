@@ -119,8 +119,9 @@ class RandomHouseholdPickingClutterFullObsEnv(PyBulletEnv):
         if z is None:
             edge = patch.copy()
             edge[5:-5] = 0
-            safe_z_pos = max(np.mean(patch.flatten()[(-patch).flatten().argsort()[2:12]]) - self.gripper_depth,
-                             np.mean(edge.flatten()[(-edge).flatten().argsort()[:6]]) - 0.005)
+            # safe_z_pos = max(np.mean(patch.flatten()[(-patch).flatten().argsort()[2:12]]) - self.gripper_depth,
+            #                  np.mean(edge.flatten()[(-edge).flatten().argsort()[:6]]) - 0.005)
+            safe_z_pos = np.mean(patch.flatten()[(-patch).flatten().argsort()[2:12]]) - self.gripper_depth
             safe_z_pos += self.workspace[2, 0]
         else:
             safe_z_pos = np.mean(patch.flatten()[(-patch).flatten().argsort()[2:12]]) + z

@@ -23,6 +23,9 @@ class Tray2:
     '''
         tray_shrink = 0.03
         slopes_d = 0.03
+        botton_half_thick = 0.05
+        half_thickness = 0.001
+        pos[2] -= botton_half_thick - 2 * half_thickness
         color_inner = [0.9, 0.6, 0.6, 1]
         size[0] -= tray_shrink
         size[1] -= tray_shrink
@@ -40,14 +43,13 @@ class Tray2:
         size_inner[2] = h_inner
         half_wall_height_inner = size_inner[2] / (2 * cos_offset_inner)
         half_wall_height_outer = size_outer[2] / (2 * cos_offset_outer)
-        half_thickness = 0.001
         size0_inner = size_inner[0] / 2 + 2 * half_wall_height_inner * sin_offset_inner
         size1_inner = size_inner[1] / 2 + 2 * half_wall_height_inner * sin_offset_inner
         size0_outer = size_outer[0] / 2 + 2 * half_wall_height_outer * sin_offset_outer
         size1_outer = size_outer[1] / 2 + 2 * half_wall_height_outer * sin_offset_outer
-        bottom_visual = pb.createVisualShape(pb.GEOM_BOX, halfExtents=[size0_inner, size1_inner, half_thickness],
+        bottom_visual = pb.createVisualShape(pb.GEOM_BOX, halfExtents=[size0_inner, size1_inner, botton_half_thick],
                                              rgbaColor=color)
-        bottom_collision = pb.createCollisionShape(pb.GEOM_BOX, halfExtents=[size0_inner, size1_inner, half_thickness])
+        bottom_collision = pb.createCollisionShape(pb.GEOM_BOX, halfExtents=[size0_inner, size1_inner, botton_half_thick])
 
         front_visual_inner = pb.createVisualShape(pb.GEOM_BOX,
                                                   halfExtents=[half_thickness, size1_inner, half_wall_height_inner],
@@ -112,21 +114,21 @@ class Tray2:
                                                              front_visual_outer, back_visual_outer,
                                                              left_visual_outer, right_visual_outer],
                                      linkPositions=[[-size_inner[0] / 2 - sin_offset_inner * half_wall_height_inner, 0,
-                                                     size_inner[2] / 2],
+                                                     size_inner[2] / 2 + botton_half_thick],
                                                     [size_inner[0] / 2 + sin_offset_inner * half_wall_height_inner, 0,
-                                                     size_inner[2] / 2],
+                                                     size_inner[2] / 2 + botton_half_thick],
                                                     [0, -size_inner[1] / 2 - sin_offset_inner * half_wall_height_inner,
-                                                     size_inner[2] / 2],
+                                                     size_inner[2] / 2 + botton_half_thick],
                                                     [0, size_inner[1] / 2 + sin_offset_inner * half_wall_height_inner,
-                                                     size_inner[2] / 2],
+                                                     size_inner[2] / 2 + botton_half_thick],
                                                     [-size_outer[0] / 2 - sin_offset_outer * half_wall_height_outer, 0,
-                                                     size_outer[2] / 2],
+                                                     size_outer[2] / 2 + botton_half_thick],
                                                     [size_outer[0] / 2 + sin_offset_outer * half_wall_height_outer, 0,
-                                                     size_outer[2] / 2],
+                                                     size_outer[2] / 2 + botton_half_thick],
                                                     [0, -size_outer[1] / 2 - sin_offset_outer * half_wall_height_outer,
-                                                     size_outer[2] / 2],
+                                                     size_outer[2] / 2 + botton_half_thick],
                                                     [0, size_outer[1] / 2 + sin_offset_outer * half_wall_height_outer,
-                                                     size_outer[2] / 2]],
+                                                     size_outer[2] / 2 + botton_half_thick]],
                                      linkOrientations=[pb.getQuaternionFromEuler([0., -inclination_inner, 0.]),
                                                        pb.getQuaternionFromEuler([0., inclination_inner, 0.]),
                                                        pb.getQuaternionFromEuler([inclination_inner, 0., 0.]),
