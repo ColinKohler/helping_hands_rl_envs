@@ -49,7 +49,7 @@ class RandomHouseholdPickingClutterFullObsEnv(PyBulletEnv):
         self.obj_grasped = 0
         # self.tray = Tray()
         self.tray = Tray2()
-        self.exhibit_env_obj = False
+        self.exhibit_env_obj = True
         self.z_heuristic = config['z_heuristic']
         self.bin_size = config['bin_size']
         self.gripper_depth = 0.04
@@ -215,9 +215,12 @@ class RandomHouseholdPickingClutterFullObsEnv(PyBulletEnv):
                 #         creat_duck(randpos)
                 #         self.wait(100)
                 elif self.exhibit_env_obj:  # exhibit all random objects in this environment
+                    # root_dir = os.path.dirname(helping_hands_rl_envs.__file__)
+                    # urdf_pattern = os.path.join(root_dir, constants.URDF_PATH, 'random_household_object_200/*/*/*.obj')
+                    # found_object_directories = glob.glob(urdf_pattern)
+                    # total_num_objects = len(found_object_directories)
                     root_dir = os.path.dirname(helping_hands_rl_envs.__file__)
-                    # urdf_pattern = os.path.join(root_dir, constants.URDF_PATH, 'random_household_object/*/*.urdf')
-                    urdf_pattern = os.path.join(root_dir, constants.URDF_PATH, 'random_household_object_200/*/*/*.obj')
+                    urdf_pattern = os.path.join(root_dir, constants.URDF_PATH, 'GraspNet1B_object/0*/')
                     found_object_directories = glob.glob(urdf_pattern)
                     total_num_objects = len(found_object_directories)
 
@@ -234,19 +237,19 @@ class RandomHouseholdPickingClutterFullObsEnv(PyBulletEnv):
                         y = (i % columns) * distance
                         y += self.workspace[1].mean() - display_size / 2
                         display_pos = [x, y, 0.08]
-                        # obj = self._generateShapes(constants.RANDOM_HOUSEHOLD, 1,
-                        #                            rot=[pb.getQuaternionFromEuler([0., 0., -np.pi/4])],
-                        #                            pos=[display_pos], padding=self.min_boarder_padding,
-                        #                            min_distance=self.min_object_distance, model_id=i)
-                        obj = self._generateShapes(constants.RANDOM_HOUSEHOLD200, 1,
+                        obj = self._generateShapes(constants.GRASP_NET_OBJ, 1,
                                                    rot=[pb.getQuaternionFromEuler([0., 0., -np.pi / 4])],
                                                    pos=[display_pos], padding=self.min_boarder_padding,
                                                    min_distance=self.min_object_distance, model_id=i)
-                        obj_centers.append(obj[0].center)
-                        obj_scales.append(obj[0].real_scale)
-
-                    obj_centers = np.array(obj_centers)
-                    obj_scales = np.array(obj_scales)
+                        # obj = self._generateShapes(constants.RANDOM_HOUSEHOLD200, 1,
+                        #                            rot=[pb.getQuaternionFromEuler([0., 0., -np.pi / 4])],
+                        #                            pos=[display_pos], padding=self.min_boarder_padding,
+                        #                            min_distance=self.min_object_distance, model_id=i)
+                    #     obj_centers.append(obj[0].center)
+                    #     obj_scales.append(obj[0].real_scale)
+                    #
+                    # obj_centers = np.array(obj_centers)
+                    # obj_scales = np.array(obj_scales)
                     print('Number of all objects: ', total_num_objects)
                     self.wait(10000)
             except NoValidPositionException:

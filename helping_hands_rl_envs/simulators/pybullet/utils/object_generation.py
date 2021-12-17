@@ -8,6 +8,7 @@ import helping_hands_rl_envs
 from helping_hands_rl_envs.simulators.pybullet.objects.cube import Cube
 from helping_hands_rl_envs.simulators.pybullet.objects.cylinder import Cylinder
 from helping_hands_rl_envs.simulators.pybullet.objects.brick import Brick
+from helping_hands_rl_envs.simulators.pybullet.objects.grasp_net_obj import GraspNetObject
 from helping_hands_rl_envs.simulators.pybullet.objects.triangle import Triangle
 from helping_hands_rl_envs.simulators.pybullet.objects.roof import Roof
 from helping_hands_rl_envs.simulators.pybullet.objects.random_object import RandomObject
@@ -67,6 +68,9 @@ def generateRandomHouseHoldObj(pos, rot, scale, index):
 
 def generateRandomHouseHoldObj200(pos, rot, scale, index):
   return RandomHouseHoldObject200(pos, rot, scale, index)
+
+def generateGraspNetObject(pos, rot, scale, index):
+  return GraspNetObject(pos, rot, scale, index)
 
 def generateSpoon(pos, rot, scale):
   return Spoon(pos, rot, scale)

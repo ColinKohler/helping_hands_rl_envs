@@ -104,3 +104,6 @@ venv.bak/
 .mypy_cache/
 
 .idea/
+
+# large obj models
+/helping_hands_rl_envs/simulators/urdf/object/GraspNet1B_models/0*/

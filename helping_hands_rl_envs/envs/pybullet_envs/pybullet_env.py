@@ -528,6 +528,8 @@ class PyBulletEnv(BaseEnv):
         handle = pb_obj_generation.generateTestTube(position, orientation, scale, model_id=None)
       elif shape_type == constants.SWAB:
         handle = pb_obj_generation.generateSwab(position, orientation, scale, model_id=None)
+      elif shape_type == constants.GRASP_NET_OBJ:
+        handle = pb_obj_generation.generateGraspNetObject(position, orientation, scale, model_id)
 
       else:
         raise NotImplementedError
