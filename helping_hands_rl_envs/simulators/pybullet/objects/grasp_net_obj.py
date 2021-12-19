@@ -27,30 +27,42 @@ def get_immediate_subdirectories(a_dir):
 class GraspNetObject(PybulletObject):
     def __init__(self, pos, rot, scale, index=-1):
 
-        if index:
+        if index >= 0:
             obj_filepath = found_object_directories[index]
         else:
             index = np.random.choice(np.arange(total_num_objects), 1)[0]
             obj_filepath = found_object_directories[index]
 
-
         color = np.random.uniform(0.6, 1, (4,))
         color[-1] = 1
-
-        obj_visual = pb.createVisualShape(pb.GEOM_MESH,
-                                          fileName=obj_filepath + 'convex.obj',
-                                          rgbaColor=color,
-                                          meshScale=[scale, scale, scale])
-        obj_collision = pb.createCollisionShape(pb.GEOM_MESH,
-                                                fileName=obj_filepath + 'convex.obj',
-                                                meshScale=[scale, scale, scale])
         self.center = [0, 0, 0]
+        obj_edge_max = 0.1  # the maximum edge size of an obj before scaling
+        obj_scale = scale
 
-        object_id = pb.createMultiBody(baseMass=0.15,
-                                       baseCollisionShapeIndex=obj_collision,
-                                       baseVisualShapeIndex=obj_visual,
-                                       basePosition=pos,
-                                       baseOrientation=rot)
+        while True:
+            obj_visual = pb.createVisualShape(pb.GEOM_MESH,
+                                              fileName=obj_filepath + 'convex.obj',
+                                              rgbaColor=color,
+                                              meshScale=[obj_scale, obj_scale, obj_scale])
+            obj_collision = pb.createCollisionShape(pb.GEOM_MESH,
+                                                    fileName=obj_filepath + 'convex.obj',
+                                                    meshScale=[obj_scale, obj_scale, obj_scale])
+
+            object_id = pb.createMultiBody(baseMass=0.15,
+                                           baseCollisionShapeIndex=obj_collision,
+                                           baseVisualShapeIndex=obj_visual,
+                                           basePosition=pos,
+                                           baseOrientation=rot)
+
+            aabb = pb.getAABB(object_id)
+            aabb = np.asarray(aabb)
+            size = aabb[1] - aabb[0]
+
+            if np.partition(size, -2)[-2] > obj_edge_max * scale:
+                obj_scale *= 0.6
+                pb.removeBody(object_id)
+            else:
+                break
 
         pb.changeDynamics(object_id,
                           -1,
