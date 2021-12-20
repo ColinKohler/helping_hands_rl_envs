@@ -36,7 +36,9 @@ class GraspNetObject(PybulletObject):
         color = np.random.uniform(0.6, 1, (4,))
         color[-1] = 1
         self.center = [0, 0, 0]
-        obj_edge_max = 0.1  # the maximum edge size of an obj before scaling
+        obj_edge_max = 0.15  # the maximum edge size of an obj before scaling
+        obj_edge_min = 0.014  # the minimum edge size of an obj before scaling
+        obj_volume_max = 0.0006  # the maximum volume of an obj before scaling
         obj_scale = scale
 
         while True:
@@ -59,7 +61,13 @@ class GraspNetObject(PybulletObject):
             size = aabb[1] - aabb[0]
 
             if np.partition(size, -2)[-2] > obj_edge_max * scale:
-                obj_scale *= 0.6
+                obj_scale *= 0.8
+                pb.removeBody(object_id)
+            elif size[0] * size[1] * size[2] > obj_volume_max * (scale ** 3):
+                obj_scale *= 0.85
+                pb.removeBody(object_id)
+            elif size.min() < obj_edge_min * scale:
+                obj_scale /= 0.95
                 pb.removeBody(object_id)
             else:
                 break
