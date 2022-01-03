@@ -106,4 +106,4 @@ venv.bak/
 .idea/
 
 # large obj models
-/helping_hands_rl_envs/simulators/urdf/object/GraspNet1B_models/0*/
+/helping_hands_rl_envs/simulators/urdf/object/GraspNet1B_object/*0*/**
