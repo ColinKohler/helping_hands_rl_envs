@@ -229,8 +229,8 @@ class RandomHouseholdPickingClutterFullObsEnv(PyBulletEnv):
                     found_object_directories = glob.glob(urdf_pattern)
                     total_num_objects = len(found_object_directories)
 
-                    display_size = 2
-                    columns = math.ceil(math.sqrt(total_num_objects))
+                    display_size = 1.5
+                    columns = math.floor(math.sqrt(total_num_objects))
                     distance = display_size / (columns - 1)
 
                     obj_centers = []
