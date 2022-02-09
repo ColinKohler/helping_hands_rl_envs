@@ -49,7 +49,8 @@ class RandomHouseholdPickingClutterFullObsEnv(PyBulletEnv):
         self.obj_grasped = 0
         # self.tray = Tray()
         self.tray = Tray2()
-        self.exhibit_env_obj = False
+        # self.exhibit_env_obj = False
+        self.exhibit_env_obj = True
         self.z_heuristic = config['z_heuristic']
         self.bin_size = config['bin_size']
         self.gripper_depth = 0.04

@@ -6,12 +6,10 @@ import pybullet as pb
 import numpy as np
 import os
 import glob
-import re
 
 import helping_hands_rl_envs
 from helping_hands_rl_envs.simulators.pybullet.objects.pybullet_object import PybulletObject
 from helping_hands_rl_envs.simulators import constants
-from helping_hands_rl_envs.simulators.pybullet.objects.random_household_object_200_info import *
 
 root_dir = os.path.dirname(helping_hands_rl_envs.__file__)
 obj_pattern = os.path.join(root_dir, constants.URDF_PATH, 'GraspNet1B_object/0*/')
@@ -36,9 +34,9 @@ class GraspNetObject(PybulletObject):
         color = np.random.uniform(0.6, 1, (4,))
         color[-1] = 1
         self.center = [0, 0, 0]
-        obj_edge_max = 0.15  # the maximum edge size of an obj before scaling
-        obj_edge_min = 0.014  # the minimum edge size of an obj before scaling
-        obj_volume_max = 0.0006  # the maximum volume of an obj before scaling
+        obj_edge_max = 0.15 * scale  # the maximum edge size of an obj before scaling
+        obj_edge_min = 0.014 * scale  # the minimum edge size of an obj before scaling
+        obj_volume_max = 0.0006 * (scale ** 3)  # the maximum volume of an obj before scaling
         obj_scale = scale
 
         while True:
@@ -60,13 +58,13 @@ class GraspNetObject(PybulletObject):
             aabb = np.asarray(aabb)
             size = aabb[1] - aabb[0]
 
-            if np.partition(size, -2)[-2] > obj_edge_max * scale:
+            if np.partition(size, -2)[-2] > obj_edge_max:
                 obj_scale *= 0.8
                 pb.removeBody(object_id)
-            elif size[0] * size[1] * size[2] > obj_volume_max * (scale ** 3):
+            elif size[0] * size[1] * size[2] > obj_volume_max:
                 obj_scale *= 0.85
                 pb.removeBody(object_id)
-            elif size.min() < obj_edge_min * scale:
+            elif size.min() < obj_edge_min:
                 obj_scale /= 0.95
                 pb.removeBody(object_id)
             else:
