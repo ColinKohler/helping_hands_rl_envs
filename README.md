@@ -79,6 +79,7 @@ based simulator is included for quick prototyping.
 - **box_palletizing**: Stack boxes on top of a pallet.
 - **covid_test**: Supervise 3 covid tests.
 - **object_grasping**: Grasping objects in clutter.
+- **5D_grasping**: Grasping objects in clutter with 5 DoFs.
 
 ### 6D Environments
 - **ramp_block_stacking**: Finish block_stacking in the workspace with two ramps

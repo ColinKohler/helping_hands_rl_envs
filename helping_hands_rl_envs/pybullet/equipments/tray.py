@@ -20,7 +20,6 @@ class Tray:
              Box: inclination 90
              Plate: inclination 0
     '''
-    tray_shrink = 0.03
     slopes_d = 0.03
     botton_half_thick = 0.05
     half_thickness = 0.001
@@ -29,8 +28,6 @@ class Tray:
     if transparent:
       color[3] = 0
       color_inner[3] = 0
-    size[0] -= tray_shrink
-    size[1] -= tray_shrink
     size_inner = size.copy()
     size_outer = size.copy()
     size_outer[0] += slopes_d

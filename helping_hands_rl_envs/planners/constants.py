@@ -65,6 +65,7 @@ PLANNERS = {
   'cup_stacking': BlockStackingPlanner,
   'block_bin_packing': BlockBinPackingPlanner,
   'object_grasping': BlockPickingPlanner,
+  '5D_grasping': BlockPickingPlanner,
   'random_block_picking': BlockPickingPlanner,
   'random_block_picking_clutter': BlockPickingPlanner,
   'random_household_picking': BlockPickingPlanner,

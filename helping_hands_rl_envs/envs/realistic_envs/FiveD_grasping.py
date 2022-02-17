@@ -35,12 +35,12 @@ def creat_duck(pos):
                        useMaximalCoordinates=True)
 
 
-class ObjectGrasping(BaseEnv):
+class FiveDGrasping(BaseEnv):
     '''
   '''
 
     def __init__(self, config):
-        super(ObjectGrasping, self).__init__(config)
+        super(FiveDGrasping, self).__init__(config)
         self.object_init_z = 0.1
         self.obj_grasped = 0
         self.tray = Tray()
@@ -53,18 +53,16 @@ class ObjectGrasping(BaseEnv):
 
     def initialize(self):
         super().initialize()
-        self.tray.initialize(pos=[self.workspace[0].mean(), self.workspace[1].mean(), 0],
-                             size=[self.bin_size, self.bin_size, 0.1])
 
     def _decodeAction(self, action):
         """
-    decode input action base on self.action_sequence
-    Args:
-      action: action tensor
+        decode input action base on self.action_sequence
+        Args:
+          action: action tensor
 
-    Returns: motion_primative, x, y, z, rot
+        Returns: motion_primative, x, y, z, rot
 
-    """
+        """
         primative_idx, x_idx, y_idx, z_idx, rot_idx = map(lambda a: self.action_sequence.find(a),
                                                           ['p', 'x', 'y', 'z', 'r'])
         motion_primative = action[primative_idx] if primative_idx != -1 else 0
@@ -161,6 +159,8 @@ class ObjectGrasping(BaseEnv):
         return obs, reward, done
 
     def isSimValid(self):
+        if self.robot.getGripperOpenRatio() > 1:
+            return False
         for obj in self.objects:
             p = obj.getPosition()
             if not self.check_random_obj_valid and self.object_types[obj] == constants.RANDOM:
@@ -183,6 +183,16 @@ class ObjectGrasping(BaseEnv):
         ''''''
         while True:
             self.resetPybulletWorkspace()
+            if self.tray.id is not None:
+                self.tray.remove()
+            self.tray_z = np.random.uniform(0.05, 0.2)
+            tray_rot = np.random.uniform(-0.314, 0.314, 3)
+            tray_rot[-1] = np.asarray([0])
+            self.tray_pos = pb.getQuaternionFromEuler(tray_rot)
+            self.tray.initialize(pos=[self.workspace[0].mean(), self.workspace[1].mean(), self.tray_z],
+                                 rot=self.tray_pos,
+                                 size=[self.bin_size, self.bin_size, 0.1])
+
             try:
                 if not self.exhibit_env_obj:
                     for i in range(self.num_obj):
@@ -190,7 +200,7 @@ class ObjectGrasping(BaseEnv):
                         x += self.workspace[0].mean()
                         y = (np.random.rand() - 0.5) * 0.1
                         y += self.workspace[1].mean()
-                        randpos = [x, y, 0.40]
+                        randpos = [x, y, 0.40 + self.tray_z]
                         # obj = self._generateShapes(constants.RANDOM_HOUSEHOLD, 1, random_orientation=self.random_orientation,
                         #                            pos=[randpos], padding=self.min_boarder_padding,
                         #                            min_distance=self.min_object_distance, model_id=-1)
@@ -297,9 +307,9 @@ class ObjectGrasping(BaseEnv):
         return False
 
     def _getObservation(self, action=None):
-        state, in_hand, obs = super(ObjectGrasping, self)._getObservation()
+        state, in_hand, obs = super(FiveDGrasping, self)._getObservation()
         return 0, np.zeros_like(in_hand), obs
 
 
-def createObjectGrasping(config):
-    return ObjectGrasping(config)
+def createFiveDGrasping(config):
+    return FiveDGrasping(config)
