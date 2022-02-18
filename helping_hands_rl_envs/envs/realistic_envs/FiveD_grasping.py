@@ -74,11 +74,8 @@ class FiveDGrasping(BaseEnv):
             raise NotImplementedError
         x = action[x_idx]
         y = action[y_idx]
-        # x += (self.workspace[0, 0] + self.workspace[0, 1]) / 2
-        # y += (self.workspace[1, 0] + self.workspace[1, 1]) / 2
-        if self.z_heuristic == 'residual' and z_idx != -1:
-            z = self.getPatch_z(x, y, rz, z=action[z_idx])
-        elif z_idx != -1:
+
+        if z_idx != -1:
             z = action[z_idx]
         else:
             z = self.getPatch_z(x, y, rz)
