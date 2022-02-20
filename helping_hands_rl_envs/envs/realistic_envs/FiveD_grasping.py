@@ -144,6 +144,7 @@ class FiveDGrasping(BaseEnv):
 
         obs = self._getObservation(action)
         done = self._checkTermination()
+        self.robot.closeGripper()
         if self.reward_type == 'dense':
             reward = 1.0 if self.obj_grasped > pre_obj_grasped else 0.0
         else:
