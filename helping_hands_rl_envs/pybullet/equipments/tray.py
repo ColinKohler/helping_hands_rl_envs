@@ -14,13 +14,14 @@ class Tray:
     '''
     :param pos:
     :param rot:
-    :param size:
+    :param size: the maximum box that can be fitted into the outer tray
     :param color:
-    :return: tray with walls have inclination, where inclination is the angle between walls and ground.
-             Box: inclination 90
-             Plate: inclination 0
+    :return: tray with walls have inclination, where inclination is the angle between the wall and button normal.
+             Box: inclination 0
+             Plate: inclination 90
+             the inner tray is pink while the outer tray is gray
     '''
-    slopes_d = 0.03
+    slopes_d = 0.02  # the distance between the inner slops and the outer slops at tray's button
     botton_half_thick = 0.05
     half_thickness = 0.001
     pos[2] -= botton_half_thick - 2 * half_thickness
@@ -30,15 +31,15 @@ class Tray:
       color_inner[3] = 0
     size_inner = size.copy()
     size_outer = size.copy()
-    size_outer[0] += slopes_d
-    size_outer[1] += slopes_d
-    inclination_inner = np.pi * (70 / 180)
-    inclination_outer = np.pi * (45 / 180)
+    size_inner[0] -= 2 * slopes_d
+    size_inner[1] -= 2 * slopes_d
+    inclination_inner = np.pi * (60 / 180)
+    inclination_outer = np.pi * (30 / 180)
     cos_offset_inner = np.cos(inclination_inner)
     sin_offset_inner = np.sin(inclination_inner)
     cos_offset_outer = np.cos(inclination_outer)
     sin_offset_outer = np.sin(inclination_outer)
-    h_inner = (size[2] / np.tan(inclination_outer) + slopes_d / 2) / np.tan(inclination_inner)
+    h_inner = slopes_d / (np.tan(inclination_inner) - np.tan(inclination_outer))
     size_inner[2] = h_inner
     half_wall_height_inner = size_inner[2] / (2 * cos_offset_inner)
     half_wall_height_outer = size_outer[2] / (2 * cos_offset_outer)
@@ -46,9 +47,10 @@ class Tray:
     size1_inner = size_inner[1] / 2 + 2 * half_wall_height_inner * sin_offset_inner
     size0_outer = size_outer[0] / 2 + 2 * half_wall_height_outer * sin_offset_outer
     size1_outer = size_outer[1] / 2 + 2 * half_wall_height_outer * sin_offset_outer
-    bottom_visual = pb.createVisualShape(pb.GEOM_BOX, halfExtents=[size0_inner, size1_inner, botton_half_thick],
+
+    bottom_visual = pb.createVisualShape(pb.GEOM_BOX, halfExtents=[size0_outer, size1_outer, botton_half_thick],
                                          rgbaColor=color)
-    bottom_collision = pb.createCollisionShape(pb.GEOM_BOX, halfExtents=[size0_inner, size1_inner, botton_half_thick])
+    bottom_collision = pb.createCollisionShape(pb.GEOM_BOX, halfExtents=[size0_outer, size1_outer, botton_half_thick])
 
     front_visual_inner = pb.createVisualShape(pb.GEOM_BOX,
                                               halfExtents=[half_thickness, size1_inner, half_wall_height_inner],

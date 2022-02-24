@@ -9,7 +9,7 @@ class Sensor(object):
       cameraUpVector=cam_up_vector,
       cameraTargetPosition=target_pos,
     )
-
+    self.cam_pos = cam_pos
     self.near = near
     self.far = far
     self.fov = np.degrees(2 * np.arctan((target_size / 2) / self.far))
@@ -24,6 +24,12 @@ class Sensor(object):
     self.proj_matrix = pb.computeProjectionMatrixFOV(70, 1, 0.001, 0.3)
 
   def getHeightmap(self, size):
+    """
+    Assumes that the camera is top-down and the heightmap is centered on the camera's optical axel and z is in world
+    coordinate
+    :param size:
+    :return:
+    """
     image_arr = pb.getCameraImage(width=size, height=size,
                                   viewMatrix=self.view_matrix,
                                   projectionMatrix=self.proj_matrix,
@@ -31,7 +37,7 @@ class Sensor(object):
     depth_img = np.array(image_arr[3])
     depth = self.far * self.near / (self.far - (self.far - self.near) * depth_img)
 
-    return np.abs(depth - np.max(depth)).reshape(size, size)
+    return (self.cam_pos[2] - depth).reshape(size, size)
 
   def getPointCloud(self, size, to_numpy=True):
     image_arr = pb.getCameraImage(width=size, height=size,

@@ -183,13 +183,15 @@ class FiveDGrasping(BaseEnv):
             self.resetPybulletWorkspace()
             if self.tray.id is not None:
                 self.tray.remove()
-            self.tray_z = np.random.uniform(0.05, 0.2)
+            tray_z = np.random.uniform(0.05, 0.2)
             tray_rot = np.random.uniform(-0.314, 0.314, 3)
+            # tray_z = np.random.uniform(0, 0)
+            # tray_rot = np.random.uniform(0, 0, 3)
             tray_rot[-1] = np.asarray([0])
             self.tray_pos = pb.getQuaternionFromEuler(tray_rot)
-            self.tray.initialize(pos=[self.workspace[0].mean(), self.workspace[1].mean(), self.tray_z],
+            self.tray.initialize(pos=[self.workspace[0].mean(), self.workspace[1].mean(), tray_z],
                                  rot=self.tray_pos,
-                                 size=[self.bin_size, self.bin_size, 0.1])
+                                 size=[self.bin_size, self.bin_size, 0.2])
 
             try:
                 if not self.exhibit_env_obj:
@@ -198,7 +200,7 @@ class FiveDGrasping(BaseEnv):
                         x += self.workspace[0].mean()
                         y = (np.random.rand() - 0.5) * 0.1
                         y += self.workspace[1].mean()
-                        randpos = [x, y, 0.40 + self.tray_z]
+                        randpos = [x, y, 0.40 + tray_z]
                         # obj = self._generateShapes(constants.RANDOM_HOUSEHOLD, 1, random_orientation=self.random_orientation,
                         #                            pos=[randpos], padding=self.min_boarder_padding,
                         #                            min_distance=self.min_object_distance, model_id=-1)
