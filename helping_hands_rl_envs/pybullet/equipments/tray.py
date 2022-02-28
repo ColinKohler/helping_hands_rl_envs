@@ -33,7 +33,7 @@ class Tray:
     size_outer = size.copy()
     size_inner[0] -= 2 * slopes_d
     size_inner[1] -= 2 * slopes_d
-    inclination_inner = np.pi * (60 / 180)
+    inclination_inner = np.pi * (50 / 180)
     inclination_outer = np.pi * (30 / 180)
     cos_offset_inner = np.cos(inclination_inner)
     sin_offset_inner = np.sin(inclination_inner)
@@ -159,7 +159,7 @@ class Tray:
 
     pb.changeDynamics(self.id,
                       -1,
-                      lateralFriction=0.5,
+                      lateralFriction=0.8,
                       rollingFriction=0.01,
                       linearDamping=0.1)
 
