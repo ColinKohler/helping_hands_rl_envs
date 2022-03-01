@@ -191,7 +191,7 @@ class FiveDGrasping(BaseEnv):
             self.tray_pos = pb.getQuaternionFromEuler(tray_rot)
             self.tray.initialize(pos=[self.workspace[0].mean(), self.workspace[1].mean(), tray_z],
                                  rot=self.tray_pos,
-                                 size=[self.bin_size, self.bin_size, 0.2])
+                                 size=[self.bin_size, self.bin_size, 0.15])
 
             try:
                 if not self.exhibit_env_obj:

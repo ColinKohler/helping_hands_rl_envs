@@ -22,6 +22,9 @@ class Tray:
              the inner tray is pink while the outer tray is gray
     '''
     slopes_d = 0.02  # the distance between the inner slops and the outer slops at tray's button
+    tray_shrink = 0.03
+    size[0] -= tray_shrink
+    size[1] -= tray_shrink
     botton_half_thick = 0.05
     half_thickness = 0.001
     pos[2] -= botton_half_thick - 2 * half_thickness
@@ -33,8 +36,8 @@ class Tray:
     size_outer = size.copy()
     size_inner[0] -= 2 * slopes_d
     size_inner[1] -= 2 * slopes_d
-    inclination_inner = np.pi * (50 / 180)
-    inclination_outer = np.pi * (30 / 180)
+    inclination_inner = np.pi * (70 / 180)
+    inclination_outer = np.pi * (45 / 180)
     cos_offset_inner = np.cos(inclination_inner)
     sin_offset_inner = np.sin(inclination_inner)
     cos_offset_outer = np.cos(inclination_outer)
