@@ -457,7 +457,7 @@
     </joint>
 
     <!-- Attach the base of the gripper to the end of the arm -->
-    <joint name='gripper_to_arm' type='continuous'> <!--possibly should be fixed? -->
+    <joint name='gripper_to_arm' type='fixed'> <!--possibly should be fixed? -->
       <parent>lbr_iiwa_link_7</parent>
       <child>gripah_base</child>
       <axis>
@@ -508,6 +508,10 @@
     </link>
 
     <link name="wide_finger_link">
+      <contact>
+        <lateral_friction>0.8</lateral_friction>
+        <spinning_friction>.1</spinning_friction>
+      </contact>
       <pose frame=''>0 0 1.360 1.5708 -1.557463 0</pose>
       <inertial>
         <pose frame=''>0.056976 0.015337 0 0 0 0</pose>
@@ -557,6 +561,10 @@
     </joint>
 
     <link name="narrow_finger_link">
+      <contact>
+        <lateral_friction>0.8</lateral_friction>
+        <spinning_friction>.1</spinning_friction>
+      </contact>
       <pose>0 0 1.360 1.5708 -1.557463 0</pose>
       <inertial>
         <pose>0.052556 0.013896 0 0 0 0</pose>
@@ -603,6 +611,38 @@
           <velocity>8.0</velocity>
         </limit>
       </axis>
+    </joint>
+    <!-- This is a dummy link at the finger tips that makes computing the IK more convenient -->
+    <link name='finger_tip'>
+      <contact>
+        <lateral_friction>0.8</lateral_friction>
+        <spinning_friction>.1</spinning_friction>
+      </contact>
+      <pose frame=''>0 0 1.499 0 3.1415 3.1415</pose>
+      <!--<pose frame=''>0 0.022 1.535 0 3.1415 0</pose>-->
+      <inertial>
+        <mass>0</mass>
+        <inertia>
+          <ixx>0</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0</iyy>
+          <iyz>0</iyz>
+          <izz>0</izz>
+        </inertia>
+      </inertial>
+      <visual name='finger_tip'>
+        <pose frame=''>0 0 0 0 0 0</pose>
+        <geometry>
+		  <box>
+		     <size>0.02 0.02 0.02 </size>
+		  </box>
+        </geometry>
+      </visual>
+    </link>
+    <joint name='finger_tip_joint' type="fixed">
+      <parent>gripah_base</parent>
+      <child>finger_tip</child>
     </joint>
 
 

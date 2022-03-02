@@ -25,7 +25,7 @@ class KukaHydrostaticGripper(RobotBase):
     super().__init__()
     self.max_velocity = .35
     self.max_force = 200.
-    self.end_effector_index = 14
+    self.end_effector_index = 10
     self.gripper_index = 7
 
     # lower limits for null space
@@ -41,14 +41,14 @@ class KukaHydrostaticGripper(RobotBase):
       0.00001, 0.00001, 0.00001, 0.00001, 0.00001, 0.00001, 0.00001, 0.00001, 0.00001, 0.00001,
       ]
 
-    self.home_positions = [0.3926, 0., -2.137, 1.432, 0, -1.591, 0.071, 0., 0., 0.]
+    self.home_positions = [0.3926, 0., -2.137, 1.432, 0, -1.591, 0.071, 0., 0., 0., 0.]
     self.home_positions_joint = self.home_positions[:7]
     # self.home_positions = [
     #     0.006418, 0.413184, -0.011401, -1.589317, 0.005379, 1.137684, -0.006539, 0.000048,
     #     -0.299912, 0.000000, -0.000043, 0.299960, 0.000000, -0.000200
     # ]
 
-    self.gripper_joint_limit = [0, 0.2] #TODO update
+    self.gripper_joint_limit = [0, 0.3] #TODO update
 
   def initialize(self):
     ''''''
