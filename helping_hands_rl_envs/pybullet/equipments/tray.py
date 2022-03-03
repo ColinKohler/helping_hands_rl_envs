@@ -30,14 +30,16 @@ class Tray:
     pos[2] -= botton_half_thick - 2 * half_thickness
     color_inner = [0.9, 0.6, 0.6, 1]
     if transparent:
-      color[3] = 0
-      color_inner[3] = 0
+      color[3] = 0.3
+      color_inner[3] = 0.3
     size_inner = size.copy()
     size_outer = size.copy()
     size_inner[0] -= 2 * slopes_d
     size_inner[1] -= 2 * slopes_d
-    inclination_inner = np.pi * (70 / 180)
-    inclination_outer = np.pi * (45 / 180)
+    inclination_outer = 30
+    inclination_inner = 45 + inclination_outer / 2
+    inclination_outer = np.pi * (inclination_outer / 180)
+    inclination_inner = np.pi * (inclination_inner / 180)
     cos_offset_inner = np.cos(inclination_inner)
     sin_offset_inner = np.sin(inclination_inner)
     cos_offset_outer = np.cos(inclination_outer)
