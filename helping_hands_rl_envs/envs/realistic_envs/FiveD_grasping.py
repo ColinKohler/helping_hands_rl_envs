@@ -49,7 +49,7 @@ class FiveDGrasping(BaseEnv):
         self.z_heuristic = config['z_heuristic']
         self.bin_size = config['bin_size']
         self.gripper_depth = 0.04
-        self.gripper_clearance = 0.01
+        self.gripper_reach = 0.01
 
     def initialize(self):
         super().initialize()
@@ -108,17 +108,15 @@ class FiveDGrasping(BaseEnv):
         patch = local_region[int(self.in_hand_size / 2 - 16):int(self.in_hand_size / 2 + 16),
                              int(self.in_hand_size / 2 - 4):int(self.in_hand_size / 2 + 4)]
         if z is None:
-            edge = patch.copy()
-            edge[5:-5] = 0
-            # safe_z_pos = max(np.mean(patch.flatten()[(-patch).flatten().argsort()[2:12]]) - self.gripper_depth,
-            #                  np.mean(edge.flatten()[(-edge).flatten().argsort()[:6]]) - 0.005)
             safe_z_pos = np.mean(patch.flatten()[(-patch).flatten().argsort()[2:12]]) - self.gripper_depth
-            safe_z_pos += self.workspace[2, 0]
+            safe_z_pos = max(safe_z_pos,
+                             np.mean(patch.flatten()[(patch).flatten().argsort()[2:12]]) + self.gripper_reach)
+            # safe_z_pos += self.workspace[2, 0]
         else:
             safe_z_pos = np.mean(patch.flatten()[(-patch).flatten().argsort()[2:12]]) + z
 
         # use clearance to prevent gripper colliding with ground
-        safe_z_pos = max(safe_z_pos, self.workspace[2, 0] + self.gripper_clearance)
+        safe_z_pos = max(safe_z_pos, self.workspace[2, 0] + self.gripper_reach)
         safe_z_pos = min(safe_z_pos, self.workspace[2, 1])
         assert self.workspace[2][0] <= safe_z_pos <= self.workspace[2][1]
 
