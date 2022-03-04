@@ -131,5 +131,5 @@ CREATE_ENV_FNS = {
   'close_loop_clutter_picking': createCloseLoopHouseholdPickingClutteredEnv,
   'close_loop_block_pushing': createCloseLoopBlockPushingEnv,
   'close_loop_block_in_bowl': createCloseLoopBlockInBowlEnv,
-  'force_block_picking' : createForceBlockPicking,
+  'force_block_picking' : createForceBlockPickingEnv,
 }
