@@ -16,7 +16,7 @@ class TestBulletBlockStacking(unittest.TestCase):
     bin_size = 0.3
     # workspace_size = 0.35
     # obs_size = 112
-    workspace = np.asarray([[0.5 - workspace_size / 2, 0.5 + workspace_size / 2],
+    workspace = np.asarray([[0.35 - workspace_size / 2, 0.35 + workspace_size / 2],
                             [0 - workspace_size / 2, 0 + workspace_size / 2],
                             [0, 0 + workspace_size]])
     # env_config = {'workspace': workspace, 'max_steps': 30, 'obs_size': 128, 'render': False, 'fast_mode': True,
@@ -30,7 +30,7 @@ class TestBulletBlockStacking(unittest.TestCase):
                   'reward_type': 'dense', 'simulate_grasp': True, 'perfect_grasp': True, 'robot': 'kuka',
                   'workspace_check': 'point', 'object_scale_range': (0.8, 1), 'z_heuristic': 'patch_center',
                   'min_object_distance': 0., 'min_boarder_padding': 0.15, 'adjust_gripper_after_lift': True,
-                  'in_hand_size': 32, 'bin_size': bin_size, 'bin_type': 'Normal'}
+                  'in_hand_size': 32, 'bin_size': bin_size, 'bin_type': 'Normal', 'uncalibrated': ''}
 
     planner_config = {'random_orientation': True}
 

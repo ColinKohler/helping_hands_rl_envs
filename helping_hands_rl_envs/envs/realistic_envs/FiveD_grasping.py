@@ -48,6 +48,7 @@ class FiveDGrasping(BaseEnv):
         # self.exhibit_env_obj = True
         self.z_heuristic = config['z_heuristic']
         self.bin_size = config['bin_size']
+        self.uncalibrated = config['uncalibrated']
         self.gripper_depth = 0.04
         self.gripper_reach = 0.01
 
@@ -181,10 +182,20 @@ class FiveDGrasping(BaseEnv):
             self.resetPybulletWorkspace()
             if self.tray.id is not None:
                 self.tray.remove()
+            if self.uncalibrated == 'z':
+                tray_z = np.random.uniform(0.1, 0.2)
+                tray_rot = np.random.uniform(0, 0, 3)
+            elif self.uncalibrated == 'r':
+                tray_z = np.random.uniform(0., 0.)
+                tray_rot = np.random.uniform(-0.157, 0.157, 3)
+            elif self.uncalibrated == 'z_r':
+                tray_z = np.random.uniform(0.1, 0.2)
+                tray_rot = np.random.uniform(-0.157, 0.157, 3)
+            else:
+                tray_z = np.random.uniform(0., 0.)
+                tray_rot = np.random.uniform(0, 0, 3)
             # tray_z = np.random.uniform(0.05, 0.2)
-            tray_rot = np.random.uniform(-0.314, 0.314, 3)
-            tray_z = np.random.uniform(0.1, 0.2)
-            # tray_rot = np.random.uniform(-0.157, 0.157, 3)
+            # tray_rot = np.random.uniform(-0.314, 0.314, 3)
             tray_rot[-1] = np.asarray([0])
             self.tray_pos = pb.getQuaternionFromEuler(tray_rot)
             self.tray.initialize(pos=[self.workspace[0].mean(), self.workspace[1].mean(), tray_z],
