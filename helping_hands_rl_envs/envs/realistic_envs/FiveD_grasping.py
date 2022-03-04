@@ -2,6 +2,8 @@ import os
 import math
 import glob
 import numpy as np
+from matplotlib import pyplot as plt
+
 import helping_hands_rl_envs
 from helping_hands_rl_envs.envs.base_env import BaseEnv
 from helping_hands_rl_envs.pybullet.utils import constants
@@ -128,6 +130,8 @@ class FiveDGrasping(BaseEnv):
 
     def step(self, action):
         pre_obj_grasped = self.obj_grasped
+        if self.reward_type == 'dense_scene':
+            obs0 = self._getObservation()
         self.takeAction(action)
         self.wait(100)
         # remove obj that above a threshold hight
@@ -141,11 +145,55 @@ class FiveDGrasping(BaseEnv):
         #   if not self._isObjectWithinWorkspace(obj):
         #     self._removeObject(obj)
 
-        obs = self._getObservation(action)
+        obs1 = self._getObservation()
         done = self._checkTermination()
+
+        if self.reward_type == 'dense_scene':
+            # the difference d measures the change of the observation in terns of pixel value.
+            # d in [0, 1]
+            motion_primative, x, y, z, rot = self._decodeAction(action)
+            row_pixel, col_pixel = self._getPixelsFromPos(x, y)
+
+            xs = np.arange(-(self.in_hand_size - 1) / 2, (self.in_hand_size - 1) / 2 + 1, 1).reshape(1, -1).repeat(
+                self.in_hand_size, axis=0)
+            ys = np.arange(-(self.in_hand_size - 1) / 2, (self.in_hand_size - 1) / 2 + 1, 1).reshape(-1, 1).repeat(
+                self.in_hand_size, axis=1)
+            circle = (np.power(xs, 2) + np.power(ys, 2)) <= (self.in_hand_size / 2) ** 2
+
+            s0 = obs0[2][0]
+            s1 = obs1[2][0]
+
+            mask = np.zeros_like(s0, dtype=bool)
+            mask[int(row_pixel - self.in_hand_size / 2):int(row_pixel + self.in_hand_size / 2),
+                 int(col_pixel - self.in_hand_size / 2):int(col_pixel + self.in_hand_size / 2)] = circle
+            mask = np.logical_not(mask)
+
+            d = (np.abs(s0[mask] - s1[mask]) / np.maximum(s0[mask], s1[mask])).mean() * 10
+            d = min(d, 0.49)
+
+            # plt.figure()
+            # plt.imshow(mask.astype(float))
+            # plt.colorbar()
+            #
+            # dx = np.abs(s0 - s1) / np.maximum(s0, s1)
+            # plt.figure()
+            # plt.imshow(dx)
+            # plt.colorbar()
+            #
+            # plt.figure()
+            # plt.imshow(s0)
+            # plt.colorbar()
+            #
+            # plt.figure()
+            # plt.imshow(s1)
+            # plt.colorbar()
+            # plt.show()
+
         self.robot.closeGripper()
         if self.reward_type == 'dense':
-            reward = 1.0 if self.obj_grasped > pre_obj_grasped else 0.0
+            reward = 1.0 if self.obj_grasped > pre_obj_grasped else 0
+        elif self.reward_type == 'dense_scene':
+            reward = 1.0 - d if self.obj_grasped > pre_obj_grasped else 0
         else:
             reward = 1.0 if done else 0.0
 
@@ -153,7 +201,7 @@ class FiveDGrasping(BaseEnv):
             done = self.current_episode_steps >= self.max_steps or not self.isSimValid()
         self.current_episode_steps += 1
 
-        return obs, reward, done
+        return obs1, reward, done
 
     def isSimValid(self):
         if self.robot.getGripperOpenRatio() > 1:
