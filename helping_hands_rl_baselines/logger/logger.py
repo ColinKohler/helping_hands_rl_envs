@@ -151,7 +151,7 @@ class Logger(object):
         'num_eps' : self.num_eps,
         'num_steps' : self.num_steps,
         'num_training_steps' : self.num_training_steps,
-        'training_eps_rewards' : self.rewards,
+        'training_eps_rewards' : self.training_eps_rewards,
         'num_eval_intervals' : self.num_eval_intervals,
         'eval_eps_rewards' : self.eval_eps_rewards,
         'eval_mean_values' : self.eval_mean_values,
