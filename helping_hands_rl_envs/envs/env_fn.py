@@ -67,6 +67,8 @@ from helping_hands_rl_envs.envs.close_loop_envs.close_loop_household_picking_clu
 from helping_hands_rl_envs.envs.close_loop_envs.close_loop_block_pushing import createCloseLoopBlockPushingEnv
 from helping_hands_rl_envs.envs.close_loop_envs.close_loop_block_in_bowl import createCloseLoopBlockInBowlEnv
 
+from helping_hands_rl_envs.envs.force_envs.force_block_picking import createForceBlockPickingEnv
+
 CREATE_ENV_FNS = {
   'block_picking' : createBlockPickingEnv,
   'block_stacking' : createBlockStackingEnv,
@@ -129,4 +131,5 @@ CREATE_ENV_FNS = {
   'close_loop_clutter_picking': createCloseLoopHouseholdPickingClutteredEnv,
   'close_loop_block_pushing': createCloseLoopBlockPushingEnv,
   'close_loop_block_in_bowl': createCloseLoopBlockInBowlEnv,
+  'force_block_picking' : createForceBlockPicking,
 }

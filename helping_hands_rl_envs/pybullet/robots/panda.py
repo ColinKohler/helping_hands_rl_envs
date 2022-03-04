@@ -31,8 +31,11 @@ class Panda(RobotBase):
     self.holding_obj = None
     self.num_joints = pb.getNumJoints(self.id)
     [pb.resetJointState(self.id, idx, self.home_positions[idx]) for idx in range(self.num_joints)]
+
     pb.enableJointForceTorqueSensor(self.id, 8)
-    # pb.enableJointForceTorqueSensor(self.id, 7)
+    pb.enableJointForceTorqueSensor(self.id, 9)
+    pb.enableJointForceTorqueSensor(self.id, 10)
+
     c = pb.createConstraint(self.id,
                             9,
                             self.id,
@@ -144,6 +147,12 @@ class Panda(RobotBase):
   def gripperHasForce(self):
     # return pb.getJointState(self.id, 9)[3] <= -5 or pb.getJointState(self.id, 10)[3] <= -5
     return pb.getJointState(self.id, 8)[2][2] > 100
+
+  def getFingerFroce(self):
+    finger_a_force = pb.getJointState(self.id, 9)[2]
+    finger_b_force = pb.getJointState(self.id, 10)[2]
+
+    return finger_a_force, finger_b_force
 
   def getPickedObj(self, objects):
     if not objects:
