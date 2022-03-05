@@ -168,7 +168,7 @@ class FiveDGrasping(BaseEnv):
                  int(col_pixel - self.in_hand_size / 2):int(col_pixel + self.in_hand_size / 2)] = circle
             mask = np.logical_not(mask)
 
-            d = (np.abs(s0[mask] - s1[mask]) / np.maximum(s0[mask], s1[mask])).mean() * 10
+            d = (np.abs(s0[mask] - s1[mask]) / np.maximum(s0[mask], s1[mask])).mean() * 50
             d = min(d, 0.49)
 
             # plt.figure()
