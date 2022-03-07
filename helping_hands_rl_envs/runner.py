@@ -163,15 +163,24 @@ class MultiRunner(object):
       remote.send(('simulate', action))
 
     obs = [remote.recv() for remote in self.remotes]
-    states, hand_obs, obs = zip(*obs)
+    if len(obs[0]) == 3:
+      states, hand_obs, obs = zip(*obs)
+      states = np.stack(states).astype(float)
+      hand_obs = np.stack(hand_obs)
+      obs = np.stack(obs)
+      obs = (states, hand_obs, obs)
+    elif len(obs[0]) == 4:
+      states, hand_obs, obs, force  = zip(*obs)
+      states = np.stack(states).astype(float)
+      hand_obs = np.stack(hand_obs)
+      obs = np.stack(obs)
+      force = np.stack(force)
+      obs = (states, hand_obs, obs, force)
 
-    states = np.stack(states).astype(float)
-    hand_obs = np.stack(hand_obs)
-    obs = np.stack(obs)
     rewards = np.zeros_like(states).astype(np.float32)
     dones = np.zeros_like(states).astype(np.float32)
 
-    return (states, hand_obs, obs), rewards, dones
+    return obs, rewards, dones
 
   def canSimulate(self):
     for remote in self.remotes:
@@ -217,18 +226,27 @@ class MultiRunner(object):
     else:
       obs, rewards, dones, metadata = res
 
-    states, hand_obs, obs = zip(*obs)
+    if len(obs[0]) == 3:
+      states, hand_obs, obs  = zip(*obs)
+      states = np.stack(states).astype(float)
+      hand_obs = np.stack(hand_obs)
+      obs = np.stack(obs)
+      obs = (states, hand_obs, obs)
+    elif len(obs[0]) == 4:
+      states, hand_obs, obs, force  = zip(*obs)
+      states = np.stack(states).astype(float)
+      hand_obs = np.stack(hand_obs)
+      obs = np.stack(obs)
+      force = np.stack(force)
+      obs = (states, hand_obs, obs, force)
 
-    states = np.stack(states).astype(float)
-    hand_obs = np.stack(hand_obs)
-    obs = np.stack(obs)
     rewards = np.stack(rewards)
     dones = np.stack(dones).astype(np.float32)
 
     if metadata:
-      return (states, hand_obs, obs), rewards, dones, metadata
+      return obs, rewards, dones, metadata
     else:
-      return (states, hand_obs, obs), rewards, dones
+      return obs, rewards, dones
 
   def reset(self):
     '''
@@ -241,13 +259,21 @@ class MultiRunner(object):
       remote.send(('reset', None))
 
     obs = [remote.recv() for remote in self.remotes]
-    states, hand_obs, obs = zip(*obs)
+    if len(obs[0]) == 3:
+      states, hand_obs, obs  = zip(*obs)
+      states = np.stack(states).astype(float)
+      hand_obs = np.stack(hand_obs)
+      obs = np.stack(obs)
+      obs = (states, hand_obs, obs)
+    elif len(obs[0]) == 4:
+      states, hand_obs, obs, force  = zip(*obs)
+      states = np.stack(states).astype(float)
+      hand_obs = np.stack(hand_obs)
+      obs = np.stack(obs)
+      force = np.stack(force)
+      obs = (states, hand_obs, obs, force)
 
-    states = np.stack(states).astype(float)
-    hand_obs = np.stack(hand_obs)
-    obs = np.stack(obs)
-
-    return (states, hand_obs, obs)
+    return obs
 
   def reset_envs(self, env_nums):
     '''
@@ -264,13 +290,21 @@ class MultiRunner(object):
       self.remotes[env_num].send(('reset', None))
 
     obs = [self.remotes[env_num].recv() for env_num in env_nums]
-    states, hand_obs, obs = zip(*obs)
+    if len(obs[0]) == 3:
+      states, hand_obs, obs  = zip(*obs)
+      states = np.stack(states).astype(float)
+      hand_obs = np.stack(hand_obs)
+      obs = np.stack(obs)
+      obs = (states, hand_obs, obs)
+    elif len(obs[0]) == 4:
+      states, hand_obs, obs, force  = zip(*obs)
+      states = np.stack(states).astype(float)
+      hand_obs = np.stack(hand_obs)
+      obs = np.stack(obs)
+      force = np.stack(force)
+      obs = (states, hand_obs, obs, force)
 
-    states = np.stack(states).astype(float)
-    hand_obs = np.stack(hand_obs)
-    obs = np.stack(obs)
-
-    return (states, hand_obs, obs)
+    return obs
 
   def getActiveEnvId(self):
     '''
@@ -410,13 +444,21 @@ class MultiRunner(object):
       remote.send(('get_obs'))
 
     obs = [remote.recv() for remote in self.remotes]
-    states, hand_obs, obs = zip(*obs)
+    if len(obs[0]) == 3:
+      states, hand_obs, obs  = zip(*obs)
+      states = np.stack(states).astype(float)
+      hand_obs = np.stack(hand_obs)
+      obs = np.stack(obs)
+      obs = (states, hand_obs, obs)
+    elif len(obs[0]) == 4:
+      states, hand_obs, obs, force  = zip(*obs)
+      states = np.stack(states).astype(float)
+      hand_obs = np.stack(hand_obs)
+      obs = np.stack(obs)
+      force = np.stack(force)
+      obs = (states, hand_obs, obs, force)
 
-    states = np.stack(states).astype(float)
-    hand_obs = np.stack(hand_obs)
-    obs = np.stack(obs)
-
-    return states, hand_obs, obs
+    return obs
 
   def areObjectsInWorkspace(self):
     '''
@@ -503,12 +545,11 @@ class SingleRunner(object):
       obs, rewards, dones = results
     else:
       obs, rewards, dones, metadata = results
-    states, hand_obs, obs = obs
 
     if metadata:
-      return (states, hand_obs, obs), rewards, dones, metadata
+      return obs, rewards, dones, metadata
     else:
-      return (states, hand_obs, obs), rewards, dones
+      return obs, rewards, dones
 
   def reset(self):
     '''

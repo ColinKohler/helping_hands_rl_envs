@@ -148,7 +148,7 @@ class Panda(RobotBase):
     # return pb.getJointState(self.id, 9)[3] <= -5 or pb.getJointState(self.id, 10)[3] <= -5
     return pb.getJointState(self.id, 8)[2][2] > 100
 
-  def getFingerFroce(self):
+  def getFingerForce(self):
     finger_a_force = pb.getJointState(self.id, 9)[2]
     finger_b_force = pb.getJointState(self.id, 10)[2]
 
