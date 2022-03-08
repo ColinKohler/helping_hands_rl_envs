@@ -288,7 +288,7 @@ class FiveDGrasping(BaseEnv):
                     # found_object_directories = glob.glob(urdf_pattern)
                     # total_num_objects = len(found_object_directories)
                     root_dir = os.path.dirname(helping_hands_rl_envs.__file__)
-                    urdf_pattern = os.path.join(root_dir, constants.URDF_PATH, 'GraspNet1B_object/0*/')
+                    urdf_pattern = os.path.join(root_dir, constants.URDF_PATH, 'object/GraspNet1B_object/0*/')
                     found_object_directories = glob.glob(urdf_pattern)
                     total_num_objects = len(found_object_directories)
 
