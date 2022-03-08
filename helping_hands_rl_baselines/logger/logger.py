@@ -18,7 +18,7 @@ class Logger(object):
     num_eval_eps (int): Number of episodes in a evaluation iteration
     hyperparameters (dict): Hyperparameters to log. Defaults to None
   '''
-  def __init__(self, results_path, num_eval_eps=100, hyperparameters=None):
+  def __init__(self, results_path, checkpoint_interval=500, num_eval_eps=100, hyperparameters=None):
     self.results_path = results_path
     self.writer = SummaryWriter(results_path)
     self.log_counter = 0
@@ -137,9 +137,12 @@ class Logger(object):
     for k, v in self.scalar_logs.items():
       self.writer.add_scalar(k, v, self.log_counter)
 
+    if self.num_training_steps > 0 and self.num_training_steps % self.checkpoint_interval == 0:
+      self.exportData()
+
     self.log_counter += 1
 
-  def exportData(self, filepath):
+  def exportData(self):
     '''
     Export log data as a pickle
 
