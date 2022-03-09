@@ -65,6 +65,9 @@ class Kuka(RobotBase):
     [pb.resetJointState(self.id, idx, self.home_positions[idx]) for idx in range(self.num_joints)]
     self.openGripper()
 
+    pb.enableJointForceTorqueSensor(self.id, 9)
+    pb.enableJointForceTorqueSensor(self.id, 10)
+
     self.arm_joint_names = list()
     self.arm_joint_indices = list()
     for i in range (self.num_joints):
@@ -162,6 +165,12 @@ class Kuka(RobotBase):
 
   def gripperHasForce(self):
     return pb.getJointState(self.id, 8)[3] >= 2 or pb.getJointState(self.id, 11)[3] <= -2
+
+  def getFingerForce(self):
+    finger_a_force = pb.getJointState(self.id, 9)[2]
+    finger_b_force = pb.getJointState(self.id, 10)[2]
+
+    return finger_a_force, finger_b_force
 
   def _calculateIK(self, pos, rot):
     return pb.calculateInverseKinematics(self.id, self.end_effector_index, pos, rot, jointDamping=self.jd)[:7]
