@@ -88,4 +88,5 @@ PLANNERS = {
   'close_loop_block_in_bowl' : CloseLoopBlockInBowlPlanner,
   'force_block_picking' : CloseLoopBlockPickingPlanner,
   'force_block_pulling' : CloseLoopBlockPullingPlanner,
+  'force_block_picking_corner' : CloseLoopBlockPickingCornerPlanner,
 }

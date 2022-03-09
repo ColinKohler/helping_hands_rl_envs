@@ -68,6 +68,7 @@ from helping_hands_rl_envs.envs.close_loop_envs.close_loop_block_in_bowl import 
 
 from helping_hands_rl_envs.envs.force_envs.force_block_picking import createForceBlockPickingEnv
 from helping_hands_rl_envs.envs.force_envs.force_block_pulling import createForceBlockPullingEnv
+from helping_hands_rl_envs.envs.force_envs.force_block_picking_corner import createForceBlockPickingCornerEnv
 
 CREATE_ENV_FNS = {
   'block_picking' : createBlockPickingEnv,
@@ -133,4 +134,5 @@ CREATE_ENV_FNS = {
   'close_loop_block_in_bowl': createCloseLoopBlockInBowlEnv,
   'force_block_picking' : createForceBlockPickingEnv,
   'force_block_pulling' : createForceBlockPullingEnv,
+  'force_block_picking_corner' : createForceBlockPickingCornerEnv,
 }
