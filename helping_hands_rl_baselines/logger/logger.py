@@ -21,6 +21,7 @@ class Logger(object):
   def __init__(self, results_path, checkpoint_interval=500, num_eval_eps=100, hyperparameters=None):
     self.results_path = results_path
     self.writer = SummaryWriter(results_path)
+    self.checkpoint_interval = checkpoint_interval
     self.log_counter = 0
     self.scalar_logs = dict()
 

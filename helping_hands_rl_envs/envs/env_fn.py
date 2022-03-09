@@ -25,7 +25,6 @@ from helping_hands_rl_envs.envs.deconstruct_envs.improvise_house_building_3_deco
 from helping_hands_rl_envs.envs.deconstruct_envs.improvise_house_building_discrete_deconstruct_env import createImproviseHouseBuildingDiscreteDeconstructEnv
 from helping_hands_rl_envs.envs.deconstruct_envs.improvise_house_building_random_deconstruct_env import createImproviseHouseBuildingRandomDeconstructEnv
 
-
 from helping_hands_rl_envs.envs.realistic_envs.object_grasping import createObjectGrasping
 from helping_hands_rl_envs.envs.realistic_envs.block_picking_env import createBlockPickingEnv
 from helping_hands_rl_envs.envs.realistic_envs.block_bin_packing_env import createBlockBinPackingEnv
@@ -68,6 +67,7 @@ from helping_hands_rl_envs.envs.close_loop_envs.close_loop_block_pushing import 
 from helping_hands_rl_envs.envs.close_loop_envs.close_loop_block_in_bowl import createCloseLoopBlockInBowlEnv
 
 from helping_hands_rl_envs.envs.force_envs.force_block_picking import createForceBlockPickingEnv
+from helping_hands_rl_envs.envs.force_envs.force_block_pulling import createForceBlockPullingEnv
 
 CREATE_ENV_FNS = {
   'block_picking' : createBlockPickingEnv,
@@ -132,4 +132,5 @@ CREATE_ENV_FNS = {
   'close_loop_block_pushing': createCloseLoopBlockPushingEnv,
   'close_loop_block_in_bowl': createCloseLoopBlockInBowlEnv,
   'force_block_picking' : createForceBlockPickingEnv,
+  'force_block_pulling' : createForceBlockPullingEnv,
 }

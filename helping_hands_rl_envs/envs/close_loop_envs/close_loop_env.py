@@ -301,7 +301,7 @@ class CloseLoopEnv(BaseEnv):
       return depth
     elif self.view_type in ['camera_center_xyz', 'camera_center_xyz_height']:
       # xyz centered, gripper will be visible
-      gripper_pos[2] += gripper_z_offset
+      #gripper_pos[2] += gripper_z_offset
       target_pos = [gripper_pos[0], gripper_pos[1], 0]
       cam_up_vector = [-1, 0, 0]
       self.sensor.setCamMatrix(gripper_pos, cam_up_vector, target_pos)
