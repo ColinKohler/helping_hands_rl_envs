@@ -13,7 +13,7 @@ class ForceBlockPickingEnv(CloseLoopBlockPickingEnv):
     #finger_force = [np.sqrt(np.sum(finger_a_force[:3])**2), np.sqrt(np.sum(finger_b_force[:3])**2)]
     finger_force = [finger_a_force[:3], finger_b_force[:3]]
 
-    return state, hand_obs, obs, np.array(finger_force)
+    return state, hand_obs, obs, np.array(finger_force).reshape(-1)
 
 def createForceBlockPickingEnv(config):
   return ForceBlockPickingEnv(config)
