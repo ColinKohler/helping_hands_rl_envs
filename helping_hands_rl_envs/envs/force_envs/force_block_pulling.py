@@ -10,7 +10,8 @@ class ForceBlockPullingEnv(CloseLoopBlockPullingEnv):
     state, hand_obs, obs = super()._getObservation(action=action)
     finger_a_force, finger_b_force = self.robot.getFingerForce()
 
-    finger_force = [np.sqrt(np.sum(finger_a_force[:3])**2), np.sqrt(np.sum(finger_b_force[:3])**2)]
+    #finger_force = [np.sqrt(np.sum(finger_a_force[:3])**2), np.sqrt(np.sum(finger_b_force[:3])**2)]
+    finger_force = [finger_a_force[:3], finger_b_force[:3]]
 
     return state, hand_obs, obs, np.array(finger_force)
 
