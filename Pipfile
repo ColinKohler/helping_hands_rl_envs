@@ -17,6 +17,8 @@ sphinx = "*"
 rinohtype = "*"
 scikit-learn = "*"
 sphinxcontrib-napoleon = "*"
+more-itertools = "*"
+seaborn = "*"
 
 [requires]
 python_version = "3.7"
