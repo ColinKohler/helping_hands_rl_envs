@@ -41,8 +41,8 @@ class CloseLoopBlockPullingCornerEnv(CloseLoopEnv):
     return orientation
 
   def _checkTermination(self):
-    block_pos, _ = self.objects[-1].getObjPose()
-    return np.linalg.norm(self.env.corner.getPullPose()[0] - block_pos[:2]) < 1e-1
+    block_pos = np.array(self.objects[-1].getXYPosition())
+    return np.linalg.norm(self.corner.getPullPose()[0][:2] - block_pos) < 1e-1
 
   def getObjectPoses(self, objects=None):
     if objects is None: objects = self.objects + [self.corner]
@@ -94,6 +94,8 @@ if __name__ == '__main__':
   while True:
     action = planner.getNextAction()
     obs, reward, done = env.step(action)
+    print(done)
+    input()
 
   # fig, axs = plt.subplots(8, 5, figsize=(25, 40))
   # for i in range(40):

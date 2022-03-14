@@ -60,12 +60,12 @@ class CloseLoopBlockPullingCornerPlanner(CloseLoopPlanner):
       self.current_target = (press_pos, pre_press_rot, constants.PLACE_PRIMATIVE)
     elif self.stage == 2:
       # moving to pull
-      self.stage = 0
+      self.stage = 3
       self.current_target = (pull_pos, pull_rot, constants.PLACE_PRIMATIVE)
-    #elif self.stage == 3:
-    #  # moving to pre pick
-    #  self.stage = 4
-    #  self.current_target = (post_pull_pos, pull_rot, constants.PLACE_PRIMATIVE)
+    elif self.stage == 3:
+      # moving to pre pick
+      self.stage = 0
+      self.current_target = (post_pull_pos, pull_rot, constants.PLACE_PRIMATIVE)
     #elif self.stage == 4:
     #  self.stage = 5
     #  self.current_target = (pre_pick_pos, object_rot, constants.PLACE_PRIMATIVE)
