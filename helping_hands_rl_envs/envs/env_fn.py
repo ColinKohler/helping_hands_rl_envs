@@ -60,6 +60,7 @@ from helping_hands_rl_envs.envs.close_loop_envs.close_loop_block_stacking import
 from helping_hands_rl_envs.envs.close_loop_envs.close_loop_block_pulling import createCloseLoopBlockPullingEnv
 from helping_hands_rl_envs.envs.close_loop_envs.close_loop_house_building_1 import createCloseLoopHouseBuilding1Env
 from helping_hands_rl_envs.envs.close_loop_envs.close_loop_block_picking_corner import createCloseLoopBlockPickingCornerEnv
+from helping_hands_rl_envs.envs.close_loop_envs.close_loop_block_pulling_corner import createCloseLoopBlockPullingCornerEnv
 from helping_hands_rl_envs.envs.close_loop_envs.close_loop_drawer_opening import createCloseLoopDrawerOpeningEnv
 from helping_hands_rl_envs.envs.close_loop_envs.close_loop_household_picking import createCloseLoopHouseholdPickingEnv
 from helping_hands_rl_envs.envs.close_loop_envs.close_loop_household_picking_cluttered import createCloseLoopHouseholdPickingClutteredEnv
@@ -69,6 +70,7 @@ from helping_hands_rl_envs.envs.close_loop_envs.close_loop_block_in_bowl import 
 from helping_hands_rl_envs.envs.force_envs.force_block_picking import createForceBlockPickingEnv
 from helping_hands_rl_envs.envs.force_envs.force_block_pulling import createForceBlockPullingEnv
 from helping_hands_rl_envs.envs.force_envs.force_block_picking_corner import createForceBlockPickingCornerEnv
+from helping_hands_rl_envs.envs.force_envs.force_block_pulling_corner import createForceBlockPullingCornerEnv
 
 CREATE_ENV_FNS = {
   'block_picking' : createBlockPickingEnv,
@@ -127,6 +129,7 @@ CREATE_ENV_FNS = {
   'close_loop_block_pulling': createCloseLoopBlockPullingEnv,
   'close_loop_house_building_1': createCloseLoopHouseBuilding1Env,
   'close_loop_block_picking_corner': createCloseLoopBlockPickingCornerEnv,
+  'close_loop_block_pulling_corner': createCloseLoopBlockPullingCornerEnv,
   'close_loop_drawer_opening': createCloseLoopDrawerOpeningEnv,
   'close_loop_household_picking': createCloseLoopHouseholdPickingEnv,
   'close_loop_clutter_picking': createCloseLoopHouseholdPickingClutteredEnv,
@@ -135,4 +138,5 @@ CREATE_ENV_FNS = {
   'force_block_picking' : createForceBlockPickingEnv,
   'force_block_pulling' : createForceBlockPullingEnv,
   'force_block_picking_corner' : createForceBlockPickingCornerEnv,
+  'force_block_pulling_corner' : createForceBlockPullingCornerEnv,
 }
