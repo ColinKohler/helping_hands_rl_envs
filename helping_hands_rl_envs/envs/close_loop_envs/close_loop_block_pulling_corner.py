@@ -65,7 +65,7 @@ if __name__ == '__main__':
                           [0.01, 0.50]])
   env_config = {'workspace': workspace, 'max_steps': 100, 'obs_size': 128, 'render': True, 'fast_mode': True,
                 'seed': 2, 'action_sequence': 'pxyzr', 'num_objects': 1, 'random_orientation': True,
-                'reward_type': 'step_left', 'simulate_grasp': True, 'perfect_grasp': False, 'robot': 'kuka',
+                'reward_type': 'step_left', 'simulate_grasp': True, 'perfect_grasp': False, 'robot': 'panda',
                 'object_init_space_check': 'point', 'physics_mode': 'fast', 'object_scale_range': (1.2, 1.2),
                 'hard_reset_freq': 1000, }
   planner_config = {'random_orientation': True, 'dpos': 0.05, 'drot': np.pi/8}
