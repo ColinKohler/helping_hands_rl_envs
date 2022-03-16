@@ -490,7 +490,7 @@
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
-            <uri>meshes/wrist.STL</uri>
+            <uri>../hydrostatic_gripper/meshes/wrist.STL</uri>
           </mesh>
         </geometry>
         <material name="gray"/>
@@ -501,7 +501,7 @@
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
-            <uri>meshes/wrist.STL</uri>
+            <uri>../hydrostatic_gripper/meshes/wrist.STL</uri>
           </mesh>
         </geometry>
       </collision>
@@ -530,7 +530,7 @@
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
-            <uri>meshes/wide_finger.STL</uri>
+            <uri>../hydrostatic_gripper/meshes/wide_finger.STL</uri>
           </mesh>
         </geometry>
         <material name="gray"/>
@@ -540,7 +540,7 @@
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
-            <uri>meshes/wide_finger.STL</uri>
+            <uri>../hydrostatic_gripper/meshes/wide_finger.STL</uri>
           </mesh>
         </geometry>
       </collision>
@@ -583,7 +583,8 @@
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
-            <uri>meshes/narrow_finger.STL</uri>
+            <!-- <uri>meshes/narrow_finger.STL</uri> -->
+            <uri>../hydrostatic_gripper/meshes/narrow_finger.STL</uri>
           </mesh>
         </geometry>
         <material name="gray"/>
@@ -593,7 +594,7 @@
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
-            <uri>meshes/narrow_finger.STL</uri>
+            <uri>../hydrostatic_gripper/meshes/narrow_finger.STL</uri>
           </mesh>
         </geometry>
       </collision>
