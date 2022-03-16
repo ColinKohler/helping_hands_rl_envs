@@ -42,7 +42,10 @@ class CloseLoopBlockPullingCornerEnv(CloseLoopEnv):
 
   def _checkTermination(self):
     block_pos = np.array(self.objects[-1].getXYPosition())
-    return np.linalg.norm(self.corner.getPullPose()[0][:2] - block_pos) < 1e-1
+    corner_wall_x = self.corner.getObjPose()[0][0]
+    corner_wall_y = self.corner.getObjPose()[0][1]
+    return (np.abs(corner_wall_x - block_pos[0]) > 1e-1 or
+            np.abs(corner_wall_y - block_pos[1]) > 1e-1)
 
   def getObjectPoses(self, objects=None):
     if objects is None: objects = self.objects + [self.corner]
