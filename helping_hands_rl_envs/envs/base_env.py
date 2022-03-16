@@ -507,7 +507,6 @@ class BaseEnv:
     else:
       orientations = rot
 
-
     for position, orientation in zip(valid_positions, orientations):
       if not scale:
         scale = npr.choice(np.arange(self.block_scale_range[0], self.block_scale_range[1]+0.01, 0.02))
@@ -547,8 +546,6 @@ class BaseEnv:
       elif shape_type == constants.FLAT_BLOCK:
         handle = pb_obj_generation.generateFlatBlock(position, orientation, scale)
       elif shape_type == constants.RANDOM_HOUSEHOLD200:
-        handle = pb_obj_generation.generateRandomHouseHoldObj200(position, orientation, scale, model_id)
-      elif shape_type == constants.GRASP_NET_OBJ:
         handle = pb_obj_generation.generateGraspNetObject(position, orientation, scale, model_id)
 
       else:
