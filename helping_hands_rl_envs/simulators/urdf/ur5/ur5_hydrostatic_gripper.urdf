@@ -302,7 +302,7 @@
   </joint>
   <!-- base -->
   <joint name="simple_arm_tool0_simple_gripper_base_joint" type="fixed">
-    <origin rpy="0 -1.5708 0" xyz="0 0 0"/>
+    <origin rpy="1.5708 0 -1.5708" xyz="0 0 0.015"/>
     <parent link="simple_arm_tool0"/>
     <child link="gripah_base"/>
   </joint>
@@ -321,18 +321,18 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="meshes/wrist.STL"/>
+        <mesh filename="simulators/urdf/hydrostatic_gripper/meshes/wrist.STL"/>
       </geometry>
       <material name="gray"/>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="meshes/wrist.STL"/>
+        <mesh filename="simulators/urdf/hydrostatic_gripper/meshes/wrist.STL"/>
       </geometry>
     </collision>
   </link>
-  <!-- <link name="wide_finger_link">
+  <link name="wide_finger_link">
     <inertial>
       <origin rpy="0 0 0" xyz="0.056976 0.015337 -2.3122E-09"/>
       <mass value="0.0167"/>
@@ -341,14 +341,14 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="meshes/wide_finger.STL"/>
+        <mesh filename="simulators/urdf/hydrostatic_gripper/meshes/wide_finger.STL"/>
       </geometry>
       <material name="gray"/>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="meshes/wide_finger.STL"/>
+        <mesh filename="simulators/urdf/hydrostatic_gripper/meshes/wide_finger.STL"/>
       </geometry>
     </collision>
   </link>
@@ -368,14 +368,14 @@
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="meshes/narrow_finger.STL"/>
+        <mesh filename="simulators/urdf/hydrostatic_gripper/meshes/narrow_finger.STL"/>
       </geometry>
       <material name="gray"/>
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="meshes/narrow_finger.STL"/>
+        <mesh filename="simulators/urdf/hydrostatic_gripper/meshes/narrow_finger.STL"/>
       </geometry>
     </collision>
   </link>
@@ -385,9 +385,14 @@
     <parent link="gripah_base"/>
     <child link="narrow_finger_link"/>
     <limit effort="6.6" lower="-1.0472" upper="1.0472" velocity="8.0"/>
-  </joint> -->
+  </joint>
 
-   <!-- <link name="dummy_center_indicator_link">
+   <link name="dummy_center_indicator_link">
+     <visual>
+       <geometry>
+         <box size="0.02 0.02 0.02"/>
+       </geometry>
+     </visual>
     <inertial>
       <mass value="0.0" />
       <inertia ixx = "0" ixy = "0" ixz = "0"
@@ -399,6 +404,6 @@
   <joint name="dummy_center_fixed_joint" type="fixed">
     <child link="dummy_center_indicator_link"/>
     <parent link="simple_arm_tool0"/>
-    <origin rpy="0.0 0.0 1.5707" xyz="0 0 0.14" />
-  </joint> -->
+    <origin rpy="0.0 0.0 1.5707" xyz="0 -0.2 0.015" />
+  </joint>
 </robot>
