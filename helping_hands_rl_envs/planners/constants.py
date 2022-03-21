@@ -30,6 +30,7 @@ from helping_hands_rl_envs.planners.close_loop_household_picking_cluttered_plann
 from helping_hands_rl_envs.planners.close_loop_household_pushing_planner import CloseLoopHouseholdPushingPlanner
 from helping_hands_rl_envs.planners.close_loop_block_pushing_planner import CloseLoopBlockPushingPlanner
 from helping_hands_rl_envs.planners.close_loop_block_in_bowl_planner import CloseLoopBlockInBowlPlanner
+from helping_hands_rl_envs.planners.close_loop_peg_insertion_planner import CloseLoopPegInsertionPlanner
 
 PLANNERS = {
   'random' : RandomPlanner,
@@ -88,6 +89,7 @@ PLANNERS = {
   'close_loop_household_pushing' : CloseLoopHouseholdPushingPlanner,
   'close_loop_block_pushing' : CloseLoopBlockPushingPlanner,
   'close_loop_block_in_bowl' : CloseLoopBlockInBowlPlanner,
+  'close_loop_peg_insertion' : CloseLoopPegInsertionPlanner,
   'force_block_picking' : CloseLoopBlockPickingPlanner,
   'force_block_pulling' : CloseLoopBlockPullingPlanner,
   'force_block_picking_corner' : CloseLoopBlockPickingCornerPlanner,

@@ -443,7 +443,7 @@ class BaseEnv:
 
   def _getDefaultBoarderPadding(self, shape_type):
     if shape_type in (constants.CUBE, constants.TRIANGLE, constants.RANDOM, constants.CYLINDER, constants.RANDOM_BLOCK,
-                      constants.RANDOM_HOUSEHOLD, constants.BOTTLE, constants.TEST_TUBE, constants.SWAB):
+                      constants.RANDOM_HOUSEHOLD, constants.BOTTLE, constants.TEST_TUBE, constants.SWAB, constants.SQUARE_PEG):
       padding = self.max_block_size * 2.4
     elif shape_type in (constants.BRICK, constants.ROOF, constants.CUP, constants.SPOON, constants.BOX,
                         constants.FLAT_BLOCK):
@@ -458,7 +458,7 @@ class BaseEnv:
 
   def _getDefaultMinDistance(self, shape_type):
     if shape_type in (constants.CUBE, constants.TRIANGLE, constants.RANDOM, constants.CYLINDER, constants.RANDOM_BLOCK,
-                      constants.BOTTLE, constants.TEST_TUBE, constants.SWAB):
+                      constants.BOTTLE, constants.TEST_TUBE, constants.SWAB, constants.SQUARE_PEG):
       min_distance = self.max_block_size * 2.4
     elif shape_type in (constants.BRICK, constants.ROOF, constants.CUP, constants.SPOON, constants.BOX,
                         constants.FLAT_BLOCK):
@@ -477,7 +477,7 @@ class BaseEnv:
     return [o.getXYPosition() for o in self.objects]
 
   def _generateShapes(self, shape_type=0, num_shapes=1, scale=None, pos=None, rot=None,
-                           min_distance=None, padding=None, random_orientation=False, z_scale=1, model_id=1):
+                           min_distance=None, padding=None, random_orientation=False, z_scale=1, model_id=1, wait=True):
     ''''''
     # if padding is not set, use the default padding
     if padding is None:
@@ -552,7 +552,8 @@ class BaseEnv:
         handle = pb_obj_generation.generateFlatBlock(position, orientation, scale)
       elif shape_type == constants.RANDOM_HOUSEHOLD200:
         handle = pb_obj_generation.generateGraspNetObject(position, orientation, scale, model_id)
-
+      elif shape_type == constants.SQUARE_PEG:
+        handle = pb_obj_generation.generateSquarePeg(position, orientation, scale)
       else:
         raise NotImplementedError
 
@@ -564,7 +565,8 @@ class BaseEnv:
     for h in shape_handles:
       self.object_types[h] = shape_type
 
-    self.wait(50)
+    if wait:
+      self.wait(50)
     return shape_handles
 
   def getObjects(self):
