@@ -62,16 +62,17 @@ if __name__ == '__main__':
                 'seed': 2, 'action_sequence': 'pxyzr', 'num_objects': 1, 'random_orientation': True,
                 'reward_type': 'step_left', 'simulate_grasp': True, 'perfect_grasp': False, 'robot': 'panda',
                 'object_init_space_check': 'point', 'physics_mode': 'fast', 'object_scale_range': (1, 1), 'hard_reset_freq': 1000}
-  planner_config = {'random_orientation': False, 'dpos': 0.05, 'drot': np.pi/8}
+  planner_config = {'random_orientation': False, 'dpos': 0.025, 'drot': np.pi/8}
   env_config['seed'] = 1
   env = CloseLoopPegInsertionEnv(env_config)
   planner = CloseLoopPegInsertionPlanner(env, planner_config)
-  obs = env.reset()
 
   input('start')
-  done = False
-  while not done:
-    action = planner.getNextAction()
-    #plt.imshow(obs[2].squeeze(), cmap='gray'); plt.show()
-    obs, reward, done = env.step(action)
-    time.sleep(0.1)
+  for _ in range(10):
+    obs = env.reset()
+    done = False
+    while not done:
+      action = planner.getNextAction()
+      #plt.imshow(obs[2].squeeze(), cmap='gray'); plt.show()
+      obs, reward, done = env.step(action)
+      time.sleep(0.1)
