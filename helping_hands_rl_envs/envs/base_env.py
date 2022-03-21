@@ -125,6 +125,11 @@ class BaseEnv:
       self.num_solver_iterations = 200
       self.solver_residual_threshold = 1e-7
       self.robot.position_gain = 0.01
+    elif config['physics_mode'] == 'force':
+      self.physics_mode = 'force'
+      self.num_solver_iterations = 200
+      self.solver_residual_threshold = 1e-7
+      self.robot.position_gain = 0.005
     elif config['physics_mode'] == 'custom':
       self.physics_mode = 'custom'
       self.num_solver_iterations = config['num_solver_iterations']
@@ -205,7 +210,7 @@ class BaseEnv:
 
     # TODO: These might have to be in the config depending on how they effect the solver_residual_threshold
     self.table_id = pb.loadURDF('plane.urdf', [0,0,0])
-    pb.changeDynamics(self.table_id, -1, linearDamping=0.04, angularDamping=0.04, restitution=0, contactStiffness=3000, contactDamping=100)
+    #pb.changeDynamics(self.table_id, -1, linearDamping=0.04, angularDamping=0.04, restitution=0, contactStiffness=3000, contactDamping=100)
 
     # Load the UR5 and set it to the home positions
     self.robot.initialize()

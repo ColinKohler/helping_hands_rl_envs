@@ -9,12 +9,12 @@ import helping_hands_rl_envs
 from helping_hands_rl_envs.pybullet.objects.pybullet_object import PybulletObject
 from helping_hands_rl_envs.pybullet.utils import constants
 
-class Peg(PybulletObject):
+class SquarePeg(PybulletObject):
   def __init__(self, pos, rot, scale):
     root_dir = os.path.dirname(helping_hands_rl_envs.__file__)
-    urdf_filepath = os.path.join(root_dir, constants.OBJECTS_PATH, 'peg.urdf')
+    urdf_filepath = os.path.join(root_dir, constants.OBJECTS_PATH, 'square_peg.urdf')
     object_id = pb.loadURDF(urdf_filepath, basePosition=pos, baseOrientation=rot, globalScaling=scale)
-    super().__init__(constants.PEG, object_id)
+    super().__init__(constants.SQUARE_PEG, object_id)
 
     self.original_height = 0.025
     self.original_size = 0.05

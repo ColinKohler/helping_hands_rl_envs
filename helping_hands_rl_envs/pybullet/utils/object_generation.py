@@ -15,7 +15,7 @@ from helping_hands_rl_envs.pybullet.objects.random_brick import RandomBrick
 from helping_hands_rl_envs.pybullet.objects.cup import Cup
 from helping_hands_rl_envs.pybullet.objects.bowl import Bowl
 from helping_hands_rl_envs.pybullet.objects.plate import Plate
-from helping_hands_rl_envs.pybullet.objects.peg import Peg
+from helping_hands_rl_envs.pybullet.objects.square_peg import SquarePeg
 from helping_hands_rl_envs.pybullet.objects.test_tube import TestTube
 from helping_hands_rl_envs.pybullet.objects.swab import Swab
 from helping_hands_rl_envs.pybullet.objects.random_block import RandomBlock
@@ -37,8 +37,8 @@ def generateBrick(pos, rot, scale):
 def generateCylinder(pos, rot, scale):
   return Cylinder(pos, rot, scale)
 
-def generatePeg(pos, rot, scale):
-  return Peg(pos, rot, scale)
+def generateSquarePeg(pos, rot, scale):
+  return SquarePeg(pos, rot, scale)
 
 def generateTriangle(pos, rot, scale):
   return Triangle(pos, rot, scale)
