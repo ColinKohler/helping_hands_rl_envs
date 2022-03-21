@@ -19,6 +19,7 @@ scikit-learn = "*"
 sphinxcontrib-napoleon = "*"
 more-itertools = "*"
 seaborn = "*"
+pymeshlab = "*"
 
 [requires]
-python_version = "3.7"
+python_version = "3.8"
