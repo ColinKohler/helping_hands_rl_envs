@@ -302,7 +302,8 @@
   </joint>
   <!-- base -->
   <joint name="simple_arm_tool0_simple_gripper_base_joint" type="fixed">
-    <origin rpy="1.5708 0 -1.5708" xyz="0 0 0.015"/>
+    <origin rpy="0.785398 0 -1.5708" xyz="0 0 0.015"/>
+    <!-- <origin rpy="1.5708 0 -1.5708" xyz="0 0 0.015"/> -->
     <parent link="simple_arm_tool0"/>
     <child link="gripah_base"/>
   </joint>
