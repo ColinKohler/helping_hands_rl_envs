@@ -72,6 +72,7 @@ from helping_hands_rl_envs.envs.force_envs.force_block_picking import createForc
 from helping_hands_rl_envs.envs.force_envs.force_block_pulling import createForceBlockPullingEnv
 from helping_hands_rl_envs.envs.force_envs.force_block_picking_corner import createForceBlockPickingCornerEnv
 from helping_hands_rl_envs.envs.force_envs.force_block_pulling_corner import createForceBlockPullingCornerEnv
+from helping_hands_rl_envs.envs.force_envs.force_peg_insertion import createForcePegInsertionEnv
 
 CREATE_ENV_FNS = {
   'block_picking' : createBlockPickingEnv,
@@ -141,4 +142,5 @@ CREATE_ENV_FNS = {
   'force_block_pulling' : createForceBlockPullingEnv,
   'force_block_picking_corner' : createForceBlockPickingCornerEnv,
   'force_block_pulling_corner' : createForceBlockPullingCornerEnv,
+  'force_peg_insertion' : createForcePegInsertionEnv,
 }

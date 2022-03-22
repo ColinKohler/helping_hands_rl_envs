@@ -94,4 +94,5 @@ PLANNERS = {
   'force_block_pulling' : CloseLoopBlockPullingPlanner,
   'force_block_picking_corner' : CloseLoopBlockPickingCornerPlanner,
   'force_block_pulling_corner' : CloseLoopBlockPullingCornerPlanner,
+  'force_peg_insertion' : CloseLoopPegInsertionPlanner,
 }
