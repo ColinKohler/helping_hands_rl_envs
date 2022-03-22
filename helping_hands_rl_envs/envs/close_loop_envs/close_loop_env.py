@@ -112,7 +112,7 @@ class CloseLoopEnv(BaseEnv):
     if self._checkTermination():
       return 1
     else:
-      0
+      return 0
 
   def setRobotHoldingObj(self):
     self.robot.holding_obj = self.robot.getPickedObj(self.objects)
