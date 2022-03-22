@@ -33,7 +33,7 @@ class CloseLoopPegInsertionPlanner(CloseLoopPlanner):
       self.current_target = (pre_insert_pos, pre_insert_rot, constants.PICK_PRIMATIVE)
     elif self.stage == 1:
       # insert peg
-      self.stage = 2
+      self.stage = 0
       self.current_target = (insert_pos, insert_rot, constants.PICK_PRIMATIVE)
 
   def getNextAction(self):
