@@ -79,6 +79,6 @@ if __name__ == '__main__':
     done = False
     while not done:
       action = planner.getNextAction()
-      #plt.imshow(obs[2].squeeze(), cmap='gray'); plt.show()
+      plt.imshow(obs[2].squeeze(), cmap='gray'); plt.show()
       obs, reward, done = env.step(action)
       time.sleep(0.1)
