@@ -21,7 +21,7 @@ class CloseLoopPegInsertionPlanner(CloseLoopPlanner):
 
   def setNewTarget(self):
     pre_insert_pos, pre_insert_rot = self.env.peg_hole.getHolePose()
-    pre_insert_pos[2] += 0.12
+    pre_insert_pos[2] += 0.14
     pre_insert_rot = list(transformations.euler_from_quaternion(pre_insert_rot))
 
     insert_pos, insert_rot = self.env.peg_hole.getHolePose()
@@ -30,7 +30,6 @@ class CloseLoopPegInsertionPlanner(CloseLoopPlanner):
     gripper_rz = transformations.euler_from_quaternion(self.env.robot._getEndEffectorRotation())[2]
 
     if self.stage == 0:
-      print(pre_insert_rot)
       # moving to pre insert
       while pre_insert_rot[2] - gripper_rz > np.pi/4:
         pre_insert_rot[2] -= np.pi/2
