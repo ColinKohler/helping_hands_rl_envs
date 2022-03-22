@@ -1,5 +1,5 @@
 import numpy as np
-from helping_hands_rl_envs.envs.close_loop_envs.close_loop_block_picking_corner import CloseLoopPegInsertionEnv
+from helping_hands_rl_envs.envs.close_loop_envs.close_loop_peg_insertion import CloseLoopPegInsertionEnv
 
 class ForcePegInsertionEnv(CloseLoopPegInsertionEnv):
   def __init__(self, config):
