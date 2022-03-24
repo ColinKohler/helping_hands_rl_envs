@@ -30,10 +30,10 @@ class CloseLoopPegInsertionEnv(CloseLoopEnv):
     self.robot.moveTo([self.workspace[0].mean(), self.workspace[1].mean(), 0.2], transformations.quaternion_from_euler(0, 0, 0))
 
     self.resetPegHole()
-    #self.peg = pb_obj_generation.generateSquarePeg([self.workspace[0].mean(), self.workspace[1].mean(), 0.17], [0,0,0,1], 0.12)
     self.peg = self._generateShapes(constants.SQUARE_PEG, pos=[[self.workspace[0].mean(), self.workspace[1].mean(), 0.17]], rot=[[0,0,0,1]], scale=0.10, wait=False)[0]
     self.robot.closeGripper()
     self.setRobotHoldingObj()
+    self.peg.resetPose([self.workspace[0].mean(), self.workspace[1].mean(), 0.17], [0,0,0,1])
 
     return self._getObservation()
 
