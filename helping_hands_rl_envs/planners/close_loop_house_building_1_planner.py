@@ -24,7 +24,7 @@ class CloseLoopHouseBuilding1Planner(CloseLoopPlanner):
 
   def setNewTarget(self):
     blocks = np.array(list(filter(lambda x: x.object_type_id is constants.CUBE and not self.isObjectHeld(x) and self.isObjOnTop(x), self.env.objects)))
-    if not blocks:
+    if len(blocks) == 0:
       blocks = np.array(list(filter(lambda x: x.object_type_id is constants.CUBE, self.env.objects)))
     block_poses = self.env.getObjectPoses(blocks)
     sorted_inds = np.flip(np.argsort(block_poses[:,2], axis=0))

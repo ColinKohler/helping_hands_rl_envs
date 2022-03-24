@@ -193,14 +193,14 @@ class CloseLoopEnv(BaseEnv):
     ''''''
     if self.obs_type == 'pixel':
       self.heightmap = self._getHeightmap()
-      gripper_img = self.getGripperImg()
+      #gripper_img = self.getGripperImg()
       heightmap = self.heightmap
-      if self.view_type.find('height') > -1:
-        gripper_pos = self.robot._getEndEffectorPosition()
-        heightmap[gripper_img == 1] = gripper_pos[2]
-      else:
-        heightmap[gripper_img == 1] = 0
-      heightmap = heightmap.reshape([1, self.heightmap_size, self.heightmap_size])
+      #if self.view_type.find('height') > -1:
+      #  gripper_pos = self.robot._getEndEffectorPosition()
+      #  heightmap[gripper_img == 1] = gripper_pos[2]
+      #else:
+      #  heightmap[gripper_img == 1] = 0
+      #heightmap = heightmap.reshape([1, self.heightmap_size, self.heightmap_size])
       # gripper_img = gripper_img.reshape([1, self.heightmap_size, self.heightmap_size])
       return self._isHolding(), None, heightmap
     else:
@@ -225,11 +225,11 @@ class CloseLoopEnv(BaseEnv):
     self.simulate_rot = [0, 0, gripper_rz]
     # obs = self.renderer.getTopDownDepth(self.obs_size_m, self.heightmap_size, pos, 0)
     obs = self._getHeightmap(gripper_pos=self.simulate_pos, gripper_rz=gripper_rz)
-    gripper_img = self.getGripperImg(p, gripper_rz)
-    if self.view_type.find('height') > -1:
-      obs[gripper_img == 1] = self.simulate_pos[2]
-    else:
-      obs[gripper_img == 1] = 0
+    #gripper_img = self.getGripperImg(p, gripper_rz)
+    #if self.view_type.find('height') > -1:
+    #  obs[gripper_img == 1] = self.simulate_pos[2]
+    #else:
+    #  obs[gripper_img == 1] = 0
     # gripper_img = gripper_img.reshape([1, self.heightmap_size, self.heightmap_size])
     # obs[gripper_img==1] = 0
     obs = obs.reshape([1, self.heightmap_size, self.heightmap_size])
