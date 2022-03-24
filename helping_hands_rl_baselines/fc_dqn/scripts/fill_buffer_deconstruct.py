@@ -2,13 +2,14 @@ import sys
 import time
 import copy
 import collections
+import torch
 from tqdm import tqdm
-
+from helping_hands_rl_baselines.fc_dqn.utils.parameters import *
 import matplotlib.pyplot as plt
 
 sys.path.append('./')
 sys.path.append('..')
-from baselines.fc_dqn.utils.env_wrapper import EnvWrapper
+from helping_hands_rl_baselines.fc_dqn.utils.env_wrapper import EnvWrapper
 
 ExpertTransition = collections.namedtuple('ExpertTransition', 'state obs action reward next_state next_obs done step_left expert')
 
@@ -35,12 +36,28 @@ def fillDeconstruct(agent, replay_buffer):
                 return False
         return True
 
+    if env in ['block_stacking',
+               'house_building_1',
+               'house_building_2',
+               'house_building_3',
+               'house_building_4',
+               'improvise_house_building_2',
+               'improvise_house_building_3',
+               'improvise_house_building_discrete',
+               'improvise_house_building_random',
+               'ramp_block_stacking',
+               'ramp_house_building_1',
+               'ramp_house_building_2',
+               'ramp_house_building_3',
+               'ramp_house_building_4']:
+        deconstruct_env = env + '_deconstruct'
+    else:
+        raise NotImplementedError('deconstruct env not supported for env: {}'.format(env))
+
     plt.style.use('default')
-    envs = EnvWrapper(num_processes,  env, env_config, planner_config)
+    envs = EnvWrapper(num_processes, deconstruct_env, env_config, planner_config)
 
     states, in_hands, obs = envs.reset()
-    obs = obs.permute(0, 3, 1, 2)
-    in_hands = in_hands.permute(0, 3, 1, 2)
     total = 0
     s = 0
     step_times = []
@@ -50,9 +67,8 @@ def fillDeconstruct(agent, replay_buffer):
     local_action = [[] for i in range(num_processes)]
     local_reward = [[] for i in range(num_processes)]
 
-    pbar = tqdm(total=buffer_size)
-    buffer_len = 0
-    while len(replay_buffer) < buffer_size:
+    pbar = tqdm(total=planner_episode)
+    while total < planner_episode:
         # buffer_obs = agent.getCurrentObs(in_hands, obs)
         plan_actions = envs.getNextAction()
         actions_star_idx, actions_star = agent.getActionFromPlan(plan_actions)
@@ -63,9 +79,6 @@ def fillDeconstruct(agent, replay_buffer):
         dones[actions_star[:, state_id] + states_ != 1] = 1
         t = time.time()-t0
         step_times.append(t)
-
-        obs_ = obs_.permute(0, 3, 1, 2)
-        in_hands_ = in_hands_.permute(0, 3, 1, 2)
 
         buffer_obs = getCurrentObs(in_hands_, obs)
         for i in range(num_processes):
@@ -79,11 +92,9 @@ def fillDeconstruct(agent, replay_buffer):
         done_idxes = torch.nonzero(dones).squeeze(1)
         if done_idxes.shape[0] != 0:
             empty_in_hands = envs.getEmptyInHand()
-            empty_in_hands = empty_in_hands.permute(0, 3, 1, 2)
 
             buffer_obs_ = getCurrentObs(empty_in_hands, copy.deepcopy(obs_))
             reset_states_, reset_in_hands_, reset_obs_ = envs.reset_envs(done_idxes)
-            reset_obs_ = reset_obs_.permute(0, 3, 1, 2)
             for i, idx in enumerate(done_idxes):
                 local_obs[idx].append(buffer_obs_[idx])
                 local_state[idx].append(copy.deepcopy(states_[idx]))
@@ -117,11 +128,10 @@ def fillDeconstruct(agent, replay_buffer):
             '{}/{}, SR: {:.3f}, step time: {:.2f}; avg step time: {:.2f}'
             .format(s, total, float(s)/total if total !=0 else 0, t, np.mean(step_times))
         )
-        pbar.update(len(replay_buffer) - buffer_len)
-        buffer_len = len(replay_buffer)
+        pbar.update(done_idxes.shape[0])
 
         states = copy.copy(states_)
         obs = copy.copy(obs_)
-
+    pbar.close()
 if __name__ == '__main__':
     fillDeconstruct()

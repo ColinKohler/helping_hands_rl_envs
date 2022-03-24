@@ -3,8 +3,8 @@ import torch
 # from scipy.ndimage import median_filter
 from cupyx.scipy.ndimage import median_filter
 import cupy as cp
-from baselines.fc_dqn.agents.base_agent import BaseAgent
-from baselines.fc_dqn.utils import transformations
+from helping_hands_rl_baselines.fc_dqn.agents.base_agent import BaseAgent
+from helping_hands_rl_baselines.fc_dqn.utils import transformations
 
 
 class Base6D(BaseAgent):
@@ -33,7 +33,7 @@ class Base6D(BaseAgent):
         for rz in self.rzs:
             for ry in self.rys:
                 for rx in self.rxs:
-                    occupancy = np.ones((24, 24, 24))
+                    occupancy = np.ones((self.patch_size, self.patch_size, self.patch_size))
                     point = np.argwhere(occupancy)
                     point = point - self.patch_size / 2
                     R = transformations.euler_matrix(rx, ry, rz)[:3, :3].T
