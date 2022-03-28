@@ -69,7 +69,7 @@ class TestBulletBlockStacking(unittest.TestCase):
                 sr = float(s) / total if total != 0 else 0
 
             pbar.set_description(
-                '{:.2f}/{}, avg: {:.3f}, plan time: {:.2f}, action time: {:.2f}, avg step time: {:.2f}'
-                    .format(s, steps, sr, t_plan, t_action, np.mean(step_times))
+                '{:.2f}/{}, r: {:.3f}, avg: {:.3f}, plan time: {:.2f}, action time: {:.2f}, avg step time: {:.2f}'
+                    .format(s, steps, rewards[0], sr, t_plan, t_action, np.mean(step_times))
             )
         env.close()

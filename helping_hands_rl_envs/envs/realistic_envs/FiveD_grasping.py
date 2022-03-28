@@ -2,6 +2,7 @@ import os
 import math
 import glob
 import numpy as np
+import torch
 from matplotlib import pyplot as plt
 
 import helping_hands_rl_envs
@@ -57,7 +58,7 @@ class FiveDGrasping(BaseEnv):
     def initialize(self):
         super().initialize()
 
-    def _decodeAction(self, action, return_tray_bottom=False):
+    def _decodeAction(self, action, return_collision_z=False):
         """
         decode input action base on self.action_sequence
         Args:
@@ -85,8 +86,8 @@ class FiveDGrasping(BaseEnv):
 
         rot = (rx, ry, rz)
 
-        if return_tray_bottom:
-            tray_bottom = self.getPatch_z(x, y, rz, return_tray_bottom=True)
+        if return_collision_z:
+            tray_bottom = self.getPatch_z(x, y, rz, return_collision_z=True)
             return motion_primative, x, y, z, rot, tray_bottom
 
         return motion_primative, x, y, z, rot
@@ -99,7 +100,7 @@ class FiveDGrasping(BaseEnv):
         col_pixel = max(col_pixel, self.in_hand_size / 2)
         return row_pixel, col_pixel
 
-    def getPatch_z(self, x, y, rz, z=None, return_tray_bottom=False):
+    def getPatch_z(self, x, y, rz, z=None, return_collision_z=False):
         """
         get the image patch in heightmap, centered at center_pixel, rotated by rz
         :param obs:
@@ -115,7 +116,17 @@ class FiveDGrasping(BaseEnv):
         patch = local_region[int(self.in_hand_size / 2 - 16):int(self.in_hand_size / 2 + 16),
                 int(self.in_hand_size / 2 - 4):int(self.in_hand_size / 2 + 4)]
 
-        tray_bottom_z_pos = np.mean(patch.flatten()[(patch).flatten().argsort()[2:12]]) + self.gripper_reach
+        # tray_bottom_z_pos = np.mean(patch.flatten()[(patch).flatten().argsort()[2:12]]) + self.gripper_reach
+
+        # tray_bottom_z_pos is the minimum height of the grasp_pose_edge
+        # collision_z_pos is the maximum height of the grasp_pose_edge
+        grasp_pose_edge = np.zeros((8, 8))
+        grasp_pose_edge[0:4, :] = patch[0:4, :]
+        grasp_pose_edge[-4:, :] = patch[-4:, :]
+        # collision_z_pos = np.mean(grasp_pose_edge.flatten()[(-grasp_pose_edge).flatten().argsort()[2:8]]) \
+        #                     + self.gripper_reach
+        tray_bottom_z_pos = np.mean(grasp_pose_edge.flatten()[(grasp_pose_edge).flatten().argsort()[2:8]]) \
+                            + self.gripper_reach
         if z is None:
             aggressive_z_pos = np.mean(patch.flatten()[(-patch).flatten().argsort()[2:12]]) - self.gripper_depth
             safe_z_pos = max(aggressive_z_pos, tray_bottom_z_pos)
@@ -127,7 +138,7 @@ class FiveDGrasping(BaseEnv):
         # safe_z_pos = min(safe_z_pos, self.workspace[2, 1])
         # assert self.workspace[2][0] <= safe_z_pos <= self.workspace[2][1]
 
-        if return_tray_bottom:
+        if return_collision_z:
             return tray_bottom_z_pos
         return safe_z_pos
 
@@ -158,29 +169,29 @@ class FiveDGrasping(BaseEnv):
             # the difference d measures the change of the observation outside the grasp local in terns of pixel
             # value. Where the grasp local is the region within radius of the gripper.
             # d in [0, 1]
-            motion_primative, x, y, z, rot, grasp_local_bottom = self._decodeAction(action, return_tray_bottom=True)
+            motion_primative, x, y, z, rot, grasp_local_bottom = self._decodeAction(action, return_collision_z=True)
             row_pixel, col_pixel = self._getPixelsFromPos(x, y)
 
-            # xs = np.arange(-(self.in_hand_size - 1) / 2, (self.in_hand_size - 1) / 2 + 1, 1).reshape(1, -1).repeat(
-            #     self.in_hand_size, axis=0)
-            # ys = np.arange(-(self.in_hand_size - 1) / 2, (self.in_hand_size - 1) / 2 + 1, 1).reshape(-1, 1).repeat(
-            #     self.in_hand_size, axis=1)
-            # circle = (np.power(xs, 2) + np.power(ys, 2)) <= (self.in_hand_size / 2) ** 2
-            #
-            # s0 = obs0[2][0]
-            # s1 = obs1[2][0]
-            #
-            # grasp_local = np.zeros_like(s0, dtype=bool)
-            # grasp_local[int(row_pixel - self.in_hand_size / 2):int(row_pixel + self.in_hand_size / 2),
-            #             int(col_pixel - self.in_hand_size / 2):int(col_pixel + self.in_hand_size / 2)] = circle
-            # outside = np.logical_not(grasp_local)
+            xs = np.arange(-(self.in_hand_size - 1) / 2, (self.in_hand_size - 1) / 2 + 1, 1).reshape(1, -1).repeat(
+                self.in_hand_size, axis=0)
+            ys = np.arange(-(self.in_hand_size - 1) / 2, (self.in_hand_size - 1) / 2 + 1, 1).reshape(-1, 1).repeat(
+                self.in_hand_size, axis=1)
+            circle = (np.power(xs, 2) + np.power(ys, 2)) <= (self.in_hand_size / 2) ** 2
+
+            s0 = obs0[2][0]
+            s1 = obs1[2][0]
+
+            grasp_local = np.zeros_like(s0, dtype=bool)
+            grasp_local[int(row_pixel - self.in_hand_size / 2):int(row_pixel + self.in_hand_size / 2),
+                        int(col_pixel - self.in_hand_size / 2):int(col_pixel + self.in_hand_size / 2)] = circle
+            outside = np.logical_not(grasp_local)
 
             # d_scene: the difference of the scene
             # d_collision: the distance z goes below grasp_local_bottom
-            # d_scene = (np.abs(s0[outside] - s1[outside]) / np.maximum(s0[outside], s1[outside])).mean()
+            d_scene = (np.abs(s0[outside] - s1[outside]) / np.maximum(s0[outside], s1[outside])).mean()
             d_collision = np.maximum(grasp_local_bottom - z, 0)
-            # d = d_scene * 50 + d_collision * 100
-            d = d_collision * 50
+            d = d_scene * 10 + d_collision * 50
+            # d = d_collision * 50
             # d = min(d, 0.499)
             d = min(d, 1)
 
