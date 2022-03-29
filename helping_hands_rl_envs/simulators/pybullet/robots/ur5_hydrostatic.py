@@ -166,7 +166,7 @@ class UR5_Hydrostatic(RobotBase):
     return True
 
   def _calculateIK(self, pos, rot):
-    return pb.calculateInverseKinematics(self.id, self.end_effector_index, pos, rot)[:7]
+    return pb.calculateInverseKinematics(self.id, self.end_effector_index, pos, rot)[:6]
 
   def _getGripperJointPosition(self):
     p1 = pb.getJointState(self.id, self.gripper_joint_indices[0])[0]

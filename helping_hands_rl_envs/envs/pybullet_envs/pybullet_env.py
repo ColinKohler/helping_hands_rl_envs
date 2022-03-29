@@ -10,6 +10,7 @@ import helping_hands_rl_envs.envs.pybullet_envs.constants as py_constants
 
 from helping_hands_rl_envs.simulators.pybullet.robots.ur5_simple import UR5_Simple
 from helping_hands_rl_envs.simulators.pybullet.robots.ur5_robotiq import UR5_Robotiq
+from helping_hands_rl_envs.simulators.pybullet.robots.ur5_hydrostatic import UR5_Hydrostatic
 from helping_hands_rl_envs.simulators.pybullet.robots.kuka import Kuka
 from helping_hands_rl_envs.simulators.pybullet.robots.kuka_hydrostatic import KukaHydrostaticGripper
 from helping_hands_rl_envs.simulators.pybullet.utils.sensor import Sensor
@@ -54,6 +55,8 @@ class PyBulletEnv(BaseEnv):
       self.robot = UR5_Simple()
     elif config['robot'] == 'ur5_robotiq':
       self.robot = UR5_Robotiq()
+    elif config['robot'] == 'ur5_hydrostatic_gripper':
+      self.robot = UR5_Hydrostatic()
     elif config['robot'] == 'kuka':
       self.robot = Kuka()
     elif config['robot'] == 'kuka_hydrostatic_gripper':
