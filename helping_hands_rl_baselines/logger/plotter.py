@@ -16,6 +16,7 @@ class Plotter(object):
   '''
   def __init__(self, log_filepaths, log_names):
     self.logs = self.loadLogs(log_filepaths, log_names)
+    breakpoint()
 
   def loadLogs(self, filepaths, names):
     '''
