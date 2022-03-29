@@ -113,7 +113,7 @@ class UR5_Hydrostatic(RobotBase):
       force = 10
     p1, p2 = self._getGripperJointPosition()
     target = self.gripper_joint_limit[0]
-    self._sendGripperCommand(target, target)
+    self._sendGripperCommand(target, target, force)
     self.gripper_closed = True
     it = 0
     while abs(target-p1) + abs(target-p2) > 0.001:
@@ -179,9 +179,11 @@ class UR5_Hydrostatic(RobotBase):
     pb.setJointMotorControlArray(self.id, self.arm_joint_indices, pb.POSITION_CONTROL, commands,
                                  [0.]*num_motors, self.max_forces[:-2], [0.02]*num_motors, [1.0]*num_motors)
 
-  def _sendGripperCommand(self, target_pos1, target_pos2):
-    pb.setJointMotorControlArray(self.id, self.gripper_joint_indices, pb.POSITION_CONTROL,
-                                 targetPositions=[target_pos1, target_pos2], forces=self.gripper_open_force,
-                                 positionGains=[self.position_gain]*2, velocityGains=[1.0]*2)
+  def _sendGripperCommand(self, target_pos1, target_pos2, force = 2):
+    pb.setJointMotorControlArray(self.id,
+                                 self.gripper_joint_indices,
+                                 pb.POSITION_CONTROL,
+                                 targetPositions=[target_pos1, target_pos2],
+                                 forces=[force, force])
     # pb.setJointMotorControlArray(self.id, self.gripper_joint_indices, pb.POSITION_CONTROL,
     #                              targetPositions=[target_pos1, target_pos2], forces=self.gripper_open_force)

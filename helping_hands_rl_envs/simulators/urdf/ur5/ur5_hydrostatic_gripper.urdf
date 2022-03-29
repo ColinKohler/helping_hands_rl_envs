@@ -334,6 +334,10 @@
     </collision>
   </link>
   <link name="wide_finger_link">
+    <contact>
+      <lateral_friction value="0.8"/>
+      <spinning_friction value="0.1"/>
+    </contact>
     <inertial>
       <origin rpy="0 0 0" xyz="0.056976 0.015337 -2.3122E-09"/>
       <mass value="0.0167"/>
@@ -361,6 +365,10 @@
     <limit effort="6.6" lower="-1.0472" upper="1.0472" velocity="8.0"/>
   </joint>
   <link name="narrow_finger_link">
+    <contact>
+      <lateral_friction value="0.8"/>
+      <spinning_friction value="0.1"/>
+    </contact>
     <inertial>
       <origin rpy="0 0 0" xyz="0.052556 0.013896 2.3305E-07"/>
       <mass value="0.016641"/>
@@ -388,7 +396,7 @@
     <limit effort="6.6" lower="-1.0472" upper="1.0472" velocity="8.0"/>
   </joint>
 
-   <link name="dummy_center_indicator_link">
+  <link name="dummy_center_indicator_link">
      <visual>
        <geometry>
          <box size="0.02 0.02 0.02"/>
