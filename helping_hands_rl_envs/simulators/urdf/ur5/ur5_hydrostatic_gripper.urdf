@@ -405,6 +405,6 @@
   <joint name="dummy_center_fixed_joint" type="fixed">
     <child link="dummy_center_indicator_link"/>
     <parent link="simple_arm_tool0"/>
-    <origin rpy="0.785398 0.0 1.5707" xyz="0 -0.2 0.015" />
+    <origin rpy="-1.5707 0.785398 0.0" xyz="0 -0.2 0.015" />
   </joint>
 </robot>
