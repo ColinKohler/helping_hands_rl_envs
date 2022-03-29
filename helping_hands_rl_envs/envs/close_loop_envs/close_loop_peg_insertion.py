@@ -1,5 +1,6 @@
 import pybullet as pb
 import numpy as np
+import numpy.random as npr
 
 from helping_hands_rl_envs.pybullet.utils import constants
 from helping_hands_rl_envs.envs.close_loop_envs.close_loop_env import CloseLoopEnv
@@ -80,6 +81,8 @@ if __name__ == '__main__':
     done = False
     while not done:
       action = planner.getNextAction()
-      #plt.imshow(obs[2].squeeze(), cmap='gray'); plt.show()
+      finger_a_force, finger_b_force = env.robot.getFingerForce()
+      finger_force = np.array([finger_a_force[:3], finger_b_force[:3]]).reshape(-1)
+
       obs, reward, done = env.step(action)
     print(reward)
