@@ -108,12 +108,12 @@ class UR5_Hydrostatic(RobotBase):
   def closeGripper(self, max_it=100, primative=constants.PICK_PRIMATIVE):
     ''''''
     if primative == constants.PULL_PRIMATIVE:
-      force = 20
+      self.gripper_close_force = 20
     else:
-      force = 10
+      self.gripper_close_force = 10
     p1, p2 = self._getGripperJointPosition()
     target = self.gripper_joint_limit[0]
-    self._sendGripperCommand(target, target, force)
+    self._sendGripperCommand(target, target, self.gripper_close_force)
     self.gripper_closed = True
     it = 0
     while abs(target-p1) + abs(target-p2) > 0.001:
@@ -129,9 +129,15 @@ class UR5_Hydrostatic(RobotBase):
     return True
 
   def adjustGripperCommand(self):
-    p1, p2 = self._getGripperJointPosition()
-    mean = (p1 + p2) / 2 + 0.01
-    self._sendGripperCommand(mean, mean)
+    '''TODO: As currently implemented this causes the gripper to loosen it's grip,
+    and drop things, bcause it resets the gripper close target from 0 to a small
+     offset on the current position. It is not clear that this gripper should have
+     and adjust function because there is no mechanical constraint that the fingers
+     have the same joint angle as with the robotiq or other grippers'''
+    # p1, p2 = self._getGripperJointPosition()
+    # mean = (p1 + p2) / 2 - 0.01
+    # self._sendGripperCommand(mean, mean, self.gripper_close_force)
+    return
 
   def checkGripperClosed(self):
     limit = self.gripper_joint_limit[1]

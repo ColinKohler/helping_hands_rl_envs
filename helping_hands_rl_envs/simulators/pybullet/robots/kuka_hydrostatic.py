@@ -102,9 +102,14 @@ class KukaHydrostaticGripper(RobotBase):
     return True
 
   def adjustGripperCommand(self):
-    p1, p2 = self._getGripperJointPosition()
-    mean = (p1 + p2) / 2 - 0.01
-    self._sendGripperCommand(mean, mean)
+    '''TODO As currently implemented, this works, but it is incorrect becasue the
+    one gripper has a fully open position at -0.3 and the other at 0.3, so the
+    average is always ~0.0. The function is incorrect. The SDF could be changed
+    to make the joint directions more intuitive'''
+    # p1, p2 = self._getGripperJointPosition()
+    # mean = (p1 + p2) / 2 - 0.01
+    # self._sendGripperCommand(mean, mean)
+    return
 
   def checkGripperClosed(self):
     limit = self.gripper_joint_limit[1]
