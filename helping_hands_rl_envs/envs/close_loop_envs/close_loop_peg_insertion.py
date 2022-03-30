@@ -31,11 +31,13 @@ class CloseLoopPegInsertionEnv(CloseLoopEnv):
     self.robot.moveTo([self.workspace[0].mean(), self.workspace[1].mean(), 0.2], transformations.quaternion_from_euler(0, 0, 0))
 
     self.resetPegHole()
-    self.peg = self._generateShapes(constants.SQUARE_PEG, pos=[[self.workspace[0].mean(), self.workspace[1].mean(), 0.17]], rot=[[0,0,0,1]], scale=0.125, wait=False)[0]
+    self.peg = self._generateShapes(constants.SQUARE_PEG, pos=[[self.workspace[0].mean(), self.workspace[1].mean(), 0.17]], rot=[[0,0,0,1]], scale=0.120, wait=False)[0]
     self.robot.closeGripper()
     self.setRobotHoldingObj()
-    self.peg.resetPose([self.workspace[0].mean(), self.workspace[1].mean(), 0.17], [0,0,0,1])
 
+    for _ in range(2):
+      pb.stepSimulation()
+    self.peg.resetPose([self.workspace[0].mean(), self.workspace[1].mean(), 0.17], [0,0,0,1])
     return self._getObservation()
 
   def _checkTermination(self):
@@ -83,6 +85,9 @@ if __name__ == '__main__':
       action = planner.getNextAction()
       finger_a_force, finger_b_force = env.robot.getFingerForce()
       finger_force = np.array([finger_a_force[:3], finger_b_force[:3]]).reshape(-1)
+      print(np.round(finger_force, 2))
+      input('continue')
 
       obs, reward, done = env.step(action)
     print(reward)
+    input('continue')

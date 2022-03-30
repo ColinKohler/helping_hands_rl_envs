@@ -206,7 +206,6 @@ class BaseEnv:
     pb.setTimeStep(self._timestep)
     pb.setGravity(0, 0, -10)
 
-    # TODO: These might have to be in the config depending on how they effect the solver_residual_threshold
     self.table_id = pb.loadURDF('plane.urdf', [0,0,0])
     #pb.changeDynamics(self.table_id, -1, linearDamping=0.04, angularDamping=0.04, restitution=0, contactStiffness=3000, contactDamping=100)
 
