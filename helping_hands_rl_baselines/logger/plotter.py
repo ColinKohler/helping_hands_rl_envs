@@ -16,7 +16,6 @@ class Plotter(object):
   '''
   def __init__(self, log_filepaths, log_names):
     self.logs = self.loadLogs(log_filepaths, log_names)
-    breakpoint()
 
   def loadLogs(self, filepaths, names):
     '''
@@ -57,7 +56,7 @@ class Plotter(object):
     plt.savefig(filepath)
     plt.close()
 
-  def plotEvalReturns(self, title, filepath):
+  def plotEvalReturns(self, title, filepath, window=1):
     '''
     Plot mulitple evaluation curves on a single plot.
 
@@ -67,18 +66,19 @@ class Plotter(object):
     fig, ax = plt.subplots()
     ax.set_title(title)
     ax.set_xlabel('Training Steps')
-    ax.set_ylabel('Avg. Reward')
+    ax.set_ylabel('Discounted Return')
 
     for log_name, log in self.logs.items():
       eval_returns = [np.mean(returns) for returns in log['eval_eps_dis_rewards']]
-      xs = np.arange(len(eval_returns)) * 500
+      eval_returns = np.mean(list(more_itertools.windowed(eval_returns, window)), axis=1)
+      xs = np.arange(window, len(eval_returns) + window)
       ax.plot(xs, eval_returns, label=log_name)
 
     ax.legend()
     plt.savefig(filepath)
     plt.close()
 
-  def plotEvalRewards(self, title, filepath):
+  def plotEvalRewards(self, title, filepath, window=1):
     '''
     Plot mulitple evaluation curves on a single plot.
 
@@ -92,14 +92,15 @@ class Plotter(object):
 
     for log_name, log in self.logs.items():
       eval_rewards = [np.mean(rewards) for rewards in log['eval_eps_rewards']]
-      xs = np.arange(len(eval_rewards)) * 500
+      eval_rewards = np.mean(list(more_itertools.windowed(eval_rewards, window)), axis=1)
+      xs = np.arange(window, len(eval_rewards) + window) * 500
       ax.plot(xs, eval_rewards, label=log_name)
 
     ax.legend()
     plt.savefig(filepath)
     plt.close()
 
-  def plotEvalLens(self, title, filepath):
+  def plotEvalLens(self, title, filepath, window=1):
     '''
     Plot mulitple evaluation curves on a single plot.
 
@@ -109,17 +110,39 @@ class Plotter(object):
     fig, ax = plt.subplots()
     ax.set_title(title)
     ax.set_xlabel('Training Steps')
-    ax.set_ylabel('Avg. Reward')
+    ax.set_ylabel('Avg. Eps Len')
 
     for log_name, log in self.logs.items():
       eval_lens = [np.mean(lens) for lens in log['eval_eps_lens']]
-      xs = np.arange(len(eval_lens)) * 500
+      eval_lens = np.mean(list(more_itertools.windowed(eval_lens, window)), axis=1)
+      xs = np.arange(window, len(eval_lens) + window) * 500
       ax.plot(xs, eval_lens, label=log_name)
 
     ax.legend()
     plt.savefig(filepath)
     plt.close()
 
+  def plotEvalValues(self, title, filepath, window=1):
+    '''
+    Plot mulitple evaluation curves on a single plot.
+
+    Args:
+    '''
+
+    fig, ax = plt.subplots()
+    ax.set_title(title)
+    ax.set_xlabel('Training Steps')
+    ax.set_ylabel('Avg. Eps Value')
+
+    for log_name, log in self.logs.items():
+      eval_values = [np.mean(lens) for lens in log['eval_mean_values']]
+      eval_values = np.mean(list(more_itertools.windowed(eval_values, window)), axis=1)
+      xs = np.arange(window, len(eval_values) + window) * 500
+      ax.plot(xs, eval_values, label=log_name)
+
+    ax.legend()
+    plt.savefig(filepath)
+    plt.close()
 
   def plotLearningCurve(self, name, title, filepath, window=100):
     '''

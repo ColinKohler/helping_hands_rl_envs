@@ -7,13 +7,15 @@ if __name__ == '__main__':
   args = parser.parse_args()
 
   log_filepaths = [
-    '/home/colin/hdd/workspace/midichlorians/data/peg_insertion/sm_tol_test/log_data.pkl',
-    '/home/colin/hdd/workspace/ysalamir/data/peg_insertion/32_x_32_obs/log_data.pkl',
+    '/home/colin/hdd/workspace/midichlorians/data/peg_insertion/sm_hole_32x32/log_data.pkl',
+    '/home/colin/hdd/workspace/ysalamir/data/peg_insertion/sm_hole_32x32/log_data.pkl',
   ]
   log_names = ['force', 'vanilla']
 
+  base_dir = 'helping_hands_rl_baselines/scripts/outputs/'
   plotter = Plotter(log_filepaths, log_names)
-  plotter.plotLearningCurves('128x128 Square Peg Insertion', 'train.pdf', window=100, max_eps=None)
-  plotter.plotEvalRewards('128x128 Square Peg Insertion', 'eval_rewards.pdf')
-  plotter.plotEvalReturns('128x128 Square Peg Insertion', 'eval_returns.pdf')
-  plotter.plotEvalLens('128x128 Square Peg Insertion', 'eval_lens.pdf')
+  plotter.plotLearningCurves('128x128 Square Peg Insertion', base_dir + 'train.pdf', window=500, max_eps=None)
+  plotter.plotEvalRewards('128x128 Square Peg Insertion', base_dir + 'eval_rewards.pdf', window=5)
+  plotter.plotEvalReturns('128x128 Square Peg Insertion', base_dir +'eval_returns.pdf', window=5)
+  plotter.plotEvalLens('128x128 Square Peg Insertion', base_dir + 'eval_lens.pdf', window=5)
+  plotter.plotEvalValues('128x128 Square Peg Insertion', base_dir +'eval_values.pdf', window=5)
