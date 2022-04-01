@@ -31,7 +31,7 @@ class CloseLoopPegInsertionEnv(CloseLoopEnv):
     self.robot.moveTo([self.workspace[0].mean(), self.workspace[1].mean(), 0.2], transformations.quaternion_from_euler(0, 0, 0))
 
     self.resetPegHole()
-    self.peg = self._generateShapes(constants.SQUARE_PEG, pos=[[self.workspace[0].mean(), self.workspace[1].mean(), 0.17]], rot=[[0,0,0,1]], scale=0.120, wait=False)[0]
+    self.peg = self._generateShapes(constants.SQUARE_PEG, pos=[[self.workspace[0].mean(), self.workspace[1].mean(), 0.17]], rot=[[0,0,0,1]], scale=0.1175, wait=False)[0]
     self.robot.closeGripper()
     self.setRobotHoldingObj()
 
@@ -41,7 +41,7 @@ class CloseLoopPegInsertionEnv(CloseLoopEnv):
     return self._getObservation()
 
   def _checkTermination(self):
-    if not self._isHolding():
+    if not self._isPegInHand():
       return True
 
     hole_pos, hole_rot = self.peg_hole.getHolePose()
@@ -58,6 +58,13 @@ class CloseLoopPegInsertionEnv(CloseLoopEnv):
     else:
       return 0
 
+  def _isPegInHand(self):
+    peg_pos = self.peg.getPosition()
+    end_effector_pos = self.robot._getEndEffectorPosition()
+    end_effector_pos[2] -= 0.03
+
+    return np.allclose(peg_pos, end_effector_pos, atol=1e-2)
+
 def createCloseLoopPegInsertionEnv(config):
   return CloseLoopPegInsertionEnv(config)
 
@@ -72,7 +79,7 @@ if __name__ == '__main__':
                 'reward_type': 'step_left', 'simulate_grasp': True, 'perfect_grasp': False, 'robot': 'panda',
                 'object_init_space_check': 'point', 'physics_mode': 'fast', 'object_scale_range': (1, 1), 'hard_reset_freq': 1000,
                 'view_type': 'camera_center_xyz'}
-  planner_config = {'random_orientation': False, 'dpos': 0.025, 'drot': np.pi/8}
+  planner_config = {'random_orientation': False, 'dpos': 0.01, 'drot': np.pi/16}
   env_config['seed'] = 1
   env = CloseLoopPegInsertionEnv(env_config)
   planner = CloseLoopPegInsertionPlanner(env, planner_config)
@@ -85,9 +92,8 @@ if __name__ == '__main__':
       action = planner.getNextAction()
       finger_a_force, finger_b_force = env.robot.getFingerForce()
       finger_force = np.array([finger_a_force[:3], finger_b_force[:3]]).reshape(-1)
-      print(np.round(finger_force, 2))
-      input('continue')
+      #print(np.round(finger_force, 2))
 
       obs, reward, done = env.step(action)
     print(reward)
-    input('continue')
+    #input()
