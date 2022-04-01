@@ -18,7 +18,7 @@ class CloseLoopPegInsertionEnv(CloseLoopEnv):
 
   def resetPegHole(self):
     self.peg_hole_rz = np.random.random_sample() * 2*np.pi - np.pi if self.random_orientation else 0
-    self.peg_hole_pos = self._getValidPositions(0.2, 0, [], 1)[0]
+    self.peg_hole_pos = self._getValidPositions(0.25, 0, [], 1)[0]
     self.peg_hole_pos.append(0)
     self.peg_hole.reset(self.peg_hole_pos, pb.getQuaternionFromEuler((0, 0, self.peg_hole_rz)))
 
@@ -31,7 +31,7 @@ class CloseLoopPegInsertionEnv(CloseLoopEnv):
     self.robot.moveTo([self.workspace[0].mean(), self.workspace[1].mean(), 0.2], transformations.quaternion_from_euler(0, 0, 0))
 
     self.resetPegHole()
-    self.peg = self._generateShapes(constants.SQUARE_PEG, pos=[[self.workspace[0].mean(), self.workspace[1].mean(), 0.17]], rot=[[0,0,0,1]], scale=0.1175, wait=False)[0]
+    self.peg = self._generateShapes(constants.SQUARE_PEG, pos=[[self.workspace[0].mean(), self.workspace[1].mean(), 0.17]], rot=[[0,0,0,1]], scale=0.125, wait=False)[0]
     self.robot.closeGripper()
     self.setRobotHoldingObj()
 
@@ -92,7 +92,7 @@ if __name__ == '__main__':
       action = planner.getNextAction()
       finger_a_force, finger_b_force = env.robot.getFingerForce()
       finger_force = np.array([finger_a_force[:3], finger_b_force[:3]]).reshape(-1)
-      #print(np.round(finger_force, 2))
+      print(np.round(finger_force, 2))
 
       obs, reward, done = env.step(action)
     print(reward)
