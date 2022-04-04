@@ -31,7 +31,7 @@ class CloseLoopPegInsertionEnv(CloseLoopEnv):
     self.robot.moveTo([self.workspace[0].mean(), self.workspace[1].mean(), 0.2], transformations.quaternion_from_euler(0, 0, 0))
 
     self.resetPegHole()
-    self.peg = self._generateShapes(constants.SQUARE_PEG, pos=[[self.workspace[0].mean(), self.workspace[1].mean(), 0.17]], rot=[[0,0,0,1]], scale=0.125, wait=False)[0]
+    self.peg = self._generateShapes(constants.SQUARE_PEG, pos=[[self.workspace[0].mean(), self.workspace[1].mean(), 0.17]], rot=[[0,0,0,1]], scale=0.12, wait=False)[0]
     self.robot.closeGripper()
     self.setRobotHoldingObj()
 
@@ -53,10 +53,12 @@ class CloseLoopPegInsertionEnv(CloseLoopEnv):
     hole_pos, hole_rot = self.peg_hole.getHolePose()
     peg_pos = self.peg.getPosition()
 
-    if np.allclose(hole_pos[:2], peg_pos[:2], atol=1e-2) and peg_pos[2] < 0.1:
-      return 1
-    else:
-      return 0
+    finger_a_force, finger_b_force = self.robot.getFingerForce()
+    force_mag = np.sqrt(np.sum(np.array(finger_a_force)**2)) + np.sqrt(np.sum(np.array(finger_b_force)**2))
+    force_pen = np.clip(force_mag - 2, 0, 10) / 10.0
+
+    reward = 1 if np.allclose(hole_pos[:2], peg_pos[:2], atol=1e-2) and peg_pos[2] < 0.1 else 0
+    return reward - 1e-1 * force_pen
 
   def _isPegInHand(self):
     peg_pos = self.peg.getPosition()
@@ -79,21 +81,22 @@ if __name__ == '__main__':
                 'reward_type': 'step_left', 'simulate_grasp': True, 'perfect_grasp': False, 'robot': 'panda',
                 'object_init_space_check': 'point', 'physics_mode': 'fast', 'object_scale_range': (1, 1), 'hard_reset_freq': 1000,
                 'view_type': 'camera_center_xyz'}
-  planner_config = {'random_orientation': False, 'dpos': 0.01, 'drot': np.pi/16}
+  planner_config = {'random_orientation': False, 'dpos': 0.025, 'drot': np.pi/8}
   env_config['seed'] = 1
   env = CloseLoopPegInsertionEnv(env_config)
   planner = CloseLoopPegInsertionPlanner(env, planner_config)
 
   input('start')
-  for _ in range(20):
+  for _ in range(100):
+    c = 0
     obs = env.reset()
     done = False
     while not done:
       action = planner.getNextAction()
       finger_a_force, finger_b_force = env.robot.getFingerForce()
       finger_force = np.array([finger_a_force[:3], finger_b_force[:3]]).reshape(-1)
-      print(np.round(finger_force, 2))
+      #print(np.round(finger_force, 2))
 
       obs, reward, done = env.step(action)
-    print(reward)
-    #input()
+      c += reward
+    print(c)
