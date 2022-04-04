@@ -52,6 +52,7 @@ class FiveDGrasping(BaseEnv):
         self.z_heuristic = config['z_heuristic']
         self.bin_size = config['bin_size']
         self.uncalibrated = config['uncalibrated']
+        self.gripper_max_depth = 0.07
         self.gripper_depth = 0.04
         self.gripper_reach = 0.01
 
@@ -116,20 +117,20 @@ class FiveDGrasping(BaseEnv):
         patch = local_region[int(self.in_hand_size / 2 - 16):int(self.in_hand_size / 2 + 16),
                 int(self.in_hand_size / 2 - 4):int(self.in_hand_size / 2 + 4)]
 
-        # tray_bottom_z_pos = np.mean(patch.flatten()[(patch).flatten().argsort()[2:12]]) + self.gripper_reach
+        # finger_bottom_z_pos = np.mean(patch.flatten()[(patch).flatten().argsort()[2:12]]) + self.gripper_reach
 
-        # tray_bottom_z_pos is the minimum height of the grasp_pose_edge
-        # collision_z_pos is the maximum height of the grasp_pose_edge
         grasp_pose_edge = np.zeros((8, 8))
         grasp_pose_edge[0:4, :] = patch[0:4, :]
         grasp_pose_edge[-4:, :] = patch[-4:, :]
-        # collision_z_pos = np.mean(grasp_pose_edge.flatten()[(-grasp_pose_edge).flatten().argsort()[2:8]]) \
-        #                     + self.gripper_reach
-        tray_bottom_z_pos = np.mean(grasp_pose_edge.flatten()[(grasp_pose_edge).flatten().argsort()[2:8]]) \
+        # finger_bottom_z_pos is the minimum height of the gripper's finger
+        finger_bottom_z_pos = np.mean(grasp_pose_edge.flatten()[(grasp_pose_edge).flatten().argsort()[2:8]]) \
                             + self.gripper_reach
+        # gripper_ceiling_z_pos is the minimum height of the gripper base
+        gripper_ceiling_z_pos = np.mean(patch.flatten()[(-patch).flatten().argsort()[2:12]]) - self.gripper_max_depth
+        collision_z_pos = max(gripper_ceiling_z_pos, finger_bottom_z_pos)
         if z is None:
             aggressive_z_pos = np.mean(patch.flatten()[(-patch).flatten().argsort()[2:12]]) - self.gripper_depth
-            safe_z_pos = max(aggressive_z_pos, tray_bottom_z_pos)
+            safe_z_pos = max(aggressive_z_pos, finger_bottom_z_pos)
         else:
             safe_z_pos = np.mean(patch.flatten()[(-patch).flatten().argsort()[2:12]]) + z
 
@@ -139,7 +140,7 @@ class FiveDGrasping(BaseEnv):
         # assert self.workspace[2][0] <= safe_z_pos <= self.workspace[2][1]
 
         if return_collision_z:
-            return tray_bottom_z_pos
+            return collision_z_pos
         return safe_z_pos
 
     def _checkPerfectGrasp(self, x, y, z, rot, objects):
