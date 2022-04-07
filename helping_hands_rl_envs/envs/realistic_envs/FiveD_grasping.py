@@ -191,10 +191,10 @@ class FiveDGrasping(BaseEnv):
             # d_collision: the distance z goes below grasp_local_bottom
             d_scene = (np.abs(s0[outside] - s1[outside]) / np.maximum(s0[outside], s1[outside])).mean()
             d_collision = np.maximum(grasp_local_bottom - z, 0)
-            d = d_scene * 10 + d_collision * 50
+            d = d_scene * 10 + d_collision * 100
             # d = d_collision * 50
             # d = min(d, 0.499)
-            d = min(d, 1)
+            d = min(d, 0.99)
 
             # plt.figure()
             # plt.imshow(mask.astype(float))
