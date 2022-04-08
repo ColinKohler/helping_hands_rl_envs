@@ -119,18 +119,23 @@ class FiveDGrasping(BaseEnv):
 
         # finger_bottom_z_pos = np.mean(patch.flatten()[(patch).flatten().argsort()[2:12]]) + self.gripper_reach
 
-        grasp_pose_edge = np.zeros((8, 8))
-        grasp_pose_edge[0:4, :] = patch[0:4, :]
-        grasp_pose_edge[-4:, :] = patch[-4:, :]
+        grasp_pose_edge = np.zeros((6, 8))
+        grasp_pose_edge[0:3, :] = patch[0:3, :]
+        grasp_pose_edge[-3:, :] = patch[-3:, :]
         # finger_bottom_z_pos is the minimum height of the gripper's finger
-        finger_bottom_z_pos = np.mean(grasp_pose_edge.flatten()[(grasp_pose_edge).flatten().argsort()[2:8]]) \
-                            + self.gripper_reach
+        agressive_finger_bottom_z_pos = np.mean(grasp_pose_edge.flatten()[grasp_pose_edge.flatten().argsort()[2:8]]) \
+                                        + self.gripper_reach
+        if self.reward_type == 'dense_collision':
+            finger_bottom_z_pos = np.mean(grasp_pose_edge.flatten()) \
+                                  + self.gripper_reach
+        else:
+            finger_bottom_z_pos = agressive_finger_bottom_z_pos
         # gripper_ceiling_z_pos is the minimum height of the gripper base
         gripper_ceiling_z_pos = np.mean(patch.flatten()[(-patch).flatten().argsort()[2:12]]) - self.gripper_max_depth
         collision_z_pos = max(gripper_ceiling_z_pos, finger_bottom_z_pos)
         if z is None:
             aggressive_z_pos = np.mean(patch.flatten()[(-patch).flatten().argsort()[2:12]]) - self.gripper_depth
-            safe_z_pos = max(aggressive_z_pos, finger_bottom_z_pos)
+            safe_z_pos = max(aggressive_z_pos, agressive_finger_bottom_z_pos)
         else:
             safe_z_pos = np.mean(patch.flatten()[(-patch).flatten().argsort()[2:12]]) + z
 
@@ -166,6 +171,7 @@ class FiveDGrasping(BaseEnv):
         obs1 = self._getObservation()
         done = self._checkTermination()
 
+        penalty = 0
         if self.reward_type == 'dense_scene':
             # the difference d measures the change of the observation outside the grasp local in terns of pixel
             # value. Where the grasp local is the region within radius of the gripper.
@@ -184,17 +190,17 @@ class FiveDGrasping(BaseEnv):
 
             grasp_local = np.zeros_like(s0, dtype=bool)
             grasp_local[int(row_pixel - self.in_hand_size / 2):int(row_pixel + self.in_hand_size / 2),
-                        int(col_pixel - self.in_hand_size / 2):int(col_pixel + self.in_hand_size / 2)] = circle
+            int(col_pixel - self.in_hand_size / 2):int(col_pixel + self.in_hand_size / 2)] = circle
             outside = np.logical_not(grasp_local)
 
             # d_scene: the difference of the scene
             # d_collision: the distance z goes below grasp_local_bottom
             d_scene = (np.abs(s0[outside] - s1[outside]) / np.maximum(s0[outside], s1[outside])).mean()
             d_collision = np.maximum(grasp_local_bottom - z, 0)
-            d = d_scene * 10 + d_collision * 100
+            penalty = d_scene * 10 + d_collision * 100
             # d = d_collision * 50
             # d = min(d, 0.499)
-            d = min(d, 0.99)
+            penalty = min(penalty, 0.99)
 
             # plt.figure()
             # plt.imshow(mask.astype(float))
@@ -213,14 +219,21 @@ class FiveDGrasping(BaseEnv):
             # plt.imshow(s1)
             # plt.colorbar()
             # plt.show()
+        elif self.reward_type == 'dense_collision':
+            # the difference d measures the change of the observation outside the grasp local in terns of pixel
+            # value. Where the grasp local is the region within radius of the gripper.
+            # d in [0, 1]
+            motion_primative, x, y, z, rot, grasp_local_bottom = self._decodeAction(action, return_collision_z=True)
+
+            # d_collision: the distance z goes below grasp_local_bottom
+            d_collision = np.maximum(grasp_local_bottom - z, 0)
+            penalty = d_collision * 50
+            # d = d_collision * 50
+            # d = min(d, 0.499)
+            penalty = min(penalty, 0.99)
 
         self.robot.closeGripper()
-        if self.reward_type == 'dense':
-            reward = 1.0 if self.obj_grasped > pre_obj_grasped else 0
-        elif self.reward_type == 'dense_scene':
-            reward = 1.0 - d if self.obj_grasped > pre_obj_grasped else 0
-        else:
-            reward = 1.0 if done else 0.0
+        reward = 1.0 - penalty if self.obj_grasped > pre_obj_grasped else 0
 
         if not done:
             done = self.current_episode_steps >= self.max_steps or not self.isSimValid()
@@ -264,9 +277,11 @@ class FiveDGrasping(BaseEnv):
             elif self.uncalibrated == 'z_r':
                 tray_z = np.random.uniform(0.1, 0.2)
                 tray_rot = np.random.uniform(-0.157, 0.157, 3)
-            else:
+            elif self.uncalibrated == '':
                 tray_z = np.random.uniform(0., 0.)
                 tray_rot = np.random.uniform(0, 0, 3)
+            else:
+                raise NotImplementedError
             # tray_z = np.random.uniform(0.05, 0.2)
             # tray_rot = np.random.uniform(-0.314, 0.314, 3)
             tray_rot[-1] = np.asarray([0])
