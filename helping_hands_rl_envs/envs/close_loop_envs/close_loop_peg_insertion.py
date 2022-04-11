@@ -75,22 +75,21 @@ def createCloseLoopPegInsertionEnv(config):
 if __name__ == '__main__':
   import matplotlib.pyplot as plt
   import time
-  workspace = np.asarray([[0.2, 0.8],
-                          [-0.3, 0.3],
-                          [0.01, 0.50]])
+  workspace = np.asarray([[0.25, 0.65],
+                          [-0.2, 0.2],
+                          [0.01, 0.25]])
   env_config = {'workspace': workspace, 'max_steps': 100, 'obs_size': 128, 'render': True, 'fast_mode': True,
                 'seed': 2, 'action_sequence': 'pxyzr', 'num_objects': 1, 'random_orientation': True,
                 'reward_type': 'step_left', 'simulate_grasp': True, 'perfect_grasp': False, 'robot': 'panda',
                 'object_init_space_check': 'point', 'physics_mode': 'fast', 'object_scale_range': (1, 1), 'hard_reset_freq': 1000,
                 'view_type': 'camera_center_xyz'}
-  planner_config = {'random_orientation': False, 'dpos': 0.025, 'drot': np.pi/8}
+  planner_config = {'random_orientation': False, 'dpos': 0.025, 'drot': np.pi/8, 'rand_point': True}
   env_config['seed'] = 1
   env = CloseLoopPegInsertionEnv(env_config)
   planner = CloseLoopPegInsertionPlanner(env, planner_config)
 
-  input('start')
+  num_success = 0
   for _ in range(100):
-    c = 0
     obs = env.reset()
     done = False
     while not done:
@@ -100,5 +99,8 @@ if __name__ == '__main__':
       #print(np.round(finger_force, 2))
 
       obs, reward, done = env.step(action)
-      c += reward
-    print(c)
+      #print(reward)
+    if reward > 0.9:
+      num_success += 1
+    plt.imshow(obs[2].squeeze(), cmap='gray'); plt.show()
+  #print(num_success)
