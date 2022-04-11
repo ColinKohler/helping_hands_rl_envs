@@ -28,7 +28,7 @@ class Plotter(object):
         with open(fp, 'rb') as f:
           logs[n] = pickle.load(f)
       else:
-        print('No log found at {}'.format(f))
+        print('No log found at {}'.format(fp))
 
     return logs
 
