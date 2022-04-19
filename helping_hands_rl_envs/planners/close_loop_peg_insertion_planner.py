@@ -41,8 +41,8 @@ class CloseLoopPegInsertionPlanner(CloseLoopPlanner):
       self.stage = 1
       self.current_target = (pre_insert_pos, pre_insert_rot, constants.PICK_PRIMATIVE)
     elif self.stage == 1:
-      self.dpos = 0.01
       # insert peg
+      self.dpos = 0.01
       while insert_rot[2] - gripper_rz > np.pi/4:
         insert_rot[2] -= np.pi/2
       while insert_rot[2] - gripper_rz < -np.pi/4:

@@ -12,6 +12,8 @@ from helping_hands_rl_envs.planners.close_loop_peg_insertion_planner import Clos
 class CloseLoopPegInsertionEnv(CloseLoopEnv):
   def __init__(self, config):
     super().__init__(config)
+    self.peg_scale_range = config['object_scale_range']
+
     self.peg_hole = SquarePegHole()
     self.peg_hole_rz = 0
     self.peg_hole_pos = [self.workspace[0].mean(), self.workspace[1].mean(), 0]
@@ -31,7 +33,13 @@ class CloseLoopPegInsertionEnv(CloseLoopEnv):
     self.robot.moveTo([self.workspace[0].mean(), self.workspace[1].mean(), 0.2], transformations.quaternion_from_euler(0, 0, 0))
 
     self.resetPegHole()
-    self.peg = self._generateShapes(constants.SQUARE_PEG, pos=[[self.workspace[0].mean(), self.workspace[1].mean(), 0.17]], rot=[[0,0,0,1]], scale=0.12, wait=False)[0]
+    self.peg = self._generateShapes(
+      constants.SQUARE_PEG,
+      pos=[[self.workspace[0].mean(), self.workspace[1].mean(), 0.17]],
+      rot=[[0,0,0,1]],
+      scale=0.12,#self.peg_scale_range[0],
+      wait=False
+    )[0]
     self.robot.closeGripper()
     self.setRobotHoldingObj()
 
@@ -77,13 +85,12 @@ if __name__ == '__main__':
   workspace = np.asarray([[0.25, 0.65],
                           [-0.2, 0.2],
                           [0.01, 0.25]])
-  env_config = {'workspace': workspace, 'max_steps': 100, 'obs_size': 128, 'render': True, 'fast_mode': True,
-                'seed': 2, 'action_sequence': 'pxyzr', 'num_objects': 1, 'random_orientation': True,
+  env_config = {'workspace': workspace, 'max_steps': 100, 'obs_size': 128, 'render': False, 'fast_mode': True,
+                'seed': None, 'action_sequence': 'pxyzr', 'num_objects': 1, 'random_orientation': True,
                 'reward_type': 'step_left', 'simulate_grasp': True, 'perfect_grasp': False, 'robot': 'panda',
                 'object_init_space_check': 'point', 'physics_mode': 'fast', 'object_scale_range': (1, 1), 'hard_reset_freq': 1000,
                 'view_type': 'camera_center_xyz'}
-  planner_config = {'random_orientation': False, 'dpos': 0.05, 'drot': np.pi/8, 'rand_point': True}
-  env_config['seed'] = 1
+  planner_config = {'random_orientation': False, 'dpos': 0.05, 'drot': np.pi/8, 'rand_point': False}
   env = CloseLoopPegInsertionEnv(env_config)
   planner = CloseLoopPegInsertionPlanner(env, planner_config)
 

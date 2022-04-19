@@ -55,8 +55,9 @@ class Logger(object):
     self.writer.add_text(
       'Hyperparameters', '| Parameter | Value |\n|-------|-------|\n' + '\n'.join(hp_table)
     )
+    #metrics = dict()
+    #self.writer.add_hparams(hyperparameters, metrics)
 
-  # TODO: I don't use this atm so tihs is untested.
   def logStep(self, rewards, done_masks):
     '''
     Log episode step.
