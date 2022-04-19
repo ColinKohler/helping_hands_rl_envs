@@ -19,7 +19,9 @@ import helping_hands_rl_envs.envs.configs as env_configs
 
 from helping_hands_rl_envs.pybullet.robots.ur5_simple import UR5_Simple
 from helping_hands_rl_envs.pybullet.robots.ur5_robotiq import UR5_Robotiq
+from helping_hands_rl_envs.pybullet.robots.ur5_hydrostatic import UR5_Hydrostatic
 from helping_hands_rl_envs.pybullet.robots.kuka import Kuka
+from helping_hands_rl_envs.pybullet.robots.kuka_hydrostatic import KukaHydrostaticGripper
 from helping_hands_rl_envs.pybullet.robots.panda import Panda
 from helping_hands_rl_envs.pybullet.utils.sensor import Sensor
 from helping_hands_rl_envs.pybullet.objects.pybullet_object import PybulletObject
@@ -105,8 +107,12 @@ class BaseEnv:
       self.robot = UR5_Simple()
     elif config['robot'] == 'ur5_robotiq':
       self.robot = UR5_Robotiq()
+    elif config['robot'] == 'ur5_hydrostatic_gripper':
+      self.robot = UR5_Hydrostatic()
     elif config['robot'] == 'kuka':
       self.robot = Kuka()
+    elif config['robot'] == 'kuka_hydrostatic_gripper':
+      self.robot = KukaHydrostaticGripper()
     elif config['robot'] == 'panda':
       self.robot = Panda()
     else:
@@ -209,7 +215,7 @@ class BaseEnv:
     self.table_id = pb.loadURDF('plane.urdf', [0,0,0])
     #pb.changeDynamics(self.table_id, -1, linearDamping=0.04, angularDamping=0.04, restitution=0, contactStiffness=3000, contactDamping=100)
 
-    # Load the UR5 and set it to the home positions
+    # Load the robot and set it to the home positions
     self.robot.initialize()
 
     # Reset episode vars

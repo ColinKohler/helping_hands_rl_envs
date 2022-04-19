@@ -38,6 +38,7 @@ class CloseLoopPegInsertionEnv(CloseLoopEnv):
     for _ in range(2):
       pb.stepSimulation()
     self.peg.resetPose([self.workspace[0].mean(), self.workspace[1].mean(), 0.17], [0,0,0,1])
+
     return self._getObservation()
 
   def _checkTermination(self):
@@ -47,7 +48,7 @@ class CloseLoopPegInsertionEnv(CloseLoopEnv):
     hole_pos, hole_rot = self.peg_hole.getHolePose()
     peg_pos = self.peg.getPosition()
 
-    return np.allclose(hole_pos[:2], peg_pos[:2], atol=1e-2) and peg_pos[2] < 0.1
+    return np.allclose(hole_pos[:2], peg_pos[:2], atol=1e-2) and peg_pos[2] < 0.11
 
   def _getReward(self):
     hole_pos, hole_rot = self.peg_hole.getHolePose()
@@ -58,7 +59,7 @@ class CloseLoopPegInsertionEnv(CloseLoopEnv):
     force_mag = np.sqrt(np.sum(np.array(finger_a_force)**2)) + np.sqrt(np.sum(np.array(finger_b_force)**2))
     force_pen = -(np.clip(force_mag - 2, 0, 10) / 10.0)
 
-    success_reward = 1 if np.allclose(hole_pos[:2], peg_pos[:2], atol=1e-2) and peg_pos[2] < 0.1 else 0
+    success_reward = 1 if np.allclose(hole_pos[:2], peg_pos[:2], atol=1e-2) and peg_pos[2] < 0.11 else 0
     #drop_pen = 0 if self._isPegInHand() else -1
     return success_reward# + force_weight * force_pen
 
@@ -73,8 +74,6 @@ def createCloseLoopPegInsertionEnv(config):
   return CloseLoopPegInsertionEnv(config)
 
 if __name__ == '__main__':
-  import matplotlib.pyplot as plt
-  import time
   workspace = np.asarray([[0.25, 0.65],
                           [-0.2, 0.2],
                           [0.01, 0.25]])
@@ -83,7 +82,7 @@ if __name__ == '__main__':
                 'reward_type': 'step_left', 'simulate_grasp': True, 'perfect_grasp': False, 'robot': 'panda',
                 'object_init_space_check': 'point', 'physics_mode': 'fast', 'object_scale_range': (1, 1), 'hard_reset_freq': 1000,
                 'view_type': 'camera_center_xyz'}
-  planner_config = {'random_orientation': False, 'dpos': 0.025, 'drot': np.pi/8, 'rand_point': True}
+  planner_config = {'random_orientation': False, 'dpos': 0.05, 'drot': np.pi/8, 'rand_point': True}
   env_config['seed'] = 1
   env = CloseLoopPegInsertionEnv(env_config)
   planner = CloseLoopPegInsertionPlanner(env, planner_config)
@@ -102,5 +101,5 @@ if __name__ == '__main__':
       #print(reward)
     if reward > 0.9:
       num_success += 1
-    plt.imshow(obs[2].squeeze(), cmap='gray'); plt.show()
-  #print(num_success)
+    #plt.imshow(obs[2].squeeze(), cmap='gray'); plt.show()
+  print(num_success)

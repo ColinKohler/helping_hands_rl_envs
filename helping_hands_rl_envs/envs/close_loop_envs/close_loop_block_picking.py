@@ -45,39 +45,16 @@ if __name__ == '__main__':
                           [0.01, 0.50]])
   env_config = {'workspace': workspace, 'max_steps': 100, 'obs_size': 128, 'render': True, 'fast_mode': True,
                 'seed': 2, 'action_sequence': 'pxyzr', 'num_objects': 1, 'random_orientation': False,
-                'reward_type': 'step_left', 'simulate_grasp': True, 'perfect_grasp': False, 'robot': 'kuka',
+                'reward_type': 'step_left', 'simulate_grasp': True, 'perfect_grasp': False, 'robot': 'ur5_hydrostatic_gripper',
                 'object_init_space_check': 'point', 'physics_mode': 'fast', 'object_scale_range': (1, 1), 'hard_reset_freq': 1000}
   planner_config = {'random_orientation': False, 'dpos': 0.05, 'drot': np.pi/8}
   env_config['seed'] = 1
   env = CloseLoopBlockPickingEnv(env_config)
   planner = CloseLoopBlockPickingPlanner(env, planner_config)
   s, in_hand, obs = env.reset()
-  # while True:
-  #   current_pos = env.robot._getEndEffectorPosition()
-  #   current_rot = transformations.euler_from_quaternion(env.robot._getEndEffectorRotation())
-  #
-  #   block_pos = env.objects[0].getPosition()
-  #   block_rot = transformations.euler_from_quaternion(env.objects[0].getRotation())
-  #
-  #   pos_diff = block_pos - current_pos
-  #   rot_diff = np.array(block_rot) - current_rot
-  #   pos_diff[pos_diff // 0.01 > 1] = 0.01
-  #   pos_diff[pos_diff // -0.01 > 1] = -0.01
-  #
-  #   rot_diff[rot_diff // (np.pi/32) > 1] = np.pi/32
-  #   rot_diff[rot_diff // (-np.pi/32) > 1] = -np.pi/32
-  #
-  #   action = [1, pos_diff[0], pos_diff[1], pos_diff[2], rot_diff[2]]
-  #   obs, reward, done = env.step(action)
 
-  while True:
+  done = False
+  while not done:
     action = planner.getNextAction()
+    input()
     obs, reward, done = env.step(action)
-
-  # fig, axs = plt.subplots(8, 5, figsize=(25, 40))
-  # for i in range(40):
-  #   action = planner.getNextAction()
-  #   obs, reward, done = env.step(action)
-  #   axs[i//5, i%5].imshow(obs[2][0], vmax=0.3)
-  # env.reset()
-  # fig.show()

@@ -256,6 +256,8 @@ class CloseLoopEnv(BaseEnv):
       gripper_max_open = 42 * self.workspace_size / self.obs_size_m
     elif self.robot_type == 'kuka':
       gripper_max_open = 45 * self.workspace_size / self.obs_size_m
+    elif 'ur5' in self.robot_type:
+      gripper_max_open = 45 * self.workspace_size / self.obs_size_m
     else:
       raise NotImplementedError
     d = int(gripper_max_open/128*self.heightmap_size * gripper_state)
