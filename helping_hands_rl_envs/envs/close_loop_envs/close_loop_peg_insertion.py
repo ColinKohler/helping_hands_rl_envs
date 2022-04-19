@@ -40,6 +40,7 @@ class CloseLoopPegInsertionEnv(CloseLoopEnv):
       scale=0.12,#self.peg_scale_range[0],
       wait=False
     )[0]
+
     self.robot.closeGripper()
     self.setRobotHoldingObj()
 
@@ -85,7 +86,7 @@ if __name__ == '__main__':
   workspace = np.asarray([[0.25, 0.65],
                           [-0.2, 0.2],
                           [0.01, 0.25]])
-  env_config = {'workspace': workspace, 'max_steps': 100, 'obs_size': 128, 'render': False, 'fast_mode': True,
+  env_config = {'workspace': workspace, 'max_steps': 100, 'obs_size': 128, 'render': True, 'fast_mode': True,
                 'seed': None, 'action_sequence': 'pxyzr', 'num_objects': 1, 'random_orientation': True,
                 'reward_type': 'step_left', 'simulate_grasp': True, 'perfect_grasp': False, 'robot': 'panda',
                 'object_init_space_check': 'point', 'physics_mode': 'fast', 'object_scale_range': (1, 1), 'hard_reset_freq': 1000,
@@ -101,7 +102,7 @@ if __name__ == '__main__':
     while not done:
       action = planner.getNextAction()
       finger_a_force, finger_b_force = env.robot.getFingerForce()
-      finger_force = np.array([finger_a_force[:3], finger_b_force[:3]]).reshape(-1)
+      finger_force = np.array([finger_a_force, finger_b_force]).reshape(-1)
       #print(np.round(finger_force, 2))
 
       obs, reward, done = env.step(action)

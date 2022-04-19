@@ -10,7 +10,7 @@ class ForcePegInsertionEnv(CloseLoopPegInsertionEnv):
     state, hand_obs, obs = super()._getObservation(action=action)
     finger_a_force, finger_b_force = self.robot.getFingerForce()
 
-    finger_force = [finger_a_force[:3], finger_b_force[:3]]
+    finger_force = [finger_a_force.tolist(), finger_b_force.tolist()]
 
     return state, hand_obs, obs, np.array(finger_force).reshape(-1)
 

@@ -1,4 +1,5 @@
 import os
+import numpy as np
 import pybullet as pb
 from helping_hands_rl_envs.pybullet.utils import constants
 from helping_hands_rl_envs.pybullet.robots.robot_base import RobotBase
@@ -148,8 +149,13 @@ class Panda(RobotBase):
     return pb.getJointState(self.id, 8)[2][2] > 100
 
   def getFingerForce(self):
-    finger_a_force = pb.getJointState(self.id, 10)[2]
-    finger_b_force = pb.getJointState(self.id, 12)[2]
+    finger_a_rot = np.array(list(pb.getMatrixFromQuaternion(list(pb.getLinkState(self.id, 9)[5])))).reshape((3,3))
+    finger_a_force = np.array(list(pb.getJointState(self.id, 10)[2][:3]))
+    finger_a_force = np.dot(finger_a_rot, finger_a_force)
+
+    finger_b_rot = np.array(list(pb.getMatrixFromQuaternion(list(pb.getLinkState(self.id, 11)[5])))).reshape((3,3))
+    finger_b_force = np.array(list(pb.getJointState(self.id, 12)[2][:3]))
+    finger_b_force = np.dot(finger_b_rot, finger_b_force)
 
     return finger_a_force, finger_b_force
 
