@@ -85,7 +85,7 @@ class MultiPlotter(object):
     for log_name, log in self.logs.items():
       sr = list()
       for run in log:
-        eval_rewards = run['eval_eps_rewards'][:num_eval_intervals]
+        eval_rewards = list(filter(None, run['eval_eps_rewards'][:num_eval_intervals]))
         eval_rewards = [np.mean(eps) for eps in eval_rewards]
         avg_eval_rewards = np.mean(list(more_itertools.windowed(eval_rewards, window)), axis=1)
 
@@ -93,6 +93,42 @@ class MultiPlotter(object):
           n = avg_eval_rewards.shape[0]
           avg_eval_rewards = np.pad(avg_eval_rewards, (0, (num_eval_intervals - window + 1) - n), 'edge')
         sr.append(avg_eval_rewards)
+
+      sr = np.array(sr)
+      x = np.arange(sr.shape[1]) * 500
+
+      sr_mean = np.mean(sr, axis=0)
+      sr_std = np.std(sr, axis=0) / np.sqrt(len(log))
+      ax.plot(x, sr_mean.squeeze(), label=log_name)
+      ax.fill_between(x, sr_mean.squeeze() - sr_std, sr_mean.squeeze() + sr_std, alpha=0.5)
+
+    ax.legend()
+    plt.savefig(filepath)
+    plt.close()
+
+  def plotEvalValues(self, title, filepath, num_eval_intervals, window=1):
+    '''
+    Plot mulitple evaluation curves on a single plot.
+
+    Args:
+    '''
+
+    fig, ax = plt.subplots()
+    ax.set_title(title)
+    ax.set_xlabel('Training Steps')
+    ax.set_ylabel('Avg. Value')
+
+    for log_name, log in self.logs.items():
+      sr = list()
+      for run in log:
+        eval_values = list(filter(None, run['eval_mean_values'][:num_eval_intervals]))
+        eval_values = [np.mean(eps) for eps in eval_values]
+        avg_eval_values = np.mean(list(more_itertools.windowed(eval_values, window)), axis=1)
+
+        if avg_eval_values.shape[0] < (num_eval_intervals - window + 1):
+          n = avg_eval_values.shape[0]
+          avg_eval_values = np.pad(avg_eval_values, (0, (num_eval_intervals - window + 1) - n), 'edge')
+        sr.append(avg_eval_values)
 
       sr = np.array(sr)
       x = np.arange(sr.shape[1]) * 500
