@@ -16,7 +16,7 @@ class CloseLoopBlockPickingCornerEnv(CloseLoopEnv):
 
   def resetCorner(self):
     self.corner_rz = np.random.random_sample() * 2*np.pi - np.pi if self.random_orientation else 0
-    self.corner_pos = self._getValidPositions(0.2, 0, [], 1)[0]
+    self.corner_pos = self._getValidPositions(0.22, 0, [], 1)[0]
     self.corner_pos.append(0)
     self.corner.reset(self.corner_pos, pb.getQuaternionFromEuler((0, 0, self.corner_rz)))
 
@@ -30,7 +30,9 @@ class CloseLoopBlockPickingCornerEnv(CloseLoopEnv):
     self.robot.moveTo([self.workspace[0].mean(), self.workspace[1].mean(), 0.2], transformations.quaternion_from_euler(0, 0, 0))
     pos, rot_q = self.corner.getObjPose()
 
-    self._generateShapes(constants.CUBE, 1, pos=[pos], rot=[rot_q])
+    self.cube = self._generateShapes(constants.CUBE, 1, pos=[pos], rot=[rot_q])[0]
+    pb.changeDynamics(self.cube.object_id, -1, lateralFriction=0.75, mass=0.2)
+
     return self._getObservation()
 
   def _getValidOrientation(self, random_orientation):
@@ -60,46 +62,32 @@ def createCloseLoopBlockPickingCornerEnv(config):
 
 if __name__ == '__main__':
   import matplotlib.pyplot as plt
-  workspace = np.asarray([[0.2, 0.8],
-                          [-0.3, 0.3],
-                          [0.01, 0.50]])
-  env_config = {'workspace': workspace, 'max_steps': 100, 'obs_size': 128, 'render': True, 'fast_mode': True,
-                'seed': 2, 'action_sequence': 'pxyzr', 'num_objects': 1, 'random_orientation': True,
+  workspace = np.asarray([[0.25, 0.65],
+                          [-0.2, 0.2],
+                          [0.01, 0.25]])
+
+  env_config = {'workspace': workspace, 'max_steps': 100, 'obs_size': 128, 'render': False, 'fast_mode': True,
+                'seed': None, 'action_sequence': 'pxyzr', 'num_objects': 1, 'random_orientation': True,
                 'reward_type': 'step_left', 'simulate_grasp': True, 'perfect_grasp': False, 'robot': 'panda',
                 'object_init_space_check': 'point', 'physics_mode': 'force', 'object_scale_range': (1.2, 1.2),
                 'hard_reset_freq': 1000, }
-  planner_config = {'random_orientation': True, 'dpos': 0.025, 'drot': np.pi/8}
-  env_config['seed'] = 1
+  planner_config = {'random_orientation': True, 'dpos': 0.05, 'drot': np.pi/8}
   env = CloseLoopBlockPickingCornerEnv(env_config)
   planner = CloseLoopBlockPickingCornerPlanner(env, planner_config)
-  s, in_hand, obs = env.reset()
-  # while True:
-  #   current_pos = env.robot._getEndEffectorPosition()
-  #   current_rot = transformations.euler_from_quaternion(env.robot._getEndEffectorRotation())
-  #
-  #   block_pos = env.objects[0].getPosition()
-  #   block_rot = transformations.euler_from_quaternion(env.objects[0].getRotation())
-  #
-  #   pos_diff = block_pos - current_pos
-  #   rot_diff = np.array(block_rot) - current_rot
-  #   pos_diff[pos_diff // 0.01 > 1] = 0.01
-  #   pos_diff[pos_diff // -0.01 > 1] = -0.01
-  #
-  #   rot_diff[rot_diff // (np.pi/32) > 1] = np.pi/32
-  #   rot_diff[rot_diff // (-np.pi/32) > 1] = -np.pi/32
-  #
-  #   action = [1, pos_diff[0], pos_diff[1], pos_diff[2], rot_diff[2]]
-  #   obs, reward, done = env.step(action)
 
-  done = False
-  while not done:
-    action = planner.getNextAction()
-    obs, reward, done = env.step(action)
+  num_success = 0
+  for _ in range(20):
+    obs = env.reset()
+    done = False
+    while not done:
+      action = planner.getNextAction()
 
-  # fig, axs = plt.subplots(8, 5, figsize=(25, 40))
-  # for i in range(40):
-  #   action = planner.getNextAction()
-  #   obs, reward, done = env.step(action)
-  #   axs[i//5, i%5].imshow(obs[2][0], vmax=0.3)
-  # env.reset()
-  # fig.show()
+      finger_a_force, finger_b_force = env.robot.getFingerForce()
+      finger_force = np.array([finger_a_force, finger_b_force]).reshape(-1)
+      #print(np.round(finger_force, 2))
+
+      obs, reward, done = env.step(action)
+
+    if reward > 0.9:
+      num_success += 1
+  print(num_success)
