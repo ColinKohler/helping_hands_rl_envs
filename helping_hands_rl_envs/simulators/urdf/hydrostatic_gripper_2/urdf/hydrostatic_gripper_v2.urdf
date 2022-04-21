@@ -449,8 +449,6 @@
     <axis
       xyz="0 0 0" />
   </joint>
-
-
   <link
     name="dummy_ee_link">
     <visual>
@@ -468,12 +466,13 @@
     </visual>
 
   </link>
-
+  <!-- finger tip positions - ee-link is set in 1cm -->
+  <!-- xyz="0.150013332741805 0 0" -->
   <joint
     name="dummy_ee_joint"
     type="fixed">
     <origin
-      xyz="0.150013332741805 0 0"
+      xyz="0.14 0 0"
       rpy="0 1.5707963267949 0" />
     <parent
       link="gripper_base" />

@@ -10,7 +10,7 @@ import helping_hands_rl_envs.envs.pybullet_envs.constants as py_constants
 
 from helping_hands_rl_envs.simulators.pybullet.robots.ur5_simple import UR5_Simple
 from helping_hands_rl_envs.simulators.pybullet.robots.ur5_robotiq import UR5_Robotiq
-from helping_hands_rl_envs.simulators.pybullet.robots.ur5_hydrostatic import UR5_Hydrostatic
+from helping_hands_rl_envs.simulators.pybullet.robots.ur5_hydrostatic_v2 import UR5_Hydrostatic
 from helping_hands_rl_envs.simulators.pybullet.robots.kuka import Kuka
 from helping_hands_rl_envs.simulators.pybullet.robots.kuka_hydrostatic import KukaHydrostaticGripper
 from helping_hands_rl_envs.simulators.pybullet.utils.sensor import Sensor
@@ -812,4 +812,3 @@ class PyBulletEnv(BaseEnv):
         rx = -rx
         ry = -ry
     return rx, ry, rz
-
