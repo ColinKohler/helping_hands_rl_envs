@@ -1,0 +1,485 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com)
+     Commit Version: 1.6.0-4-g7f85cfe  Build Version: 1.6.7995.38578
+     For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
+<robot
+  name="Gripper_v3.SLDASM">
+  <link
+    name="gripper_wrist_addapter">
+    <inertial>
+      <origin
+        xyz="0.00444528873424797 -0.00544270547881997 -0.00013764439300674"
+        rpy="0 0 0" />
+      <mass
+        value="0.0139506047612529" />
+      <inertia
+        ixx="2.77298929829817E-06"
+        ixy="4.43034297234558E-07"
+        ixz="1.54668380003567E-08"
+        iyy="5.44068429360836E-06"
+        iyz="-2.0539054204681E-08"
+        izz="3.7468684662298E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="helping_hands_rl_envs/simulators/urdf/hydrostatic_gripper_2/meshes/gripper_wrist_addapter.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="helping_hands_rl_envs/simulators/urdf/hydrostatic_gripper_2/meshes/gripper_wrist_addapter.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <link
+    name="gripper_base">
+    <inertial>
+      <origin
+        xyz="-0.0754211188208551 -3.46944695195361E-18 -1.38777878078145E-17"
+        rpy="0 0 0" />
+      <mass
+        value="0.786634201066895" />
+      <inertia
+        ixx="0.000460892604648364"
+        ixy="-2.28868542530729E-20"
+        ixz="-1.55408252356044E-19"
+        iyy="0.000924570118396014"
+        iyz="-1.35525271560688E-19"
+        izz="0.00118611546150363" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="helping_hands_rl_envs/simulators/urdf/hydrostatic_gripper_2/meshes/gripper_base.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.898039215686275 0.917647058823529 0.929411764705882 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="helping_hands_rl_envs/simulators/urdf/hydrostatic_gripper_2/meshes/gripper_base.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="gripper_wrist_to_base"
+    type="fixed">
+    <origin
+      xyz="0.055 -0.0332705627484773 -0.016970562748477"
+      rpy="2.35619449019234 0 0" />
+    <parent
+      link="gripper_wrist_addapter" />
+    <child
+      link="gripper_base" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  <link
+    name="right_finger_base">
+    <contact>
+      <lateral_friction value="0.8"/>
+      <spinning_friction value="0.1"/>
+    </contact>
+    <inertial>
+      <origin
+        xyz="0.0319084008385262 0.0153831047381464 -2.69240095496226E-10"
+        rpy="0 0 0" />
+      <mass
+        value="0.0110794759852594" />
+      <inertia
+        ixx="1.31579673830321E-06"
+        ixy="-1.07643328010506E-06"
+        ixz="5.30216628679773E-13"
+        iyy="4.71818380979299E-06"
+        iyz="3.40999461359351E-13"
+        izz="4.78161429442458E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="helping_hands_rl_envs/simulators/urdf/hydrostatic_gripper_2/meshes/right_finger_base.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="helping_hands_rl_envs/simulators/urdf/hydrostatic_gripper_2/meshes/right_finger_base.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="right_finger_joint"
+    type="revolute">
+    <origin
+      xyz="0 0 0"
+      rpy="0 0 -0.013333" />
+    <parent
+      link="gripper_base" />
+    <child
+      link="right_finger_base" />
+    <axis
+      xyz="0 0 -1" />
+    <limit
+      lower="-2"
+      upper="2"
+      effort="0"
+      velocity="0" />
+  </joint>
+  <link
+    name="right_finger_mid">
+    <contact>
+      <lateral_friction value="0.8"/>
+      <spinning_friction value="0.1"/>
+    </contact>
+    <inertial>
+      <origin
+        xyz="0.0842965588635977 0.0217431094709035 -2.46538900405824E-14"
+        rpy="0 0 0" />
+      <mass
+        value="0.00233205195898081" />
+      <inertia
+        ixx="7.06370630978543E-08"
+        ixy="2.81323567131097E-08"
+        ixz="2.75473581254274E-19"
+        iyy="2.31846025013795E-07"
+        iyz="1.94420531174464E-20"
+        izz="2.15031810039325E-07" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="helping_hands_rl_envs/simulators/urdf/hydrostatic_gripper_2/meshes/right_finger_mid.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="helping_hands_rl_envs/simulators/urdf/hydrostatic_gripper_2/meshes/right_finger_mid.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="right_finger_base_to_mid"
+    type="fixed">
+    <origin
+      xyz="0 0 0"
+      rpy="0 0 0" />
+    <parent
+      link="right_finger_base" />
+    <child
+      link="right_finger_mid" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  <link
+    name="right_finger_tip">
+    <contact>
+      <lateral_friction value="0.8"/>
+      <spinning_friction value="0.1"/>
+    </contact>
+    <inertial>
+      <origin
+        xyz="0.122061276409105 0.0106382164258489 -1.03494837283558E-08"
+        rpy="0 0 0" />
+      <mass
+        value="0.0032882898385146" />
+      <inertia
+        ixx="1.45420364242875E-07"
+        ixy="1.7583471338638E-07"
+        ixz="-3.85907571836143E-13"
+        iyy="6.30349145962364E-07"
+        iyz="-2.08382194408177E-13"
+        izz="6.52458095647956E-07" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="helping_hands_rl_envs/simulators/urdf/hydrostatic_gripper_2/meshes/right_finger_tip.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="helping_hands_rl_envs/simulators/urdf/hydrostatic_gripper_2/meshes/right_finger_tip.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="right_finger_mid_to_tip"
+    type="fixed">
+    <origin
+      xyz="0 0 0"
+      rpy="0 0 0" />
+    <parent
+      link="right_finger_mid" />
+    <child
+      link="right_finger_tip" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  <link
+    name="left_finger_base">
+    <contact>
+      <lateral_friction value="0.8"/>
+      <spinning_friction value="0.1"/>
+    </contact>
+    <inertial>
+      <origin
+        xyz="0.0319084008387908 0.0153831047367257 -2.92048905892184E-10"
+        rpy="0 0 0" />
+      <mass
+        value="0.0110794759852593" />
+      <inertia
+        ixx="1.31579673819746E-06"
+        ixy="-1.07643327993793E-06"
+        ixz="5.32994819259796E-13"
+        iyy="4.71818380989873E-06"
+        iyz="3.41696640837467E-13"
+        izz="4.78161429442457E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="helping_hands_rl_envs/simulators/urdf/hydrostatic_gripper_2/meshes/right_finger_base.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="helping_hands_rl_envs/simulators/urdf/hydrostatic_gripper_2/meshes/right_finger_base.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="left_finger_joint"
+    type="revolute">
+    <origin
+      xyz="0 0 0"
+      rpy="-3.1416 0 0.013333" />
+    <parent
+      link="gripper_base" />
+    <child
+      link="left_finger_base" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-2"
+      upper="2"
+      effort="0"
+      velocity="0" />
+  </joint>
+  <link
+    name="left_finger_mid">
+    <contact>
+      <lateral_friction value="0.8"/>
+      <spinning_friction value="0.1"/>
+    </contact>
+    <inertial>
+      <origin
+        xyz="0.0842965588641746 0.0217431094669094 -5.87657561501587E-11"
+        rpy="0 0 0" />
+      <mass
+        value="0.00233205195898081" />
+      <inertia
+        ixx="7.0637063100611E-08"
+        ixy="2.81323567210285E-08"
+        ixz="7.13851709094192E-17"
+        iyy="2.3184602501103E-07"
+        iyz="-2.74711313640291E-17"
+        izz="2.15031810039316E-07" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="helping_hands_rl_envs/simulators/urdf/hydrostatic_gripper_2/meshes/right_finger_mid.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="helping_hands_rl_envs/simulators/urdf/hydrostatic_gripper_2/meshes/right_finger_mid.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="left_finger_base_to_mid"
+    type="fixed">
+    <origin
+      xyz="0 0 0"
+      rpy="0 0 0" />
+    <parent
+      link="left_finger_base" />
+    <child
+      link="left_finger_mid" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  <link
+    name="left_finger_tip">
+    <contact>
+      <lateral_friction value="0.8"/>
+      <spinning_friction value="0.1"/>
+    </contact>
+    <inertial>
+      <origin
+        xyz="0.122061276409137 0.0106382164199998 -1.04245308218953E-08"
+        rpy="0 0 0" />
+      <mass
+        value="0.0032882898385146" />
+      <inertia
+        ixx="1.45420364260145E-07"
+        ixy="1.75834713410199E-07"
+        ixz="-3.85704997539584E-13"
+        iyy="6.3034914594509E-07"
+        iyz="-2.084762177123E-13"
+        izz="6.52458095647954E-07" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="helping_hands_rl_envs/simulators/urdf/hydrostatic_gripper_2/meshes/right_finger_tip.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="helping_hands_rl_envs/simulators/urdf/hydrostatic_gripper_2/meshes/right_finger_tip.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="left_finger_mid_to_tip"
+    type="fixed">
+    <origin
+      xyz="0 0 0"
+      rpy="0 0 0" />
+    <parent
+      link="left_finger_mid" />
+    <child
+      link="left_finger_tip" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+
+
+  <link
+    name="dummy_ee_link">
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <box size="0.01 0.01 0.01"/>
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+
+  </link>
+
+  <joint
+    name="dummy_ee_joint"
+    type="fixed">
+    <origin
+      xyz="0.150013332741805 0 0"
+      rpy="0 1.5707963267949 0" />
+    <parent
+      link="gripper_base" />
+    <child
+      link="dummy_ee_link" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+</robot>
