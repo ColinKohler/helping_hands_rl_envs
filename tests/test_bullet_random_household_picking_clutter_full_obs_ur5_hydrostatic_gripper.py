@@ -16,7 +16,8 @@ class TestBulletBlockStacking(unittest.TestCase):
     bin_size = 0.3
     # workspace_size = 0.35
     # obs_size = 112
-    workspace = np.asarray([[0.5 - workspace_size / 2, 0.5 + workspace_size / 2],
+    workspace_center_offset = 0.6
+    workspace = np.asarray([[workspace_center_offset - workspace_size / 2, workspace_center_offset + workspace_size / 2],
                             [0 - workspace_size / 2, 0 + workspace_size / 2],
                             [0, 0 + workspace_size]])
     # env_config = {'workspace': workspace, 'max_steps': 30, 'obs_size': 128, 'render': False, 'fast_mode': True,
