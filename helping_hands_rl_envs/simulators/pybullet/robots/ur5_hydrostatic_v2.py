@@ -80,12 +80,12 @@ class UR5_Hydrostatic(RobotBase):
     self.gripper_joint_indices = list()
     for i in range (self.num_joints):
       joint_info = pb.getJointInfo(self.id, i)
-      if i in range(1, 7):
-        self.arm_joint_names.append(str(joint_info[1]))
-        self.arm_joint_indices.append(i)
+    if i in range(1, 7):
+      self.arm_joint_names.append(str(joint_info[1]))
+      self.arm_joint_indices.append(i)
     elif i in range(11, 14):
-        self.gripper_joint_names.append(str(joint_info[1]))
-        self.gripper_joint_indices.append(i)
+      self.gripper_joint_names.append(str(joint_info[1]))
+      self.gripper_joint_indices.append(i)
 
       # elif i in range(14, self.num_joints):
       #   info = pb.getJointInfo(self.id, i)
