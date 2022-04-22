@@ -457,7 +457,7 @@
     <child
       link="right_finger_base" />
     <axis
-      xyz="0 0 -1" />
+      xyz="0 0 1" />
     <limit
       lower="-2"
       upper="2"
