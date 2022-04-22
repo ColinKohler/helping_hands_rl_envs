@@ -55,3 +55,7 @@ class TestBulletBlockStacking(unittest.TestCase):
           .format(s, steps, sr, t_plan, t_action, np.mean(step_times))
       )
     env.close()
+
+if __name__ == "__main__":
+    test = TestBulletBlockStacking()
+    test.testPlanner2()
