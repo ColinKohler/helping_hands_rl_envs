@@ -48,7 +48,7 @@ class UR5_Hydrostatic(RobotBase):
       if i in range(1, 7):
         self.arm_joint_names.append(str(joint_info[1]))
         self.arm_joint_indices.append(i)
-      elif i in range(11, 13):
+      elif i in (11, 14):
         self.gripper_joint_names.append(str(joint_info[1]))
         self.gripper_joint_indices.append(i)
 
