@@ -12,12 +12,12 @@ class UR5_Hydrostatic(RobotBase):
     # Setup arm and gripper variables
     self.max_force = 200.
     self.max_velocity = 0.35
-    self.end_effector_index = 12
+    self.end_effector_index = 17
 
-    self.home_positions = [0., 0., -2.137, 1.432, -0.915, -1.591, 0.071, 0., 0., 0., 0., 0., 0., 0.]
+    self.home_positions = [0., 0., -2.137, 1.432, -0.915, -1.591, 0.071, 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.]
     self.home_positions_joint = self.home_positions[1:7]
 
-    self.gripper_joint_limit = [0., 0.4] #TODO optimize
+    self.gripper_joint_limit = [0., 0.3] #TODO optimize
     self.gripper_joint_names = list()
     self.gripper_joint_indices = list()
     self.num_dofs = 6
@@ -44,10 +44,11 @@ class UR5_Hydrostatic(RobotBase):
     self.gripper_joint_indices = list()
     for i in range (self.num_joints):
       joint_info = pb.getJointInfo(self.id, i)
+      print(joint_info)
       if i in range(1, 7):
         self.arm_joint_names.append(str(joint_info[1]))
         self.arm_joint_indices.append(i)
-      elif i in range(10, 12):
+      elif i in range(11, 13):
         self.gripper_joint_names.append(str(joint_info[1]))
         self.gripper_joint_indices.append(i)
 
