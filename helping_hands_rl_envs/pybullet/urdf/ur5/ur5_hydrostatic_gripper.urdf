@@ -776,7 +776,7 @@
     type="fixed">
     <origin
       xyz="0.150013332741805 0 0"
-      rpy="0 1.5707963267949 0" />
+      rpy="3.141593 1.5707963267949 0" />
     <parent
       link="gripper_base" />
     <child
