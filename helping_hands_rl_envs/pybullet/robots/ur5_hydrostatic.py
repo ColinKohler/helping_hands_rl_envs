@@ -44,7 +44,6 @@ class UR5_Hydrostatic(RobotBase):
     self.gripper_joint_indices = list()
     for i in range (self.num_joints):
       joint_info = pb.getJointInfo(self.id, i)
-      print(joint_info)
       if i in range(1, 7):
         self.arm_joint_names.append(str(joint_info[1]))
         self.arm_joint_indices.append(i)
@@ -88,7 +87,6 @@ class UR5_Hydrostatic(RobotBase):
       # check the contact force normal to count the horizontal contact points
       contact_points = pb.getContactPoints(self.id, obj.object_id, 9) + pb.getContactPoints(self.id, obj.object_id, 11)
       horizontal = list(filter(lambda p: abs(p[7][2]) < 0.4, contact_points))
-      print([p[7][2] for p in contact_points])
       if len(horizontal) >= 2:
         return obj
 

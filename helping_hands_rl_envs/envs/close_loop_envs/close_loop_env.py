@@ -253,7 +253,7 @@ class CloseLoopEnv(BaseEnv):
     gripper_half_size = 5 * self.workspace_size / self.obs_size_m
     gripper_half_size = round(gripper_half_size/128*self.heightmap_size)
     if self.robot_type == 'panda':
-      gripper_max_open = 42 * self.workspace_size / self.obs_size_m
+      gripper_max_open = 65 * self.workspace_size / self.obs_size_m
     elif self.robot_type == 'kuka':
       gripper_max_open = 45 * self.workspace_size / self.obs_size_m
     elif 'ur5' in self.robot_type:

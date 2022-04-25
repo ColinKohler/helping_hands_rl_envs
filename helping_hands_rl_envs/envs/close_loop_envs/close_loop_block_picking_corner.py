@@ -70,7 +70,7 @@ if __name__ == '__main__':
                 'seed': None, 'action_sequence': 'pxyzr', 'num_objects': 1, 'random_orientation': True,
                 'reward_type': 'step_left', 'simulate_grasp': True, 'perfect_grasp': False, 'robot': 'panda',
                 'object_init_space_check': 'point', 'physics_mode': 'force', 'object_scale_range': (1.2, 1.2),
-                'hard_reset_freq': 1000, }
+                'hard_reset_freq': 1000, 'view_type': 'camera_center_xyz'}
   planner_config = {'random_orientation': True, 'dpos': 0.05, 'drot': np.pi/8}
   env = CloseLoopBlockPickingCornerEnv(env_config)
   planner = CloseLoopBlockPickingCornerPlanner(env, planner_config)
@@ -86,6 +86,7 @@ if __name__ == '__main__':
       finger_force = np.array([finger_a_force, finger_b_force]).reshape(-1)
       #print(np.round(finger_force, 2))
 
+      plt.imshow(obs[2].squeeze(), cmap='gray'); plt.show()
       obs, reward, done = env.step(action)
 
     if reward > 0.9:
