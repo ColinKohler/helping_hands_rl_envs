@@ -199,7 +199,7 @@ class CloseLoopEnv(BaseEnv):
         gripper_pos = self.robot._getEndEffectorPosition()
         heightmap[gripper_img == 1] = gripper_pos[2]
       else:
-        heightmap[gripper_img == 1] = 0
+        heightmap[gripper_img == 1] = 0.03
       heightmap = heightmap.reshape([1, self.heightmap_size, self.heightmap_size])
       gripper_img = gripper_img.reshape([1, self.heightmap_size, self.heightmap_size])
       return self._isHolding(), None, heightmap
@@ -268,7 +268,7 @@ class CloseLoopEnv(BaseEnv):
     return im
 
   def _getHeightmap(self, gripper_pos=None, gripper_rz=None):
-    gripper_z_offset = 0.08 # panda
+    gripper_z_offset = 0.06 # panda
     if self.robot_type == 'kuka':
       gripper_z_offset = 0.12
     if gripper_pos is None:

@@ -85,7 +85,7 @@ class UR5_Hydrostatic(RobotBase):
       return None
     for obj in objects:
       # check the contact force normal to count the horizontal contact points
-      contact_points = pb.getContactPoints(self.id, obj.object_id, 9) + pb.getContactPoints(self.id, obj.object_id, 11)
+      contact_points = pb.getContactPoints(self.id, obj.object_id, 13) + pb.getContactPoints(self.id, obj.object_id, 16)
       horizontal = list(filter(lambda p: abs(p[7][2]) < 0.4, contact_points))
       if len(horizontal) >= 2:
         return obj

@@ -66,7 +66,7 @@ if __name__ == '__main__':
                           [-0.2, 0.2],
                           [0.01, 0.25]])
 
-  env_config = {'workspace': workspace, 'max_steps': 100, 'obs_size': 128, 'render': False, 'fast_mode': True,
+  env_config = {'workspace': workspace, 'max_steps': 100, 'obs_size': 128, 'render': True, 'fast_mode': True,
                 'seed': None, 'action_sequence': 'pxyzr', 'num_objects': 1, 'random_orientation': True,
                 'reward_type': 'step_left', 'simulate_grasp': True, 'perfect_grasp': False, 'robot': 'panda',
                 'object_init_space_check': 'point', 'physics_mode': 'force', 'object_scale_range': (1.2, 1.2),
@@ -81,12 +81,12 @@ if __name__ == '__main__':
     done = False
     while not done:
       action = planner.getNextAction()
+      plt.imshow(obs[2].squeeze(), cmap='gray'); plt.show()
 
       finger_a_force, finger_b_force = env.robot.getFingerForce()
       finger_force = np.array([finger_a_force, finger_b_force]).reshape(-1)
       #print(np.round(finger_force, 2))
 
-      plt.imshow(obs[2].squeeze(), cmap='gray'); plt.show()
       obs, reward, done = env.step(action)
 
     if reward > 0.9:
