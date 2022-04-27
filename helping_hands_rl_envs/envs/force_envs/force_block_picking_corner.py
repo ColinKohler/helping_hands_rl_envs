@@ -12,8 +12,8 @@ class ForceBlockPickingCornerEnv(CloseLoopBlockPickingCornerEnv):
 
   def _getForceMap(self):
     finger_a_force, finger_b_force = self.robot.getFingerForce()
-    finger_a_force_mag = np.sum(finger_a_force ** 2)
-    finger_b_force_mag = np.sum(finger_b_force ** 2)
+    finger_a_force_mag = np.sqrt(np.sum(finger_a_force ** 2))
+    finger_b_force_mag = np.sqrt(np.sum(finger_b_force ** 2))
 
     gripper_state = self.robot.getGripperOpenRatio()
     gripper_rz = pb.getEulerFromQuaternion(self.robot._getEndEffectorRotation())[2]
