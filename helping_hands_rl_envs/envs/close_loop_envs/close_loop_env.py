@@ -74,13 +74,6 @@ class CloseLoopEnv(BaseEnv):
       current_rot[0] = 0
       current_rot[1] = 0
 
-    # bTg = transformations.euler_matrix(0, 0, current_rot[-1])
-    # bTg[:3, 3] = current_pos
-    # gTt = np.eye(4)
-    # gTt[:3, 3] = [x, y, z]
-    # bTt = bTg.dot(gTt)
-    # pos = bTt[:3, 3]
-
     pos = np.array(current_pos) + np.array([x, y, z])
     rot = np.array(current_rot) + np.array(rot)
     rot_q = pb.getQuaternionFromEuler(rot)

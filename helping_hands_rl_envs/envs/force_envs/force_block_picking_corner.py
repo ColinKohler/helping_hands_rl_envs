@@ -14,6 +14,7 @@ class ForceBlockPickingCornerEnv(CloseLoopBlockPickingCornerEnv):
     finger_a_force, finger_b_force = self.robot.getFingerForce()
     finger_a_force_mag = np.sqrt(np.sum(finger_a_force ** 2))
     finger_b_force_mag = np.sqrt(np.sum(finger_b_force ** 2))
+    #finger_a_force_mag, finger_b_force_mag = self.robot.getFingerForce()
 
     gripper_state = self.robot.getGripperOpenRatio()
     gripper_rz = pb.getEulerFromQuaternion(self.robot._getEndEffectorRotation())[2]
@@ -67,7 +68,7 @@ if __name__ == '__main__':
     t = 0
     while not done:
       action = planner.getNextAction()
-      if t < 10:
+      if t < 100:
         fig, ax = plt.subplots(nrows=1, ncols=2)
         ax[0].imshow(obs[2].squeeze(), cmap='gray')
         ax[1].imshow(obs[3].squeeze(), cmap='gray')

@@ -43,6 +43,7 @@ class RobotBase:
 
     self.position_gain = 0.02
     self.adjust_gripper_after_lift = False
+    self.max_move_force = [0,0]
 
   def saveState(self):
     '''
@@ -316,16 +317,32 @@ class RobotBase:
       joint_state = pb.getJointStates(self.id, self.arm_joint_indices)
       joint_pos = list(zip(*joint_state))[0]
       n_it = 0
+      max_force = [0,0]
       while not np.allclose(joint_pos, target_pose, atol=1e-3) and n_it < max_it:
         pb.stepSimulation()
         n_it += 1
+
+        #finger_a_force, finger_b_force = self.getFingerForce()
+        finger_a_rot = np.array(list(pb.getMatrixFromQuaternion(list(pb.getLinkState(self.id, 8)[5])))).reshape((3,3))
+        finger_a_force = np.array(list(pb.getJointState(self.id, 9)[2][:3]))
+        finger_a_force = np.dot(finger_a_rot, finger_a_force)
+
+        finger_b_rot = np.array(list(pb.getMatrixFromQuaternion(list(pb.getLinkState(self.id, 8)[5])))).reshape((3,3))
+        finger_b_force = np.array(list(pb.getJointState(self.id, 11)[2][:3]))
+        finger_b_force = np.dot(finger_b_rot, finger_b_force)
+
+        finger_a_force_mag = np.sqrt(np.sum(finger_a_force ** 2))
+        finger_b_force_mag = np.sqrt(np.sum(finger_b_force ** 2))
+        max_force[0] = max(max_force[0], finger_a_force_mag)
+        max_force[1] = max(max_force[1], finger_b_force_mag)
+
         # Check to see if the arm can't move any close to the desired joint position
         if len(past_joint_pos) == 5 and np.allclose(past_joint_pos[-1], past_joint_pos, atol=1e-3):
           break
         past_joint_pos.append(joint_pos)
         joint_state = pb.getJointStates(self.id, self.arm_joint_indices)
         joint_pos = list(zip(*joint_state))[0]
-
+      self.max_move_force = max_force
     else:
       self._setJointPoses(target_pose)
 
