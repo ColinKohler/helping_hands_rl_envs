@@ -14,6 +14,8 @@ class Panda(RobotBase):
     self.home_positions_joint = self.home_positions[:7]
     self.gripper_joint_limit = [0, 0.04]
     self.max_force = 240
+    self.finger_a_index = 10
+    self.finger_b_index = 12
     self.end_effector_index = 13
 
     self.num_dofs = 7
@@ -33,13 +35,13 @@ class Panda(RobotBase):
     [pb.resetJointState(self.id, idx, self.home_positions[idx]) for idx in range(self.num_joints)]
 
     pb.enableJointForceTorqueSensor(self.id, 8)
+    pb.enableJointForceTorqueSensor(self.id, 9)
     pb.enableJointForceTorqueSensor(self.id, 11)
-    pb.enableJointForceTorqueSensor(self.id, 12)
 
     c = pb.createConstraint(self.id,
-                            9,
+                            self.finger_a_index,
                             self.id,
-                            10,
+                            self.finger_b_index,
                             jointType=pb.JOINT_GEAR,
                             jointAxis=[1, 0, 0],
                             parentFramePosition=[0, 0, 0],
@@ -150,21 +152,23 @@ class Panda(RobotBase):
 
   def getFingerForce(self):
     finger_a_rot = np.array(list(pb.getMatrixFromQuaternion(list(pb.getLinkState(self.id, 8)[5])))).reshape((3,3))
-    finger_a_force = np.array(list(pb.getJointState(self.id, 11)[2][:3]))
+    finger_a_force = np.array(list(pb.getJointState(self.id, 9)[2][:3]))
     finger_a_force = np.dot(finger_a_rot, finger_a_force)
 
     finger_b_rot = np.array(list(pb.getMatrixFromQuaternion(list(pb.getLinkState(self.id, 8)[5])))).reshape((3,3))
-    finger_b_force = np.array(list(pb.getJointState(self.id, 12)[2][:3]))
+    finger_b_force = np.array(list(pb.getJointState(self.id, 11)[2][:3]))
     finger_b_force = np.dot(finger_b_rot, finger_b_force)
 
     return finger_a_force, finger_b_force
+
+    #return self.max_move_force
 
   def getPickedObj(self, objects):
     if not objects:
       return None
     for obj in objects:
       # check the contact force normal to count the horizontal contact points
-      contact_points = pb.getContactPoints(self.id, obj.object_id, 9) + pb.getContactPoints(self.id, obj.object_id, 10)
+      contact_points = pb.getContactPoints(self.id, obj.object_id, self.finger_a_index) + pb.getContactPoints(self.id, obj.object_id, self.finger_b_index)
       horizontal = list(filter(lambda p: abs(p[7][2]) < 0.2, contact_points))
       if len(horizontal) >= 2:
         return obj
@@ -173,8 +177,8 @@ class Panda(RobotBase):
     return pb.calculateInverseKinematics(self.id, self.end_effector_index, pos, rot, self.ll, self.ul, self.jr)[:self.num_dofs]
 
   def _getGripperJointPosition(self):
-    p1 = pb.getJointState(self.id, 9)[0]
-    p2 = pb.getJointState(self.id, 10)[0]
+    p1 = pb.getJointState(self.id, self.finger_a_index)[0]
+    p2 = pb.getJointState(self.id, self.finger_b_index)[0]
     return p1, p2
 
   def _sendPositionCommand(self, commands):
@@ -188,7 +192,7 @@ class Panda(RobotBase):
 
   def _sendGripperCommand(self, target_pos1, target_pos2, force=10):
     pb.setJointMotorControlArray(self.id,
-                                 [9, 10],
+                                 [self.finger_a_index, self.finger_b_index],
                                  pb.POSITION_CONTROL,
                                  [target_pos1, target_pos2],
                                  forces=[force, force])
