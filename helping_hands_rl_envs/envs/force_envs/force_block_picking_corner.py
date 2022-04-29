@@ -46,7 +46,7 @@ if __name__ == '__main__':
       plt.imshow(obs[2].squeeze(), cmap='gray'); plt.show()
 
       obs, reward, done = env.step(action)
-
+    print(reward)
     if reward > 0.9:
       num_success += 1
   print(num_success)
