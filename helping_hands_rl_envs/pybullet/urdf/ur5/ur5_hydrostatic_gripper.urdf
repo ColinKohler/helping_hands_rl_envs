@@ -756,17 +756,9 @@
   </joint>
   <link name="dummy_ee_link">
   </link>
-  <joint
-    name="dummy_ee_joint"
-    type="fixed">
-    <origin
-      xyz="0.150013332741805 0 0"
-      rpy="3.141593 1.5707963267949 0" />
-    <parent
-      link="gripper_base" />
-    <child
-      link="dummy_ee_link" />
-    <axis
-      xyz="0 0 0" />
+  <joint name="dummy_ee_joint" type="fixed">
+    <parent link="gripper_base"/>
+    <child link="dummy_ee_link"/>
+    <origin xyz="0.150013332741805 0 0" rpy="3.141593 1.5707963267949 0"/>
   </joint>
 </robot>

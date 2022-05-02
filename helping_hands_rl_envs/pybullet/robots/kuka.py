@@ -4,6 +4,7 @@ import math
 import numpy as np
 import numpy.random as npr
 from collections import deque
+from scipy.ndimage import rotate
 
 import pybullet as pb
 import pybullet_data
@@ -173,6 +174,23 @@ class Kuka(RobotBase):
     finger_b_force = pb.getJointState(self.id, 10)[2]
 
     return finger_a_force, finger_b_force
+
+  def getGripperImg(self, img_size, workspace_size, obs_size_m):
+    gripper_state = self.getGripperOpenRatio()
+    gripper_rz = pb.getEulerFromQuaternion(self._getEndEffectorRotation())[2]
+
+    im = np.zeros((img_size, img_size))
+    gripper_half_size = 4 * workspace_size / obs_size_m
+    gripper_half_size = round(gripper_half_size / 128 * img_size)
+    gripper_max_open = 45 * workspace_size / obs_size_m
+
+    anchor = img_size // 2
+    d = int(gripper_max_open / 128 * img_size * gripper_state)
+    im[int(anchor - d // 2 - gripper_half_size):int(anchor - d // 2 + gripper_half_size), int(anchor - gripper_half_size):int(anchor + gripper_half_size)] = 1
+    im[int(anchor + d // 2 - gripper_half_size):int(anchor + d // 2 + gripper_half_size), int(anchor - gripper_half_size):int(anchor + gripper_half_size)] = 1
+    im = rotate(im, np.rad2deg(gripper_rz), reshape=False, order=0)
+
+    return im
 
   def _calculateIK(self, pos, rot):
     return pb.calculateInverseKinematics(self.id, self.end_effector_index, pos, rot, jointDamping=self.jd)[:7]

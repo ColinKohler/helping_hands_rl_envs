@@ -5,8 +5,6 @@ from helping_hands_rl_envs.pybullet.utils import transformations
 from helping_hands_rl_envs.pybullet.utils.renderer import Renderer
 from helping_hands_rl_envs.pybullet.utils.ortho_sensor import OrthographicSensor
 from helping_hands_rl_envs.pybullet.utils.sensor import Sensor
-from scipy.ndimage import rotate
-
 
 class CloseLoopEnv(BaseEnv):
   def __init__(self, config):
@@ -186,7 +184,7 @@ class CloseLoopEnv(BaseEnv):
     ''''''
     if self.obs_type == 'pixel':
       self.heightmap = self._getHeightmap()
-      gripper_img = self.getGripperImg()
+      gripper_img = self.robot.getGripperImg(self.heightmap_size, self.workspace_size, self.obs_size_m)
       heightmap = self.heightmap
       if self.view_type.find('height') > -1:
         gripper_pos = self.robot._getEndEffectorPosition()
@@ -236,31 +234,6 @@ class CloseLoopEnv(BaseEnv):
   def canSimulate(self):
     # pos = list(self.robot._getEndEffectorPosition())
     return not self._isHolding() and self.simulate_pos[2] > self.simulate_z_threshold
-
-  def getGripperImg(self, gripper_state=None, gripper_rz=None):
-    if gripper_state is None:
-      gripper_state = self.robot.getGripperOpenRatio()
-    if gripper_rz is None:
-      gripper_rz = transformations.euler_from_quaternion(self.robot._getEndEffectorRotation())[2]
-    im = np.zeros((self.heightmap_size, self.heightmap_size))
-    gripper_half_size = 4 * self.workspace_size / self.obs_size_m
-    gripper_half_size = round(gripper_half_size / 128 * self.heightmap_size)
-    if self.robot_type == 'panda':
-      gripper_max_open = 34 * self.workspace_size / self.obs_size_m
-    elif self.robot_type == 'kuka':
-      gripper_max_open = 45 * self.workspace_size / self.obs_size_m
-    elif 'hydrostatic_gripper' in self.robot_type:
-      gripper_max_open = 35 * self.workspace_size / self.obs_size_m
-    elif 'ur5' in self.robot_type:
-      gripper_max_open = 45 * self.workspace_size / self.obs_size_m
-    else:
-      raise NotImplementedError
-    d = int(gripper_max_open / 128 * self.heightmap_size * gripper_state)
-    anchor = self.heightmap_size//2
-    im[int(anchor - d // 2 - gripper_half_size):int(anchor - d // 2 + gripper_half_size), int(anchor - gripper_half_size):int(anchor + gripper_half_size)] = 1
-    im[int(anchor + d // 2 - gripper_half_size):int(anchor + d // 2 + gripper_half_size), int(anchor - gripper_half_size):int(anchor + gripper_half_size)] = 1
-    im = rotate(im, np.rad2deg(gripper_rz), reshape=False, order=0)
-    return im
 
   def _getHeightmap(self, gripper_pos=None, gripper_rz=None):
     if gripper_pos is None:
