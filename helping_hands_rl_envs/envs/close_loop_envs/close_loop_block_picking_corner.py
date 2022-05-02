@@ -31,8 +31,7 @@ class CloseLoopBlockPickingCornerEnv(CloseLoopEnv):
     pos, rot_q = self.corner.getObjPose()
 
     self.cube = self._generateShapes(constants.CUBE, 1, pos=[pos], rot=[rot_q])[0]
-    pb.changeDynamics(self.cube.object_id, -1, lateralFriction=0.75, mass=0.2, restitution=0)
-    #pb.changeDynamics(handle.object_id, -1, linearDamping=0.04, angularDamping=0.04, restitution=0, contactStiffness=3000, contactDamping=100)
+    pb.changeDynamics(self.cube.object_id, -1, lateralFriction=0.75, mass=0.2)
 
     return self._getObservation()
 
