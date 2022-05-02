@@ -547,7 +547,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="helping_hands_rl_envs/pybullet/urdf/hydrostatic_gripper/meshes/right_finger_tip.STL" />
+          filename="helping_hands_rl_envs/pybullet/urdf/hydrostatic_gripper/meshes/right_finger_tip_11_deg_flat.STL" />
       </geometry>
       <material
         name="">
@@ -561,7 +561,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="helping_hands_rl_envs/pybullet/urdf/hydrostatic_gripper/meshes/right_finger_tip.STL" />
+          filename="helping_hands_rl_envs/pybullet/urdf/hydrostatic_gripper/meshes/right_finger_tip_11_deg_flat.STL" />
       </geometry>
     </collision>
   </link>
@@ -723,7 +723,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="helping_hands_rl_envs/pybullet/urdf/hydrostatic_gripper/meshes/right_finger_tip.STL" />
+          filename="helping_hands_rl_envs/pybullet/urdf/hydrostatic_gripper/meshes/right_finger_tip_11_deg_flat.STL" />
       </geometry>
       <material
         name="">
@@ -737,7 +737,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="helping_hands_rl_envs/pybullet/urdf/hydrostatic_gripper/meshes/right_finger_tip.STL" />
+          filename="helping_hands_rl_envs/pybullet/urdf/hydrostatic_gripper/meshes/right_finger_tip_11_deg_flat.STL" />
       </geometry>
     </collision>
   </link>
