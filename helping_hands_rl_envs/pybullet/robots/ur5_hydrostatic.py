@@ -13,6 +13,7 @@ class UR5_Hydrostatic(RobotBase):
     self.max_force = 200.
     self.max_velocity = 0.35
     self.end_effector_index = 17
+    self.gripper_z_offset = 0.1
 
     self.home_positions = [0., 0., -2.137, 1.432, -0.915, -1.591, 0.071, 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.]
     self.home_positions_joint = self.home_positions[1:7]

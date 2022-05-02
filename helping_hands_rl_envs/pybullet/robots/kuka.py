@@ -25,8 +25,10 @@ class Kuka(RobotBase):
     super().__init__()
     self.max_velocity = .35
     self.max_force = 200.
+
     self.end_effector_index = 14
     self.gripper_index = 7
+    self.gripper_z_offset = 0.12
 
     # lower limits for null space
     self.ll = [-.967, -2, -2.96, 0.19, -2.96, -2.09, -3.05]

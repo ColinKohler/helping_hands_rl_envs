@@ -14,9 +14,11 @@ class Panda(RobotBase):
     self.home_positions_joint = self.home_positions[:7]
     self.gripper_joint_limit = [0, 0.04]
     self.max_force = 240
+
     self.finger_a_index = 10
     self.finger_b_index = 12
     self.end_effector_index = 13
+    self.gripper_z_offset = 0.06
 
     self.num_dofs = 7
     self.ll = [-7]*self.num_dofs
@@ -149,6 +151,17 @@ class Panda(RobotBase):
   def gripperHasForce(self):
     # return pb.getJointState(self.id, 9)[3] <= -5 or pb.getJointState(self.id, 10)[3] <= -5
     return pb.getJointState(self.id, 8)[2][2] > 100
+
+  def getWristForce(self):
+    wrist_rot = np.array(list(pb.getMatrixFromQuaternion(list(pb.getLinkState(self.id, 7)[5])))).reshape((3,3))
+
+    wrist_force = np.array(list(pb.getJointState(self.id, 8)[2][:3]))
+    wrist_force = np.dot(wrist_rot, wrist_force)
+
+    wrist_moment = np.array(list(pb.getJointState(self.id, 8)[2][3:]))
+    wrist_moment = np.dot(wrist_rot, wrist_moment)
+
+    return wrist_force, wrist_moment
 
   def getFingerForce(self):
     finger_a_rot = np.array(list(pb.getMatrixFromQuaternion(list(pb.getLinkState(self.id, 8)[5])))).reshape((3,3))

@@ -35,7 +35,7 @@ class CloseLoopPegInsertionEnv(CloseLoopEnv):
     self.resetPegHole()
     self.peg = self._generateShapes(
       constants.SQUARE_PEG,
-      pos=[[self.workspace[0].mean(), self.workspace[1].mean(), 0.17]],
+      pos=[[self.workspace[0].mean()-0.005, self.workspace[1].mean(), 0.17]],
       rot=[[0,0,0,1]],
       scale=0.12,#self.peg_scale_range[0],
       wait=False
@@ -44,9 +44,9 @@ class CloseLoopPegInsertionEnv(CloseLoopEnv):
     self.robot.closeGripper()
     self.setRobotHoldingObj()
 
-    for _ in range(2):
-      pb.stepSimulation()
-    self.peg.resetPose([self.workspace[0].mean(), self.workspace[1].mean(), 0.17], [0,0,0,1])
+    #for _ in range(2):
+    #  pb.stepSimulation()
+    #self.peg.resetPose([self.workspace[0].mean()-0.005, self.workspace[1].mean(), 0.17], [0,0,0,1])
 
     return self._getObservation()
 
@@ -97,6 +97,7 @@ if __name__ == '__main__':
 
   num_success = 0
   for _ in range(100):
+    input()
     obs = env.reset()
     done = False
     while not done:
