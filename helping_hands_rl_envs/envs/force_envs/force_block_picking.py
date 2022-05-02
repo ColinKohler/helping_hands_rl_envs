@@ -9,11 +9,14 @@ class ForceBlockPickingEnv(CloseLoopBlockPickingEnv):
   def _getObservation(self, action=None):
     ''''''
     state, hand_obs, obs = super()._getObservation(action=action)
-    finger_a_force, finger_b_force = self.robot.getFingerForce()
 
-    finger_force = [finger_a_force[:3], finger_b_force[:3]]
+    #finger_a_force, finger_b_force = self.robot.getFingerForce()
+    #finger_force = [finger_a_force[:3], finger_b_force[:3]]
 
-    return state, hand_obs, obs, np.array(finger_force).reshape(-1)
+    wrist_force, wrist_moment = self.robot.getWristForce
+    force = np.array(wrist_force + wrist_moment)
+
+    return state, hand_obs, obs, force
 
 def createForceBlockPickingEnv(config):
   return ForceBlockPickingEnv(config)
