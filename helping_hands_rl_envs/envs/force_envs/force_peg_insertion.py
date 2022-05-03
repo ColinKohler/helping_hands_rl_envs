@@ -9,12 +9,13 @@ class ForcePegInsertionEnv(CloseLoopPegInsertionEnv):
   def _getObservation(self, action=None):
     ''''''
     state, hand_obs, obs = super()._getObservation(action=action)
-    wrist_force = self.robot.getWristForce()
     #finger_a_force, finger_b_force = self.robot.getFingerForce()
-
     #finger_force = [finger_a_force.tolist(), finger_b_force.tolist()]
 
-    return state, hand_obs, obs, wrist_force#np.array(finger_force).reshape(-1)
+    wrist_force, wrist_moment = self.robot.getWristForce()
+    force = np.concatenate((wrist_force, wrist_moment))
+
+    return state, hand_obs, obs, force
 
 def createForcePegInsertionEnv(config):
   return ForcePegInsertionEnv(config)
@@ -27,7 +28,7 @@ if __name__ == '__main__':
 
   env_config = {'workspace': workspace, 'max_steps': 100, 'obs_size': 128, 'render': True, 'fast_mode': True,
                 'seed': None, 'action_sequence': 'pxyzr', 'num_objects': 1, 'random_orientation': True,
-                'reward_type': 'step_left', 'simulate_grasp': True, 'perfect_grasp': False, 'robot': 'panda',
+                'reward_type': 'step_left', 'simulate_grasp': True, 'perfect_grasp': False, 'robot': 'ur5_hydrostatic_gripper',
                 'object_init_space_check': 'point', 'physics_mode': 'force', 'object_scale_range': (1.2, 1.2),
                 'hard_reset_freq': 1000, 'view_type': 'camera_center_xyz'}
   planner_config = {'random_orientation': True, 'dpos': 0.05, 'drot': np.pi/8}

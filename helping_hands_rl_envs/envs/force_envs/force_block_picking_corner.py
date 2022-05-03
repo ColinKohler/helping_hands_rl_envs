@@ -9,11 +9,13 @@ class ForceBlockPickingCornerEnv(CloseLoopBlockPickingCornerEnv):
   def _getObservation(self, action=None):
     ''''''
     state, hand_obs, obs = super()._getObservation(action=action)
-    finger_a_force, finger_b_force = self.robot.getFingerForce()
+    #finger_a_force, finger_b_force = self.robot.getFingerForce()
+    #force = [finger_a_force.tolist(), finger_b_force.tolist()]
 
-    finger_force = [finger_a_force.tolist(), finger_b_force.tolist()]
+    wrist_force, wrist_moment = self.robot.getWristForce()
+    force = np.concatenate((wrist_force, wrist_moment))
 
-    return state, hand_obs, obs, np.array(finger_force).reshape(-1)
+    return state, hand_obs, obs, force
 
 def createForceBlockPickingCornerEnv(config):
   return ForceBlockPickingCornerEnv(config)
@@ -40,8 +42,9 @@ if __name__ == '__main__':
     while not done:
       action = planner.getNextAction()
 
-      print('Left Finger: x:{:.3f} y:{:.3f} z:{:.3f}'.format(obs[3][0], obs[3][1], obs[3][2]))
-      print('Right Finger: x:{:.3f} y:{:.3f} z:{:.3f}'.format(obs[3][3], obs[3][4], obs[3][5]))
+      #print('Left Finger: x:{:.3f} y:{:.3f} z:{:.3f}'.format(obs[3][0], obs[3][1], obs[3][2]))
+      #print('Right Finger: x:{:.3f} y:{:.3f} z:{:.3f}'.format(obs[3][3], obs[3][4], obs[3][5]))
+      print('Wrist: Fx:{:.3f} Fy:{:.3f} Fz:{:.3f} Mx:{:.3f} My:{:.3f} Mz:{:.3f}'.format(*obs[3]))
       print()
       plt.imshow(obs[2].squeeze(), cmap='gray'); plt.show()
 
