@@ -21,7 +21,7 @@ class Panda(RobotBase):
     self.finger_a_index = 10
     self.finger_b_index = 12
     self.end_effector_index = 13
-    self.gripper_z_offset = 0.06
+    self.gripper_z_offset = 0.05
     self.gripper_joint_limit = [0, 0.04]
 
     self.ll = [-7]*self.num_dofs
@@ -194,14 +194,14 @@ class Panda(RobotBase):
     gripper_rz = pb.getEulerFromQuaternion(self._getEndEffectorRotation())[2]
 
     im = np.zeros((img_size, img_size))
-    gripper_half_size = 5 * workspace_size / obs_size_m
-    gripper_half_size = round(gripper_half_size / 128 * img_size)
+    gripper_half_width = round((4 * workspace_size / obs_size_m) / 128 * img_size)
+    gripper_half_length = round((5 * workspace_size / obs_size_m) / 128 * img_size)
     gripper_max_open = 35 * workspace_size / obs_size_m
 
     anchor = img_size // 2
     d = int(gripper_max_open / 128 * img_size * gripper_state)
-    im[int(anchor - d // 2 - gripper_half_size):int(anchor - d // 2 + gripper_half_size), int(anchor - gripper_half_size):int(anchor + gripper_half_size)] = 1
-    im[int(anchor + d // 2 - gripper_half_size):int(anchor + d // 2 + gripper_half_size), int(anchor - gripper_half_size):int(anchor + gripper_half_size)] = 2
+    im[int(anchor - d // 2 - gripper_half_length):int(anchor - d // 2 + gripper_half_length), int(anchor - gripper_half_width):int(anchor + gripper_half_width)] = 1
+    im[int(anchor + d // 2 - gripper_half_length):int(anchor + d // 2 + gripper_half_length), int(anchor - gripper_half_width):int(anchor + gripper_half_width)] = 2
     im = rotate(im, np.rad2deg(gripper_rz), reshape=False, order=0)
 
     return im

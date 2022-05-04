@@ -191,8 +191,8 @@ class CloseLoopEnv(BaseEnv):
         heightmap[gripper_img == 1] = gripper_pos[2]
       else:
         finger_a_force, finger_b_force = self.robot.getFingerForce()
-        heightmap[gripper_img == 1] = np.clip(finger_b_force[2], -10, 10) / 100
-        heightmap[gripper_img == 2] = np.clip(finger_a_force[2], -10, 10) / 100
+        heightmap[gripper_img == 1] = np.abs(np.clip(finger_b_force[2], -10, 10) / 100)
+        heightmap[gripper_img == 2] = np.abs(np.clip(finger_a_force[2], -10, 10) / 100)
       heightmap = heightmap.reshape([1, self.heightmap_size, self.heightmap_size])
       gripper_img = gripper_img.reshape([1, self.heightmap_size, self.heightmap_size])
       return self._isHolding(), None, heightmap
