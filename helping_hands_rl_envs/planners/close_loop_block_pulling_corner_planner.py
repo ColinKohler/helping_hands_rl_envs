@@ -34,15 +34,15 @@ class CloseLoopBlockPullingCornerPlanner(CloseLoopPlanner):
       pull_rz += np.pi
 
     pre_press_pos = self.env.corner.getPressPose()[0]
-    pre_press_pos[2] = 0.1
+    pre_press_pos[2] = 0.15
 
     pre_press_rot = [0, 0, pull_rz]
 
     press_pos = self.env.corner.getPressPose()[0]
-    press_pos[2] += 0.03
+    press_pos[2] += 0.0375
 
     pull_pos = self.env.corner.getPullPose()[0]
-    pull_pos[2] += 0.03
+    pull_pos[2] += 0.0375
 
     pull_rot = [0, 0, pull_rz]
 
@@ -52,30 +52,24 @@ class CloseLoopBlockPullingCornerPlanner(CloseLoopPlanner):
     pre_pick_pos = object_pos[0], object_pos[1], 0.1
     if self.stage == 0:
       # moving to pre press
+      self.dpos = 0.05
       self.stage = 1
       self.current_target = (pre_press_pos, pre_press_rot, constants.PLACE_PRIMATIVE)
     elif self.stage == 1:
       # moving to press
+      self.dpos = 0.01
       self.stage = 2
       self.current_target = (press_pos, pre_press_rot, constants.PLACE_PRIMATIVE)
     elif self.stage == 2:
       # moving to pull
+      self.dpos = 0.01
       self.stage = 3
       self.current_target = (pull_pos, pull_rot, constants.PLACE_PRIMATIVE)
     elif self.stage == 3:
       # moving to pre pick
+      self.dpos = 0.05
       self.stage = 0
       self.current_target = (post_pull_pos, pull_rot, constants.PLACE_PRIMATIVE)
-    #elif self.stage == 4:
-    #  self.stage = 5
-    #  self.current_target = (pre_pick_pos, object_rot, constants.PLACE_PRIMATIVE)
-    #elif self.stage == 5:
-    #  # moving to pick
-    #  self.stage = 6
-    #  self.current_target = (object_pos, object_rot, constants.PICK_PRIMATIVE)
-    #elif self.stage == 6:
-    #  self.stage = 0
-    #  self.current_target = (pre_pick_pos, object_rot, constants.PICK_PRIMATIVE)
 
   def getNextAction(self):
     if self.env.current_episode_steps == 1:
