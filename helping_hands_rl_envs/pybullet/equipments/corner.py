@@ -14,9 +14,9 @@ class Corner:
     bottom_collision = pb.createCollisionShape(pb.GEOM_BOX, halfExtents=[size[1]/2, size[1]/2, 0.001])
 
     front_visual = pb.createVisualShape(pb.GEOM_BOX, halfExtents=[0.0125, size[1]/2, size[2]/2], rgbaColor=[1, 1, 1, 1])
-    front_collision = pb.createCollisionShape(pb.GEOM_BOX, halfExtents=[0.0125, size[1]/2, size[2]/2])
+    front_collision = pb.createCollisionShape(pb.GEOM_BOX, halfExtents=[0.015, size[1]/2, size[2]/2])
 
-    left_visual = pb.createVisualShape(pb.GEOM_BOX, halfExtents=[size[0]/2, 0.0125, size[2] / 2], rgbaColor=[1, 1, 1, 1])
+    left_visual = pb.createVisualShape(pb.GEOM_BOX, halfExtents=[size[0]/2, 0.015, size[2] / 2], rgbaColor=[1, 1, 1, 1])
     left_collision = pb.createCollisionShape(pb.GEOM_BOX, halfExtents=[size[0]/2, 0.0125, size[2] / 2])
 
     obj_visual = pb.createVisualShape(pb.GEOM_BOX, halfExtents=[0.005, 0.005, 0.005], rgbaColor=[1, 0, 0, 0])
@@ -33,7 +33,7 @@ class Corner:
                                  baseVisualShapeIndex=bottom_visual,
                                  basePosition=pos,
                                  baseOrientation=rot,
-                                 linkMasses=[1, 1, 1, 1, 1],
+                                 linkMasses=[100, 100, 100, 100, 100],
                                  linkCollisionShapeIndices=[front_collision, left_collision, obj_collision, pull_collision, press_collision],
                                  linkVisualShapeIndices=[front_visual, left_visual, obj_visual, pull_visual, press_visual],
                                  linkPositions=[[-size[0]/2, 0, size[2]/2],

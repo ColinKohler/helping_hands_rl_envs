@@ -75,11 +75,12 @@ if __name__ == '__main__':
   env_config['seed'] = 1
   env = CloseLoopBlockPullingCornerEnv(env_config)
   planner = CloseLoopBlockPullingCornerPlanner(env, planner_config)
-  s, in_hand, obs = env.reset()
+  obs = env.reset()
 
   for _ in range(100):
     done = False
     while not done:
+      plt.imshow(obs[2][0].squeeze(), cmap='gray'); plt.show()
+      plt.imshow(obs[2][1].squeeze(), cmap='gray'); plt.show()
       action = planner.getNextAction()
       obs, reward, done = env.step(action)
-      input()
