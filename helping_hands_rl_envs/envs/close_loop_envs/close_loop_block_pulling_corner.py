@@ -63,9 +63,9 @@ def createCloseLoopBlockPullingCornerEnv(config):
 
 if __name__ == '__main__':
   import matplotlib.pyplot as plt
-  workspace = np.asarray([[0.2, 0.8],
-                          [-0.3, 0.3],
-                          [0.01, 0.50]])
+  workspace = np.asarray([[0.25, 0.65],
+                          [-0.2, 0.2],
+                          [0.01, 0.25]])
   env_config = {'workspace': workspace, 'max_steps': 100, 'obs_size': 128, 'render': True, 'fast_mode': True,
                 'seed': 2, 'action_sequence': 'pxyzr', 'num_objects': 1, 'random_orientation': True,
                 'reward_type': 'step_left', 'simulate_grasp': True, 'perfect_grasp': False, 'robot': 'panda',
