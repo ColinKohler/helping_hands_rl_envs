@@ -81,7 +81,6 @@ class RobotBase:
     for obj in objects:
       # check the contact force normal to count the horizontal contact points
       contact_points = pb.getContactPoints(self.id, obj.object_id)
-      breakpoint()
       horizontal = list(filter(lambda p: abs(p[7][2]) < 0.3, contact_points))
       if len(horizontal) >= 2:
         return obj
