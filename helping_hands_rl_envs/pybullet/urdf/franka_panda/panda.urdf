@@ -241,9 +241,16 @@
     </inertial>
     <visual>
       <geometry>
+	 	<box size="0.00 0.00 0.00"/>
+      </geometry>
+      <material name="red">
+        <color rgba="0 0 0 0"/>
+      </material>
+
+      <!--<geometry>
         <mesh filename="package://meshes/visual/hand.obj"/>
       </geometry>
-      <material name="panda_white"/>
+      <material name="panda_white"/>-->
     </visual>
     <collision>
       <geometry>
