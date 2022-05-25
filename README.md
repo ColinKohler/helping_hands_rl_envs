@@ -1,6 +1,8 @@
+# [BulletArm](https://github.com/ColinKohler/BulletArm): Further work on this package has been migrated to BulletArm.
+
 # Helping Hands RL Environments
 - [License](https://github.com/ColinKohler/helping_hands_rl_envs/blob/master/LICENSE)
-
+ 
 This package contains various simulated robotics environments used for research in the [Helping Hands](https://www2.ccs.neu.edu/research/helpinghands/) lab.
 The majority of these environments entail a robotic arm armed with a paralel jaw gripper executing a series of manipulation based tasks. For a full list of 
 the tasks currently implemented see below. The core simulator used for most tasks is [PyBullet](https://github.com/bulletphysics/bullet3) but a simple numpy
