@@ -21,7 +21,7 @@ class Panda(RobotBase):
     self.finger_a_index = 10
     self.finger_b_index = 12
     self.end_effector_index = 13
-    self.gripper_z_offset = 0.05
+    self.gripper_z_offset = 0.06
     self.gripper_joint_limit = [0, 0.04]
 
     self.ll = [-7]*self.num_dofs
