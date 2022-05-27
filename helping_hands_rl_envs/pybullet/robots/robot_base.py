@@ -44,7 +44,7 @@ class RobotBase:
     self.position_gain = 0.02
     self.adjust_gripper_after_lift = False
 
-    self.force_history_len = 100
+    self.force_history_len = 64
     self.force_history = deque([[0,0,0,0,0,0]] * self.force_history_len, maxlen=self.force_history_len)
 
   def saveState(self):

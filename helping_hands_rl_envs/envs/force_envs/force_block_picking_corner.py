@@ -12,8 +12,10 @@ class ForceBlockPickingCornerEnv(CloseLoopBlockPickingCornerEnv):
     #finger_a_force, finger_b_force = self.robot.getFingerForce()
     #force = [finger_a_force.tolist(), finger_b_force.tolist()]
 
-    wrist_force, wrist_moment = self.robot.getWristForce()
-    force = np.concatenate((wrist_force, wrist_moment))
+    #wrist_force, wrist_moment = self.robot.getWristForce()
+    #force = np.concatenate((wrist_force, wrist_moment))
+
+    force = np.array(self.robot.force_history)
 
     return state, hand_obs, obs, force
 

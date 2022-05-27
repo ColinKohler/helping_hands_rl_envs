@@ -201,7 +201,7 @@ class Panda(RobotBase):
     anchor = (img_size // 2)
     d = int(gripper_max_open * np.round(gripper_state, 2))
     im[int(anchor - d // 2 - gripper_half_length):int(anchor - d // 2 + gripper_half_length), int(anchor - gripper_half_width):int(anchor + gripper_half_width)] = 1
-    im[int(anchor + d // 2 - gripper_half_length):int(anchor + d // 2 + gripper_half_length), int(anchor - gripper_half_width):int(anchor + gripper_half_width)] = 2
+    im[int(anchor + d // 2 - gripper_half_length):int(anchor + d // 2 + gripper_half_length), int(anchor - gripper_half_width):int(anchor + gripper_half_width)] = 1
     im = rotate(im, np.rad2deg(gripper_rz), reshape=False, mode='nearest', order=0)
 
     return im
