@@ -89,11 +89,31 @@ if __name__ == '__main__':
     def smooth(x, window=100):
       return np.mean(list(more_itertools.windowed(x, window)), axis=1)
 
-    plt.plot(smooth(force[:,0]), label='F_x')
-    plt.plot(smooth(force[:,1]), label='F_y')
-    plt.plot(smooth(force[:,2]), label='F_z')
-    plt.plot(smooth(force[:,3]), label='M_x')
-    plt.plot(smooth(force[:,4]), label='M_y')
-    plt.plot(smooth(force[:,5]), label='M_z')
+    fig, ax  = plt.subplots(nrows=1, ncols=3, figsize=(10,5))
+    ax[0].title.set_text('N=100 Smoothing')
+    ax[0].plot(smooth(force[:,0]), label='F_x')
+    ax[0].plot(smooth(force[:,1]), label='F_y')
+    ax[0].plot(smooth(force[:,2]), label='F_z')
+    ax[0].plot(smooth(force[:,3]), label='M_x')
+    ax[0].plot(smooth(force[:,4]), label='M_y')
+    ax[0].plot(smooth(force[:,5]), label='M_z')
+
+    ax[1].title.set_text('N=50 Smoothing')
+    ax[1].plot(smooth(force[:,0], window=50), label='F_x')
+    ax[1].plot(smooth(force[:,1], window=50), label='F_y')
+    ax[1].plot(smooth(force[:,2], window=50), label='F_z')
+    ax[1].plot(smooth(force[:,3], window=50), label='M_x')
+    ax[1].plot(smooth(force[:,4], window=50), label='M_y')
+    ax[1].plot(smooth(force[:,5], window=50), label='M_z')
+
+    ax[2].title.set_text('No Smoothing')
+    ax[2].plot(smooth(force[:,0], window=1), label='F_x')
+    ax[2].plot(smooth(force[:,1], window=1), label='F_y')
+    ax[2].plot(smooth(force[:,2], window=1), label='F_z')
+    ax[2].plot(smooth(force[:,3], window=1), label='M_x')
+    ax[2].plot(smooth(force[:,4], window=1), label='M_y')
+    ax[2].plot(smooth(force[:,5], window=1), label='M_z')
+
+
     plt.legend()
     plt.show()

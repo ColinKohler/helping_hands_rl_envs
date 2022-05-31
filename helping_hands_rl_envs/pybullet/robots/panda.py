@@ -159,14 +159,14 @@ class Panda(RobotBase):
     return pb.getJointState(self.id, self.wrist_index)[2][2] > 100
 
   def getWristForce(self):
-    wrist_rot = pb.getMatrixFromQuaternion(pb.getLinkState(self.id, self.wrist_index - 1)[5])
-    wrist_rot = np.array(list(wrist_rot)).reshape((3,3))
+    #wrist_rot = pb.getMatrixFromQuaternion(pb.getLinkState(self.id, self.wrist_index - 1)[5])
+    #wrist_rot = np.array(list(wrist_rot)).reshape((3,3))
 
     wrist_force = np.array(list(pb.getJointState(self.id, self.wrist_index)[2][:3]))
-    wrist_force = np.dot(wrist_rot, wrist_force)
+    #wrist_force = np.dot(wrist_rot, wrist_force)
 
     wrist_moment = np.array(list(pb.getJointState(self.id, self.wrist_index)[2][3:]))
-    wrist_moment = np.dot(wrist_rot, wrist_moment)
+    #wrist_moment = np.dot(wrist_rot, wrist_moment)
 
     return wrist_force, wrist_moment
 
