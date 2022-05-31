@@ -66,7 +66,7 @@ if __name__ == '__main__':
   workspace = np.asarray([[0.25, 0.65],
                           [-0.2, 0.2],
                           [0.01, 0.25]])
-  env_config = {'workspace': workspace, 'max_steps': 100, 'obs_size': 128, 'render': True, 'fast_mode': True,
+  env_config = {'workspace': workspace, 'max_steps': 100, 'obs_size': 128, 'render': False, 'fast_mode': True,
                 'seed': 2, 'action_sequence': 'pxyzr', 'num_objects': 1, 'random_orientation': True,
                 'reward_type': 'step_left', 'simulate_grasp': True, 'perfect_grasp': False, 'robot': 'panda',
                 'object_init_space_check': 'point', 'physics_mode': 'fast', 'object_scale_range': (1.2, 1.2),
@@ -80,8 +80,6 @@ if __name__ == '__main__':
   for _ in range(100):
     done = False
     while not done:
-      plt.imshow(obs[2][0].squeeze(), cmap='gray'); plt.show()
-      #plt.imshow(obs[2][1].squeeze(), cmap='gray'); plt.show()
       action = planner.getNextAction()
       obs, reward, done = env.step(action)
 
