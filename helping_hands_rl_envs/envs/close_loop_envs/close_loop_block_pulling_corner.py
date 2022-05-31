@@ -63,6 +63,7 @@ def createCloseLoopBlockPullingCornerEnv(config):
 
 if __name__ == '__main__':
   import matplotlib.pyplot as plt
+  import more_itertools
   workspace = np.asarray([[0.25, 0.65],
                           [-0.2, 0.2],
                           [0.01, 0.25]])
@@ -85,25 +86,14 @@ if __name__ == '__main__':
 
       force = np.array(env.robot.force_history)
 
-      if np.max(obs[2][1]) > 0.1:
-        fig, ax = plt.subplots(nrows=2, ncols=3, figsize=(10,7))
-        ax[0][0].title.set_text('F_x')
-        ax[0][0].plot(force[:,0])
+    def smooth(x, window=100):
+      return np.mean(list(more_itertools.windowed(x, window)), axis=1)
 
-        ax[0][1].title.set_text('F_y')
-        ax[0][1].plot(force[:,1])
-
-        ax[0][2].title.set_text('F_z')
-        ax[0][2].plot(force[:,2])
-
-        ax[1][0].title.set_text('M_x')
-        ax[1][0].plot(force[:,3])
-
-        ax[1][1].title.set_text('M_y')
-        ax[1][1].plot(force[:,4])
-
-        ax[1][2].title.set_text('M_z')
-        ax[1][2].plot(force[:,5])
-
-        plt.tight_layout()
-        plt.show()
+    plt.plot(smooth(force[:,0]), label='F_x')
+    plt.plot(smooth(force[:,1]), label='F_y')
+    plt.plot(smooth(force[:,2]), label='F_z')
+    plt.plot(smooth(force[:,3]), label='M_x')
+    plt.plot(smooth(force[:,4]), label='M_y')
+    plt.plot(smooth(force[:,5]), label='M_z')
+    plt.legend()
+    plt.show()

@@ -2,6 +2,7 @@ import os
 import numpy as np
 import pybullet as pb
 from scipy.ndimage import rotate
+from collections import deque
 
 from helping_hands_rl_envs.pybullet.utils import constants
 from helping_hands_rl_envs.pybullet.robots.robot_base import RobotBase
@@ -21,7 +22,7 @@ class Panda(RobotBase):
     self.finger_a_index = 10
     self.finger_b_index = 12
     self.end_effector_index = 13
-    self.gripper_z_offset = 0.06
+    self.gripper_z_offset = 0.08
     self.gripper_joint_limit = [0, 0.04]
 
     self.ll = [-7]*self.num_dofs
@@ -35,6 +36,7 @@ class Panda(RobotBase):
     self.id = pb.loadURDF(self.urdf_filepath, useFixedBase=True)
     pb.resetBasePositionAndOrientation(self.id, [-0.1,0,0], [0,0,0,1])
 
+    self.force_history = deque([[0,0,0,0,0,0]] * self.force_history_len, maxlen=self.force_history_len)
     self.gripper_closed = False
     self.holding_obj = None
     self.num_joints = pb.getNumJoints(self.id)
@@ -69,6 +71,7 @@ class Panda(RobotBase):
 
   def reset(self):
     self.gripper_closed = False
+    self.force_history = deque([[0,0,0,0,0,0]] * self.force_history_len, maxlen=self.force_history_len)
     self.holding_obj = None
     [pb.resetJointState(self.id, idx, self.home_positions[idx]) for idx in range(self.num_joints)]
     self.moveToJ(self.home_positions_joint[:self.num_dofs])

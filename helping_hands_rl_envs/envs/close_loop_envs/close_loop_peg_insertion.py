@@ -37,7 +37,7 @@ class CloseLoopPegInsertionEnv(CloseLoopEnv):
       constants.SQUARE_PEG,
       pos=[[self.workspace[0].mean()-0.005, self.workspace[1].mean(), 0.17]],
       rot=[[0,0,0,1]],
-      scale=0.10,#self.peg_scale_range[0],
+      scale=0.12,#self.peg_scale_range[0],
       wait=False
     )[0]
 
@@ -83,32 +83,36 @@ def createCloseLoopPegInsertionEnv(config):
   return CloseLoopPegInsertionEnv(config)
 
 if __name__ == '__main__':
+  import matplotlib.pyplot as plt
+  import more_itertools
   workspace = np.asarray([[0.25, 0.65],
                           [-0.2, 0.2],
                           [0.01, 0.25]])
   env_config = {'workspace': workspace, 'max_steps': 100, 'obs_size': 128, 'render': True, 'fast_mode': True,
                 'seed': None, 'action_sequence': 'pxyzr', 'num_objects': 1, 'random_orientation': True,
-                'reward_type': 'step_left', 'simulate_grasp': True, 'perfect_grasp': False, 'robot': 'ur5_hydrostatic_gripper',
+                'reward_type': 'step_left', 'simulate_grasp': True, 'perfect_grasp': False, 'robot': 'panda',
                 'object_init_space_check': 'point', 'physics_mode': 'fast', 'object_scale_range': (1, 1), 'hard_reset_freq': 1000,
                 'view_type': 'camera_center_xyz'}
   planner_config = {'random_orientation': False, 'dpos': 0.05, 'drot': np.pi/8, 'rand_point': False}
   env = CloseLoopPegInsertionEnv(env_config)
   planner = CloseLoopPegInsertionPlanner(env, planner_config)
 
-  num_success = 0
   for _ in range(100):
-    input()
     obs = env.reset()
     done = False
     while not done:
       action = planner.getNextAction()
-      finger_a_force, finger_b_force = env.robot.getFingerForce()
-      finger_force = np.array([finger_a_force, finger_b_force]).reshape(-1)
-      #print(np.round(finger_force, 2))
-
       obs, reward, done = env.step(action)
-      #print(reward)
-    if reward > 0.9:
-      num_success += 1
-    #plt.imshow(obs[2].squeeze(), cmap='gray'); plt.show()
-  print(num_success)
+      force = np.array(env.robot.force_history)
+
+    def smooth(x, window=100):
+      return np.mean(list(more_itertools.windowed(x, window)), axis=1)
+
+    plt.plot(smooth(force[:,0]), label='F_x')
+    plt.plot(smooth(force[:,1]), label='F_y')
+    plt.plot(smooth(force[:,2]), label='F_z')
+    plt.plot(smooth(force[:,3]), label='M_x')
+    plt.plot(smooth(force[:,4]), label='M_y')
+    plt.plot(smooth(force[:,5]), label='M_z')
+    plt.legend()
+    plt.show()
