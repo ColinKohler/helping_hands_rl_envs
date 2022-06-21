@@ -37,7 +37,7 @@ class CloseLoopPegInsertionEnv(CloseLoopEnv):
       constants.SQUARE_PEG,
       pos=[[self.workspace[0].mean()-0.005, self.workspace[1].mean(), 0.17]],
       rot=[[0,0,0,1]],
-      scale=0.12,#self.peg_scale_range[0],
+      scale=0.10,#self.peg_scale_range[0],
       wait=False
     )[0]
 
@@ -105,14 +105,15 @@ if __name__ == '__main__':
       obs, reward, done = env.step(action)
       force = np.array(env.robot.force_history)
 
-    def smooth(x, window=100):
-      return np.mean(list(more_itertools.windowed(x, window)), axis=1)
+      def smooth(x, window=100):
+        #return np.mean(list(more_itertools.windowed(x, window)), axis=1)
+        return x
 
-    plt.plot(smooth(force[:,0]), label='F_x')
-    plt.plot(smooth(force[:,1]), label='F_y')
-    plt.plot(smooth(force[:,2]), label='F_z')
-    plt.plot(smooth(force[:,3]), label='M_x')
-    plt.plot(smooth(force[:,4]), label='M_y')
-    plt.plot(smooth(force[:,5]), label='M_z')
-    plt.legend()
-    plt.show()
+      plt.plot(smooth(force[:,0]), label='F_x')
+      plt.plot(smooth(force[:,1]), label='F_y')
+      plt.plot(smooth(force[:,2]), label='F_z')
+      plt.plot(smooth(force[:,3]), label='M_x')
+      plt.plot(smooth(force[:,4]), label='M_y')
+      plt.plot(smooth(force[:,5]), label='M_z')
+      plt.legend()
+      plt.show()
