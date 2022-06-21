@@ -171,14 +171,14 @@ class Panda(RobotBase):
     return wrist_force, wrist_moment
 
   def getFingerForce(self):
-    wrist_rot = pb.getMatrixFromQuaternion(list(pb.getLinkState(self.id, self.wrist_index)[5]))
-    wrist_rot = np.array(list(wrist_rot)).reshape((3,3))
+    #wrist_rot = pb.getMatrixFromQuaternion(list(pb.getLinkState(self.id, self.wrist_index)[5]))
+    #wrist_rot = np.array(list(wrist_rot)).reshape((3,3))
 
     finger_a_force = np.array(list(pb.getJointState(self.id, self.finger_a_index)[2][:3]))
-    finger_a_force = np.dot(wrist_rot, finger_a_force)
+    #finger_a_force = np.dot(wrist_rot, finger_a_force)
 
     finger_b_force = np.array(list(pb.getJointState(self.id, self.finger_b_index)[2][:3]))
-    finger_b_force = np.dot(wrist_rot, finger_b_force)
+    #finger_b_force = np.dot(wrist_rot, finger_b_force)
 
     return finger_a_force, finger_b_force
 

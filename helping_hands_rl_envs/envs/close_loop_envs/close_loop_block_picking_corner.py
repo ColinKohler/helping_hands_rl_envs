@@ -83,10 +83,6 @@ if __name__ == '__main__':
       action = planner.getNextAction()
       plt.imshow(obs[2].squeeze(), cmap='gray'); plt.show()
 
-      finger_a_force, finger_b_force = env.robot.getFingerForce()
-      finger_force = np.array([finger_a_force, finger_b_force]).reshape(-1)
-      #print(np.round(finger_force, 2))
-
       obs, reward, done = env.step(action)
 
     if reward > 0.9:

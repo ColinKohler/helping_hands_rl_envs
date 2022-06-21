@@ -114,6 +114,5 @@ if __name__ == '__main__':
     ax[2].plot(smooth(force[:,4], window=1), label='M_y')
     ax[2].plot(smooth(force[:,5], window=1), label='M_z')
 
-
     plt.legend()
     plt.show()

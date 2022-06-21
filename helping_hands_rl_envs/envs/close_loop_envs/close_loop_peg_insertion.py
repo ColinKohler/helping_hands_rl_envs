@@ -44,9 +44,9 @@ class CloseLoopPegInsertionEnv(CloseLoopEnv):
     self.robot.closeGripper()
     self.setRobotHoldingObj()
 
-    #for _ in range(2):
-    #  pb.stepSimulation()
-    #self.peg.resetPose([self.workspace[0].mean()-0.005, self.workspace[1].mean(), 0.17], [0,0,0,1])
+    for _ in range(2):
+      pb.stepSimulation()
+    self.peg.resetPose([self.workspace[0].mean()-0.005, self.workspace[1].mean(), 0.17], [0,0,0,1])
 
     return self._getObservation()
 
@@ -103,17 +103,17 @@ if __name__ == '__main__':
     while not done:
       action = planner.getNextAction()
       obs, reward, done = env.step(action)
+      print(np.round(env.peg.getRotation(), 3))
       force = np.array(env.robot.force_history)
 
       def smooth(x, window=100):
-        #return np.mean(list(more_itertools.windowed(x, window)), axis=1)
-        return x
+        return np.mean(list(more_itertools.windowed(x, window)), axis=1)
 
-      plt.plot(smooth(force[:,0]), label='F_x')
-      plt.plot(smooth(force[:,1]), label='F_y')
-      plt.plot(smooth(force[:,2]), label='F_z')
-      plt.plot(smooth(force[:,3]), label='M_x')
-      plt.plot(smooth(force[:,4]), label='M_y')
-      plt.plot(smooth(force[:,5]), label='M_z')
-      plt.legend()
-      plt.show()
+      #plt.plot(smooth(force[:,0], window=1), label='F_x')
+      #plt.plot(smooth(force[:,1], window=1), label='F_y')
+      #plt.plot(smooth(force[:,2], window=1), label='F_z')
+      #plt.plot(smooth(force[:,3], window=1), label='M_x')
+      #plt.plot(smooth(force[:,4], window=1), label='M_y')
+      #plt.plot(smooth(force[:,5], window=1), label='M_z')
+      #plt.legend()
+      #plt.show()

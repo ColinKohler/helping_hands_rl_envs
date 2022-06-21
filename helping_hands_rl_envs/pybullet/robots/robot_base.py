@@ -44,7 +44,7 @@ class RobotBase:
     self.position_gain = 0.02
     self.adjust_gripper_after_lift = False
 
-    self.force_history_len = 64
+    self.force_history_len = 32
 
   def saveState(self):
     '''
@@ -320,8 +320,10 @@ class RobotBase:
       while not np.allclose(joint_pos, target_pose, atol=1e-3) and n_it < max_it:
         pb.stepSimulation()
 
-        force, moment = self.getWristForce()
-        force = np.concatenate((force, moment))
+        #force, moment = self.getWristForce()
+        #force = np.concatenate((force, moment))
+        force_a, force_b = self.getFingerForce()
+        force = np.concatenate((force_a, force_b))
         self.force_history.append(force)
 
         n_it += 1
