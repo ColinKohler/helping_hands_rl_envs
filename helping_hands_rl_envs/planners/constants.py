@@ -91,6 +91,7 @@ PLANNERS = {
   'close_loop_block_in_bowl' : CloseLoopBlockInBowlPlanner,
   'close_loop_peg_insertion' : CloseLoopPegInsertionPlanner,
   'force_block_picking' : CloseLoopBlockPickingPlanner,
+  'force_block_reaching' : CloseLoopBlockPickingPlanner,
   'force_block_pulling' : CloseLoopBlockPullingPlanner,
   'force_block_picking_corner' : CloseLoopBlockPickingCornerPlanner,
   'force_block_pulling_corner' : CloseLoopBlockPullingCornerPlanner,

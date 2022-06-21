@@ -1,8 +1,8 @@
 import numpy as np
-from helping_hands_rl_envs.envs.close_loop_envs.close_loop_block_picking import CloseLoopBlockPickingEnv
+from helping_hands_rl_envs.envs.close_loop_envs.close_loop_block_reaching import CloseLoopBlockReachingEnv
 from helping_hands_rl_envs.planners.close_loop_block_picking_planner import CloseLoopBlockPickingPlanner
 
-class ForceBlockPickingEnv(CloseLoopBlockPickingEnv):
+class ForceBlockReachingEnv(CloseLoopBlockReachingEnv):
   def __init__(self, config):
     super().__init__(config)
 
@@ -14,8 +14,8 @@ class ForceBlockPickingEnv(CloseLoopBlockPickingEnv):
 
     return state, hand_obs, obs, force
 
-def createForceBlockPickingEnv(config):
-  return ForceBlockPickingEnv(config)
+def createForceBlockReachingEnv(config):
+  return ForceBlockReachingEnv(config)
 
 if __name__ == '__main__':
   import matplotlib.pyplot as plt
@@ -29,7 +29,7 @@ if __name__ == '__main__':
                 'object_init_space_check': 'point', 'physics_mode': 'force', 'object_scale_range': (1.0, 1.0),
                 'hard_reset_freq': 1000, 'view_type': 'camera_center_xyz'}
   planner_config = {'random_orientation': True, 'dpos': 0.05, 'drot': np.pi/8}
-  env = ForceBlockPickingEnv(env_config)
+  env = ForceBlockReachingEnv(env_config)
   planner = CloseLoopBlockPickingPlanner(env, planner_config)
 
   num_success = 0
