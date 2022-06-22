@@ -72,9 +72,11 @@ from helping_hands_rl_envs.envs.force_envs.force_block_reaching import createFor
 from helping_hands_rl_envs.envs.force_envs.force_block_picking import createForceBlockPickingEnv
 from helping_hands_rl_envs.envs.force_envs.force_block_stacking import createForceBlockStackingEnv
 from helping_hands_rl_envs.envs.force_envs.force_block_pulling import createForceBlockPullingEnv
+from helping_hands_rl_envs.envs.force_envs.force_block_pushing import createForceBlockPushingEnv
 from helping_hands_rl_envs.envs.force_envs.force_block_picking_corner import createForceBlockPickingCornerEnv
 from helping_hands_rl_envs.envs.force_envs.force_block_pulling_corner import createForceBlockPullingCornerEnv
 from helping_hands_rl_envs.envs.force_envs.force_peg_insertion import createForcePegInsertionEnv
+from helping_hands_rl_envs.envs.force_envs.force_drawer_opening import createForceDrawerOpeningEnv
 
 CREATE_ENV_FNS = {
   'block_picking' : createBlockPickingEnv,
@@ -144,7 +146,9 @@ CREATE_ENV_FNS = {
   'force_block_stacking' : createForceBlockStackingEnv,
   'force_block_reaching' : createForceBlockReachingEnv,
   'force_block_pulling' : createForceBlockPullingEnv,
+  'force_block_pushing' : createForceBlockPushingEnv,
   'force_block_picking_corner' : createForceBlockPickingCornerEnv,
   'force_block_pulling_corner' : createForceBlockPullingCornerEnv,
   'force_peg_insertion' : createForcePegInsertionEnv,
+  'force_drawer_opening' : createForceDrawerOpeningEnv,
 }

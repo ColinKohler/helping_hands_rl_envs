@@ -1,7 +1,7 @@
 import numpy as np
-from helping_hands_rl_envs.envs.close_loop_envs.close_loop_block_pulling import CloseLoopBlockPullingEnv
+from helping_hands_rl_envs.envs.close_loop_envs.close_loop_drawer_opening import CloseLoopDrawerOpeningEnv
 
-class ForceBlockPullingEnv(CloseLoopBlockPullingEnv):
+class ForceDrawerOpeningEnv(CloseLoopDrawerOpeningEnv):
   def __init__(self, config):
     super().__init__(config)
 
@@ -12,5 +12,5 @@ class ForceBlockPullingEnv(CloseLoopBlockPullingEnv):
 
     return state, hand_obs, obs, force
 
-def createForceBlockPullingEnv(config):
-  return ForceBlockPullingEnv(config)
+def createForceDrawerOpeningEnv(config):
+  return ForceDrawerOpeningEnv(config)
