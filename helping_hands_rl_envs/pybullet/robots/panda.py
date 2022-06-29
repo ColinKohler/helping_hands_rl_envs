@@ -156,29 +156,18 @@ class Panda(RobotBase):
     return True
 
   def gripperHasForce(self):
-    return pb.getJointState(self.id, self.wrist_index)[2][2] > 100
+    return pb.getJointState(self.id, self.finger_a_index)[3] >= 2 or \
+           pb.getJointState(self.id, self.finger_b_index)[3] <= -2
 
   def getWristForce(self):
-    #wrist_rot = pb.getMatrixFromQuaternion(pb.getLinkState(self.id, self.wrist_index - 1)[5])
-    #wrist_rot = np.array(list(wrist_rot)).reshape((3,3))
-
     wrist_force = np.array(list(pb.getJointState(self.id, self.wrist_index)[2][:3]))
-    #wrist_force = np.dot(wrist_rot, wrist_force)
-
     wrist_moment = np.array(list(pb.getJointState(self.id, self.wrist_index)[2][3:]))
-    #wrist_moment = np.dot(wrist_rot, wrist_moment)
 
     return wrist_force, wrist_moment
 
   def getFingerForce(self):
-    #wrist_rot = pb.getMatrixFromQuaternion(list(pb.getLinkState(self.id, self.wrist_index)[5]))
-    #wrist_rot = np.array(list(wrist_rot)).reshape((3,3))
-
     finger_a_force = np.array(list(pb.getJointState(self.id, self.finger_a_index)[2][:3]))
-    #finger_a_force = np.dot(wrist_rot, finger_a_force)
-
     finger_b_force = np.array(list(pb.getJointState(self.id, self.finger_b_index)[2][:3]))
-    #finger_b_force = np.dot(wrist_rot, finger_b_force)
 
     return finger_a_force, finger_b_force
 

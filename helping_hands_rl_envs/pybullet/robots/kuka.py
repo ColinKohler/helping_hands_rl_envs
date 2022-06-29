@@ -61,6 +61,7 @@ class Kuka(RobotBase):
     self.id = pb.loadSDF(urdf_filepath)[0]
     pb.resetBasePositionAndOrientation(self.id, [-0.2,0,0], [0,0,0,1])
 
+    self.force_history = deque([[0,0,0,0,0,0]] * self.force_history_len, maxlen=self.force_history_len)
     # self.is_holding = False
     self.gripper_closed = False
     self.holding_obj = None
@@ -81,6 +82,7 @@ class Kuka(RobotBase):
 
   def reset(self):
     self.gripper_closed = False
+    self.force_history = deque([[0,0,0,0,0,0]] * self.force_history_len, maxlen=self.force_history_len)
     self.holding_obj = None
     [pb.resetJointState(self.id, idx, self.home_positions[idx]) for idx in range(self.num_joints)]
     self.moveToJ(self.home_positions_joint)
@@ -169,9 +171,16 @@ class Kuka(RobotBase):
   def gripperHasForce(self):
     return pb.getJointState(self.id, 8)[3] >= 2 or pb.getJointState(self.id, 11)[3] <= -2
 
+  def getWristForce(self):
+    self.wrist_index = 7
+    wrist_force = np.array(list(pb.getJointState(self.id, self.wrist_index)[2][:3]))
+    wrist_moment = np.array(list(pb.getJointState(self.id, self.wrist_index)[2][3:]))
+
+    return wrist_force, wrist_moment
+
   def getFingerForce(self):
-    finger_a_force = pb.getJointState(self.id, 9)[2]
-    finger_b_force = pb.getJointState(self.id, 10)[2]
+    finger_a_force = pb.getJointState(self.id, 8)[2]
+    finger_b_force = pb.getJointState(self.id, 11)[2]
 
     return finger_a_force, finger_b_force
 

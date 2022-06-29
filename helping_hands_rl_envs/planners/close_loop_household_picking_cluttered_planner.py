@@ -23,20 +23,13 @@ class CloseLoopHouseholdPickingClutteredPlanner(CloseLoopPlanner):
   def setNewTarget(self):
     if self.stage == 0:
       objects = np.array(list(filter(lambda x: not self.isObjectHeld(x) and self.isObjOnTop(x), self.env.objects)))
-      # object_poses = self.env.getObjectPoses(objects)
-      # sorted_inds = np.flip(np.argsort(object_poses[:,2], axis=0))
-      # objects = objects[sorted_inds]
       np.random.shuffle(objects)
       self.target_object = objects[0]
 
       object_pos = list(self.target_object.getPosition())
-      object_pos[2] += (np.random.random() - 1) * 0.02
+      #object_pos[2] += (np.random.random() - 1) * 0.02
       object_rot = list(transformations.euler_from_quaternion(self.target_object.getRotation()))
       rz = (np.random.random() - 0.5) * np.pi
-      # while object_rot[2] < -np.pi/2:
-      #   object_rot[2] += np.pi
-      # while object_rot[2] > np.pi/2:
-      #   object_rot[2] -= np.pi
       object_rot[2] = rz
       self.current_target = (object_pos, object_rot, constants.PICK_PRIMATIVE)
       self.stage = 1
@@ -44,7 +37,7 @@ class CloseLoopHouseholdPickingClutteredPlanner(CloseLoopPlanner):
       object_pos = self.target_object.getPosition()
       object_rot = list(transformations.euler_from_quaternion(self.target_object.getRotation()))
       object_rot[2] = transformations.euler_from_quaternion(self.env.robot._getEndEffectorRotation())[2]
-      self.current_target = ((object_pos[0], object_pos[1], 0.2), object_rot, constants.PICK_PRIMATIVE)
+      self.current_target = ((object_pos[0], object_pos[1], 0.25), object_rot, constants.PICK_PRIMATIVE)
       self.stage = 0
 
   def getNextAction(self):
