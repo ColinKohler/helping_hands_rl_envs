@@ -191,7 +191,7 @@ class Kuka(RobotBase):
     im = np.zeros((img_size, img_size))
     gripper_half_size = 4 * workspace_size / obs_size_m
     gripper_half_size = round(gripper_half_size / 128 * img_size)
-    gripper_max_open = 45 * workspace_size / obs_size_m
+    gripper_max_open = 35 * workspace_size / obs_size_m
 
     anchor = img_size // 2
     d = int(gripper_max_open / 128 * img_size * gripper_state)
