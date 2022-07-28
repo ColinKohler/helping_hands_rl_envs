@@ -11,12 +11,12 @@ class CloseLoopBlockPickingEnv(CloseLoopEnv):
   def __init__(self, config):
     super().__init__(config)
     self.bin_size = 0.25
-    self.tray = Tray()
+    #self.tray = Tray()
 
   def initialize(self):
     super().initialize()
-    self.tray.initialize(pos=[self.workspace[0].mean(), self.workspace[1].mean(), 0],
-                         size=[self.bin_size, self.bin_size, 0.1])
+    #self.tray.initialize(pos=[self.workspace[0].mean(), self.workspace[1].mean(), 0],
+    #                     size=[self.bin_size, self.bin_size, 0.1])
 
   def reset(self):
     self.resetPybulletWorkspace()
@@ -45,7 +45,7 @@ if __name__ == '__main__':
                           [0.01, 0.50]])
   env_config = {'workspace': workspace, 'max_steps': 100, 'obs_size': 128, 'render': True, 'fast_mode': True,
                 'seed': 2, 'action_sequence': 'pxyzr', 'num_objects': 1, 'random_orientation': False,
-                'reward_type': 'step_left', 'simulate_grasp': True, 'perfect_grasp': False, 'robot': 'ur5_hydrostatic_gripper',
+                'reward_type': 'step_left', 'simulate_grasp': True, 'perfect_grasp': False, 'robot': 'panda',
                 'object_init_space_check': 'point', 'physics_mode': 'fast', 'object_scale_range': (1, 1), 'hard_reset_freq': 1000}
   planner_config = {'random_orientation': False, 'dpos': 0.05, 'drot': np.pi/8}
   env_config['seed'] = 1
@@ -58,3 +58,4 @@ if __name__ == '__main__':
     action = planner.getNextAction()
     input()
     obs, reward, done = env.step(action)
+    plt.imshow(obs[2].squeeze(), cmap='gray'); plt.show()

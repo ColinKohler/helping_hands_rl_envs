@@ -33,6 +33,7 @@ class RobotBase:
     self.home_positions = None
     self.home_positions_joint = None
     self.end_effector_index = None
+    self.count = 0
 
     self.holding_obj = None
     self.gripper_closed = False
@@ -324,7 +325,9 @@ class RobotBase:
         force = np.concatenate((force, moment))
         #force_a, force_b = self.getFingerForce()
         #force = np.concatenate((force_a, force_b))
-        self.force_history.append(force)
+        if self.count % 4 == 0:
+          self.force_history.append(force)
+        self.count += 1
 
         n_it += 1
         # Check to see if the arm can't move any close to the desired joint position

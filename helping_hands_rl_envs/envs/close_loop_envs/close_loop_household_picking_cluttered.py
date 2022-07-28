@@ -18,7 +18,7 @@ class CloseLoopHouseholdPickingClutteredEnv(CloseLoopEnv):
     else:
       self.trans_bin = config['transparent_bin']
     if 'collision_penalty' not in config:
-      self.coll_pen = True
+      self.coll_pen = False
     else:
       self.coll_pen = config['collision_penalty']
     if 'fix_set' not in config:
@@ -159,9 +159,10 @@ if __name__ == '__main__':
   env_config['seed'] = 1
   env = CloseLoopHouseholdPickingClutteredEnv(env_config)
   planner = CloseLoopHouseholdPickingClutteredPlanner(env, planner_config)
-  s, in_hand, obs = env.reset()
+  for _ in range(10):
+    s, in_hand, obs = env.reset()
+    done = False
 
-  while True:
-    action = planner.getNextAction()
-    obs, reward, done = env.step(action)
-    print(reward)
+    while not done:
+      action = planner.getNextAction()
+      obs, reward, done = env.step(action)

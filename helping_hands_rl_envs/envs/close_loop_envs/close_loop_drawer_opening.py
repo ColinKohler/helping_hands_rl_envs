@@ -65,33 +65,13 @@ if __name__ == '__main__':
   env_config['seed'] = 1
   env = CloseLoopDrawerOpeningEnv(env_config)
   planner = CloseLoopDrawerOpeningPlanner(env, planner_config)
-  s, in_hand, obs = env.reset()
-  # while True:
-  #   current_pos = env.robot._getEndEffectorPosition()
-  #   current_rot = transformations.euler_from_quaternion(env.robot._getEndEffectorRotation())
-  #
-  #   block_pos = env.objects[0].getPosition()
-  #   block_rot = transformations.euler_from_quaternion(env.objects[0].getRotation())
-  #
-  #   pos_diff = block_pos - current_pos
-  #   rot_diff = np.array(block_rot) - current_rot
-  #   pos_diff[pos_diff // 0.01 > 1] = 0.01
-  #   pos_diff[pos_diff // -0.01 > 1] = -0.01
-  #
-  #   rot_diff[rot_diff // (np.pi/32) > 1] = np.pi/32
-  #   rot_diff[rot_diff // (-np.pi/32) > 1] = -np.pi/32
-  #
-  #   action = [1, pos_diff[0], pos_diff[1], pos_diff[2], rot_diff[2]]
-  #   obs, reward, done = env.step(action)
 
-  while True:
-    action = planner.getNextAction()
-    obs, reward, done = env.step(action)
+  for _ in range(10):
+    s, in_hand, obs = env.reset()
 
-  # fig, axs = plt.subplots(8, 5, figsize=(25, 40))
-  # for i in range(40):
-  #   action = planner.getNextAction()
-  #   obs, reward, done = env.step(action)
-  #   axs[i//5, i%5].imshow(obs[2][0], vmax=0.3)
-  # env.reset()
-  # fig.show()
+    done = False
+    while not done:
+      action = planner.getNextAction()
+      obs, reward, done = env.step(action)
+
+      plt.imshow(obs[2].squeeze(), cmap='gray'); plt.show()

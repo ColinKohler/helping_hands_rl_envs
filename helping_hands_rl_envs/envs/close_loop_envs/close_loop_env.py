@@ -65,6 +65,7 @@ class CloseLoopEnv(BaseEnv):
     self.simulate_rot = transformations.euler_from_quaternion(self.robot._getEndEffectorRotation())
 
   def step(self, action):
+    self.robot.count = 0
     p, x, y, z, rot = self._decodeAction(action)
     current_pos = self.robot._getEndEffectorPosition()
     current_rot = list(transformations.euler_from_quaternion(self.robot._getEndEffectorRotation()))
@@ -97,6 +98,8 @@ class CloseLoopEnv(BaseEnv):
 
     self.simulate_pos = pos
     self.simulate_rot = rot
+
+    print(self.robot.count)
     return obs, reward, done
 
   def _getReward(self):
