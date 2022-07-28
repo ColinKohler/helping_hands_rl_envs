@@ -151,7 +151,7 @@ if __name__ == '__main__':
   workspace = np.asarray([[0.25, 0.65],
                           [-0.2, 0.2],
                           [0.01, 0.25]])
-  env_config = {'workspace': workspace, 'max_steps': 100, 'obs_size': 128, 'render': True, 'fast_mode': True,
+  env_config = {'workspace': workspace, 'max_steps': 100, 'obs_size': 128, 'render': False, 'fast_mode': True,
                 'seed': 2, 'action_sequence': 'pxyzr', 'num_objects': 5, 'random_orientation': False,
                 'reward_type': 'step_left', 'simulate_grasp': True, 'perfect_grasp': False, 'robot': 'panda',
                 'object_init_space_check': 'point', 'physics_mode': 'fast', 'object_scale_range': (0.8, 0.8), 'hard_reset_freq': 1000}

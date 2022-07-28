@@ -56,7 +56,7 @@ class Plotter(object):
     plt.savefig(filepath)
     plt.close()
 
-  def plotEvalReturns(self, title, filepath, window=1):
+  def plotEvalReturns(self, title, filepath, window=1, num_eval_intervals=None, eval_interval=500):
     '''
     Plot mulitple evaluation curves on a single plot.
 
@@ -70,15 +70,17 @@ class Plotter(object):
 
     for log_name, log in self.logs.items():
       eval_returns = [np.mean(returns) for returns in log['eval_eps_dis_rewards']]
+      if num_eval_intervals:
+        eval_returns = eval_returns[:num_eval_intervals]
       eval_returns = np.mean(list(more_itertools.windowed(eval_returns, window)), axis=1)
-      xs = np.arange(window, len(eval_returns) + window)
+      xs = np.arange(window, len(eval_returns) + window) * eval_interval
       ax.plot(xs, eval_returns, label=log_name)
 
     ax.legend()
     plt.savefig(filepath)
     plt.close()
 
-  def plotEvalRewards(self, title, filepath, window=1, num_eval_intervals=None):
+  def plotEvalRewards(self, title, filepath, window=1, num_eval_intervals=None, eval_interval=500):
     '''
     Plot mulitple evaluation curves on a single plot.
 
@@ -95,7 +97,8 @@ class Plotter(object):
       if num_eval_intervals:
         eval_rewards = eval_rewards[:num_eval_intervals]
       eval_rewards = np.mean(list(more_itertools.windowed(eval_rewards, window)), axis=1)
-      xs = np.arange(window, len(eval_rewards) + window) * 500
+      eval_rewards = np.clip(eval_rewards, -1, 1)
+      xs = np.arange(window, len(eval_rewards) + window) * eval_interval
       ax.plot(xs, eval_rewards, label=log_name)
 
     ax.legend()
