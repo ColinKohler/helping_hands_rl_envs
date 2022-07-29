@@ -32,21 +32,19 @@ if __name__ == '__main__':
   env = ForceBlockPickingEnv(env_config)
   planner = CloseLoopBlockPickingPlanner(env, planner_config)
 
-  num_success = 0
-  for _ in range(20):
-    obs = env.reset()
-    done = False
-    while not done:
-      action = planner.getNextAction()
+  s, in_hand, obs, force = env.reset()
+  done = False
 
-      #print('Left Finger: x:{:.3f} y:{:.3f} z:{:.3f}'.format(obs[3][0], obs[3][1], obs[3][2]))
-      #print('Right Finger: x:{:.3f} y:{:.3f} z:{:.3f}'.format(obs[3][3], obs[3][4], obs[3][5]))
-      print('Wrist: Fx:{:.3f} Fy:{:.3f} Fz:{:.3f} Mx:{:.3f} My:{:.3f} Mz:{:.3f}'.format(*obs[3]))
-      print()
-      plt.imshow(obs[2].squeeze(), cmap='gray'); plt.show()
+  while not done:
+    action = planner.getNextAction()
+    obs, reward, done = env.step(action)
+    s, in_hand, obs, force = obs
 
-      obs, reward, done = env.step(action)
-    print(reward)
-    if reward > 0.9:
-      num_success += 1
-  print(num_success)
+    plt.plot(force[:,0], label='Fx')
+    plt.plot(force[:,1], label='Fy')
+    plt.plot(force[:,2], label='Fz')
+    plt.plot(force[:,3], label='Mx')
+    plt.plot(force[:,4], label='My')
+    plt.plot(force[:,5], label='Mz')
+    plt.legend()
+    plt.show()

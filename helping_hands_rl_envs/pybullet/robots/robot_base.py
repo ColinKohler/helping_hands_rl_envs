@@ -45,7 +45,7 @@ class RobotBase:
     self.position_gain = 0.02
     self.adjust_gripper_after_lift = False
 
-    self.force_history_len = 64
+    self.force_history_len = 256
 
   def saveState(self):
     '''
@@ -325,8 +325,8 @@ class RobotBase:
         force = np.concatenate((force, moment))
         #force_a, force_b = self.getFingerForce()
         #force = np.concatenate((force_a, force_b))
-        if self.count % 4 == 0:
-          self.force_history.append(force)
+        #if self.count % 4 == 0:
+        self.force_history.append(force)
         self.count += 1
 
         n_it += 1

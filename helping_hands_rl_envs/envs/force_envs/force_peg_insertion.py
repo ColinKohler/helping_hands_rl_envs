@@ -16,6 +16,8 @@ class ForcePegInsertionEnv(CloseLoopPegInsertionEnv):
     #force = np.concatenate((wrist_force, wrist_moment))
 
     force = np.array(self.robot.force_history)
+    from scipy.ndimage.filters import uniform_filter1d
+    force = uniform_filter1d(force, size=10, axis=0)
 
     return state, hand_obs, obs, force
 
@@ -30,29 +32,26 @@ if __name__ == '__main__':
 
   env_config = {'workspace': workspace, 'max_steps': 100, 'obs_size': 128, 'render': True, 'fast_mode': True,
                 'seed': None, 'action_sequence': 'pxyzr', 'num_objects': 1, 'random_orientation': True,
-                'reward_type': 'step_left', 'simulate_grasp': True, 'perfect_grasp': False, 'robot': 'ur5_hydrostatic_gripper',
+                'reward_type': 'step_left', 'simulate_grasp': True, 'perfect_grasp': False, 'robot': 'panda',
                 'object_init_space_check': 'point', 'physics_mode': 'force', 'object_scale_range': (1.2, 1.2),
                 'hard_reset_freq': 1000, 'view_type': 'camera_center_xyz'}
-  planner_config = {'random_orientation': True, 'dpos': 0.05, 'drot': np.pi/8}
+  planner_config = {'random_orientation': True, 'dpos': 0.05, 'drot': np.pi/4}
   env = ForcePegInsertionEnv(env_config)
   planner = CloseLoopPegInsertionPlanner(env, planner_config)
 
-  num_success = 0
-  for _ in range(20):
-    obs = env.reset()
-    done = False
-    while not done:
-      action = planner.getNextAction()
-      action[1] += 0.005
+  s, in_hand, obs, force = env.reset()
+  done = False
 
-      print('Wrist: x:{:.3f} y:{:.3f} z:{:.3f}'.format(obs[3][0], obs[3][1], obs[3][2]))
-      #print('Left Finger: x:{:.3f} y:{:.3f} z:{:.3f}'.format(obs[3][0], obs[3][1], obs[3][2]))
-      #print('Right Finger: x:{:.3f} y:{:.3f} z:{:.3f}'.format(obs[3][3], obs[3][4], obs[3][5]))
-      print()
-      plt.imshow(obs[2].squeeze(), cmap='gray'); plt.show()
+  while not done:
+    action = planner.getNextAction()
+    obs, reward, done = env.step(action)
+    s, in_hand, obs, force = obs
 
-      obs, reward, done = env.step(action)
-    print(reward)
-    if reward > 0.9:
-      num_success += 1
-  print(num_success)
+    plt.plot(force[:,0], label='Fx')
+    plt.plot(force[:,1], label='Fy')
+    plt.plot(force[:,2], label='Fz')
+    plt.plot(force[:,3], label='Mx')
+    plt.plot(force[:,4], label='My')
+    plt.plot(force[:,5], label='Mz')
+    plt.legend()
+    plt.show()
