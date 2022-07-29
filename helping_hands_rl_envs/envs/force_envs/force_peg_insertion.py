@@ -1,4 +1,5 @@
 import numpy as np
+from scipy.ndimage import uniform_filter1d
 from helping_hands_rl_envs.envs.close_loop_envs.close_loop_peg_insertion import CloseLoopPegInsertionEnv
 from helping_hands_rl_envs.planners.close_loop_peg_insertion_planner import CloseLoopPegInsertionPlanner
 
@@ -16,8 +17,7 @@ class ForcePegInsertionEnv(CloseLoopPegInsertionEnv):
     #force = np.concatenate((wrist_force, wrist_moment))
 
     force = np.array(self.robot.force_history)
-    from scipy.ndimage.filters import uniform_filter1d
-    force = uniform_filter1d(force, size=10, axis=0)
+    force = uniform_filter1d(force, size=32, axis=0)
 
     return state, hand_obs, obs, force
 
