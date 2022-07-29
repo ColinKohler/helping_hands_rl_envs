@@ -1,4 +1,5 @@
 import numpy as np
+import more_itertools
 from helping_hands_rl_envs.envs.close_loop_envs.close_loop_block_picking_corner import CloseLoopBlockPickingCornerEnv
 from helping_hands_rl_envs.planners.close_loop_block_picking_corner_planner import CloseLoopBlockPickingCornerPlanner
 
@@ -16,6 +17,7 @@ class ForceBlockPickingCornerEnv(CloseLoopBlockPickingCornerEnv):
     #force = np.concatenate((wrist_force, wrist_moment))
 
     force = np.array(self.robot.force_history)
+    force = np.mean(list(more_itertools.windowed(force, 4, step=4)), axis=1)
 
     return state, hand_obs, obs, force
 

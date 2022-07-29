@@ -7,13 +7,13 @@ if __name__ == '__main__':
   args = parser.parse_args()
 
   log_filepaths = [
-    '/home/colin/hdd/workspace/midichlorians/data/drawer_opening/vision_force_1/log_data.pkl',
-    '/home/colin/hdd/workspace/midichlorians/data/drawer_opening/new_weighted_loss/log_data.pkl',
-    '/home/colin/hdd/workspace/ysalamir/data/drawer_opening/new/log_data.pkl',
+    #'/home/colin/hdd/workspace/midichlorians/data/block_picking_corner/new/log_data.pkl',
+    '/home/colin/hdd/workspace/midichlorians/data/block_picking_corner/new_force_history_4/log_data.pkl',
+    '/home/colin/hdd/workspace/ysalamir/data/block_picking_corner/new/log_data.pkl',
   ]
   #log_names = ['vison+wrist_force', 'vision']
-  log_names = ['old_force', 'new_force', 'new_vision']
-  title = 'Drawer Opening'
+  log_names = ['new_force', 'new_vision']
+  title = 'Block Pulling'
 
   base_dir = 'helping_hands_rl_baselines/scripts/outputs/'
   plotter = Plotter(log_filepaths, log_names)

@@ -99,7 +99,6 @@ class CloseLoopEnv(BaseEnv):
     self.simulate_pos = pos
     self.simulate_rot = rot
 
-    print(self.robot.count)
     return obs, reward, done
 
   def _getReward(self):
