@@ -37,7 +37,7 @@ class CloseLoopPegInsertionEnv(CloseLoopEnv):
       constants.SQUARE_PEG,
       pos=[[self.workspace[0].mean()-0.005, self.workspace[1].mean(), 0.17]],
       rot=[[0,0,0,1]],
-      scale=0.12,#self.peg_scale_range[0],
+      scale=0.1235,#self.peg_scale_range[0],
       wait=False
     )[0]
 
@@ -101,22 +101,5 @@ if __name__ == '__main__':
     obs = env.reset()
     done = False
     while not done:
-      input()
       action = planner.getNextAction()
       obs, reward, done = env.step(action)
-      print(reward)
-      #print(np.round(env.peg.getRotation(), 3))
-      #force = np.array(env.robot.force_history)
-
-      def smooth(x, window=100):
-        return np.mean(list(more_itertools.windowed(x, window)), axis=1)
-
-      #plt.plot(smooth(force[:,0], window=1), label='F_x')
-      #plt.plot(smooth(force[:,1], window=1), label='F_y')
-      #plt.plot(smooth(force[:,2], window=1), label='F_z')
-      #plt.plot(smooth(force[:,3], window=1), label='M_x')
-      #plt.plot(smooth(force[:,4], window=1), label='M_y')
-      #plt.plot(smooth(force[:,5], window=1), label='M_z')
-      #plt.legend()
-      #plt.show()
-    input()

@@ -47,13 +47,31 @@ if __name__ == '__main__':
     obs, reward, done = env.step(action)
     s, in_hand, obs, force = obs
 
-    force = np.clip(force, -100, 100) / 100
+    force1 = np.tanh(force * 0.1)
+    force2 = np.clip(force, -30, 30) / 30
+    force3 = np.tanh(force2)
 
-    plt.plot(force[:,0], label='Fx')
-    plt.plot(force[:,1], label='Fy')
-    plt.plot(force[:,2], label='Fz')
-    plt.plot(force[:,3], label='Mx')
-    plt.plot(force[:,4], label='My')
-    plt.plot(force[:,5], label='Mz')
+    fig, ax = plt.subplots(nrows=1, ncols=3)
+    ax[0].plot(force1[:,0], label='Fx')
+    ax[0].plot(force1[:,1], label='Fy')
+    ax[0].plot(force1[:,2], label='Fz')
+    ax[0].plot(force1[:,3], label='Mx')
+    ax[0].plot(force1[:,4], label='My')
+    ax[0].plot(force1[:,5], label='Mz')
+
+    ax[1].plot(force2[:,0], label='Fx')
+    ax[1].plot(force2[:,1], label='Fy')
+    ax[1].plot(force2[:,2], label='Fz')
+    ax[1].plot(force2[:,3], label='Mx')
+    ax[1].plot(force2[:,4], label='My')
+    ax[1].plot(force2[:,5], label='Mz')
+
+    ax[2].plot(force3[:,0], label='Fx')
+    ax[2].plot(force3[:,1], label='Fy')
+    ax[2].plot(force3[:,2], label='Fz')
+    ax[2].plot(force3[:,3], label='Mx')
+    ax[2].plot(force3[:,4], label='My')
+    ax[2].plot(force3[:,5], label='Mz')
+
     plt.legend()
     plt.show()
