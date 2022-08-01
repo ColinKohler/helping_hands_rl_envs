@@ -13,8 +13,7 @@ class ForcePegInsertionEnv(CloseLoopPegInsertionEnv):
     state, hand_obs, obs = super()._getObservation(action=action)
 
     force = np.array(self.robot.force_history)
-    force = np.mean(list(more_itertools.windowed(force, 4, step=4)), axis=1)
-    #force = uniform_filter1d(force, size=32, axis=0)
+    force = uniform_filter1d(force, size=16, axis=0)
 
     return state, hand_obs, obs, force
 
@@ -49,28 +48,28 @@ if __name__ == '__main__':
       force2 = np.clip(force, -10, 10) / 10
       force3 = np.tanh(force2)
 
-      #fig, ax = plt.subplots(nrows=1, ncols=3)
-      #ax[0].plot(force1[:,0], label='Fx')
-      #ax[0].plot(force1[:,1], label='Fy')
-      #ax[0].plot(force1[:,2], label='Fz')
-      #ax[0].plot(force1[:,3], label='Mx')
-      #ax[0].plot(force1[:,4], label='My')
-      #ax[0].plot(force1[:,5], label='Mz')
+      fig, ax = plt.subplots(nrows=1, ncols=3)
+      ax[0].plot(force1[:,0], label='Fx')
+      ax[0].plot(force1[:,1], label='Fy')
+      ax[0].plot(force1[:,2], label='Fz')
+      ax[0].plot(force1[:,3], label='Mx')
+      ax[0].plot(force1[:,4], label='My')
+      ax[0].plot(force1[:,5], label='Mz')
 
-      #ax[1].plot(force2[:,0], label='Fx')
-      #ax[1].plot(force2[:,1], label='Fy')
-      #ax[1].plot(force2[:,2], label='Fz')
-      #ax[1].plot(force2[:,3], label='Mx')
-      #ax[1].plot(force2[:,4], label='My')
-      #ax[1].plot(force2[:,5], label='Mz')
+      ax[1].plot(force2[:,0], label='Fx')
+      ax[1].plot(force2[:,1], label='Fy')
+      ax[1].plot(force2[:,2], label='Fz')
+      ax[1].plot(force2[:,3], label='Mx')
+      ax[1].plot(force2[:,4], label='My')
+      ax[1].plot(force2[:,5], label='Mz')
 
-      #ax[2].plot(force3[:,0], label='Fx')
-      #ax[2].plot(force3[:,1], label='Fy')
-      #ax[2].plot(force3[:,2], label='Fz')
-      #ax[2].plot(force3[:,3], label='Mx')
-      #ax[2].plot(force3[:,4], label='My')
-      #ax[2].plot(force3[:,5], label='Mz')
+      ax[2].plot(force3[:,0], label='Fx')
+      ax[2].plot(force3[:,1], label='Fy')
+      ax[2].plot(force3[:,2], label='Fz')
+      ax[2].plot(force3[:,3], label='Mx')
+      ax[2].plot(force3[:,4], label='My')
+      ax[2].plot(force3[:,5], label='Mz')
 
 
-      #plt.legend()
-      #plt.show()
+      plt.legend()
+      plt.show()
