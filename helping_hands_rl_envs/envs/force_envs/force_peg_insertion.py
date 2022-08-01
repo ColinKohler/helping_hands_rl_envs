@@ -32,11 +32,12 @@ if __name__ == '__main__':
                 'reward_type': 'step_left', 'simulate_grasp': True, 'perfect_grasp': False, 'robot': 'panda',
                 'object_init_space_check': 'point', 'physics_mode': 'force', 'object_scale_range': (1.2, 1.2),
                 'hard_reset_freq': 1000, 'view_type': 'camera_center_xyz'}
-  planner_config = {'random_orientation': True, 'dpos': 0.01, 'drot': np.pi/8}
+  planner_config = {'random_orientation': True, 'dpos': 0.05, 'drot': np.pi/4}
   env = ForcePegInsertionEnv(env_config)
   planner = CloseLoopPegInsertionPlanner(env, planner_config)
 
-  for _ in range(10):
+  succ = 0
+  for _ in range(20):
     s, in_hand, obs, force = env.reset()
     done = False
 
@@ -46,31 +47,15 @@ if __name__ == '__main__':
       s, in_hand, obs, force = obs
 
       force1 = np.tanh(force)
-      force2 = np.clip(force, -10, 10) / 10
-      force3 = np.tanh(force2)
 
-      fig, ax = plt.subplots(nrows=1, ncols=3)
-      ax[0].plot(force1[:,0], label='Fx')
-      ax[0].plot(force1[:,1], label='Fy')
-      ax[0].plot(force1[:,2], label='Fz')
-      ax[0].plot(force1[:,3], label='Mx')
-      ax[0].plot(force1[:,4], label='My')
-      ax[0].plot(force1[:,5], label='Mz')
+      #plt.plot(force1[:,0], label='Fx')
+      #plt.plot(force1[:,1], label='Fy')
+      #plt.plot(force1[:,2], label='Fz')
+      #plt.plot(force1[:,3], label='Mx')
+      #plt.plot(force1[:,4], label='My')
+      #plt.plot(force1[:,5], label='Mz')
+      #plt.legend()
+      #plt.show()
 
-      ax[1].plot(force2[:,0], label='Fx')
-      ax[1].plot(force2[:,1], label='Fy')
-      ax[1].plot(force2[:,2], label='Fz')
-      ax[1].plot(force2[:,3], label='Mx')
-      ax[1].plot(force2[:,4], label='My')
-      ax[1].plot(force2[:,5], label='Mz')
-
-      ax[2].plot(force3[:,0], label='Fx')
-      ax[2].plot(force3[:,1], label='Fy')
-      ax[2].plot(force3[:,2], label='Fz')
-      ax[2].plot(force3[:,3], label='Mx')
-      ax[2].plot(force3[:,4], label='My')
-      ax[2].plot(force3[:,5], label='Mz')
-
-
-      plt.legend()
-      plt.show()
+    succ += reward
+  print(succ)
