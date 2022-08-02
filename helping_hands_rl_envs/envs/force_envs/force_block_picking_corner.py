@@ -13,8 +13,8 @@ class ForceBlockPickingCornerEnv(CloseLoopBlockPickingCornerEnv):
     state, hand_obs, obs = super()._getObservation(action=action)
 
     force = np.array(self.robot.force_history)
-    force = np.mean(list(more_itertools.windowed(force, 4, step=4)), axis=1)
-    force = uniform_filter1d(force, size=64, axis=0)
+    #force = np.mean(list(more_itertools.windowed(force, 4, step=4)), axis=1)
+    force = uniform_filter1d(force, size=16, axis=0)
 
     return state, hand_obs, obs, force
 
@@ -44,13 +44,23 @@ if __name__ == '__main__':
     obs, reward, done = env.step(action)
     s, in_hand, obs, force = obs
 
-    force1 = np.tanh(force)
+    force1 = np.clip(force, -30, 30) / 30.
+    force2 = np.clip(force, -100, 100) / 100.
 
-    plt.plot(force1[:,0], label='Fx')
-    plt.plot(force1[:,1], label='Fy')
-    plt.plot(force1[:,2], label='Fz')
-    plt.plot(force1[:,3], label='Mx')
-    plt.plot(force1[:,4], label='My')
-    plt.plot(force1[:,5], label='Mz')
+    fig, ax = plt.subplots(nrows=1, ncols=2)
+    ax[0].plot(force1[:,0], label='Fx')
+    ax[0].plot(force1[:,1], label='Fy')
+    ax[0].plot(force1[:,2], label='Fz')
+    ax[0].plot(force1[:,3], label='Mx')
+    ax[0].plot(force1[:,4], label='My')
+    ax[0].plot(force1[:,5], label='Mz')
+
+    ax[1].plot(force2[:,0], label='Fx')
+    ax[1].plot(force2[:,1], label='Fy')
+    ax[1].plot(force2[:,2], label='Fz')
+    ax[1].plot(force2[:,3], label='Mx')
+    ax[1].plot(force2[:,4], label='My')
+    ax[1].plot(force2[:,5], label='Mz')
+
     plt.legend()
     plt.show()
