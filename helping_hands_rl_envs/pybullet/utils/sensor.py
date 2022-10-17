@@ -3,12 +3,13 @@ import numpy as np
 import cupy as cp
 
 class Sensor(object):
-  def __init__(self, cam_pos, cam_up_vector, target_pos, target_size, near, far):
+  def __init__(self, cam_pos, cam_up_vector, target_pos, target_size, near, far, type='d'):
     self.view_matrix = pb.computeViewMatrix(
       cameraEyePosition=cam_pos,
       cameraUpVector=cam_up_vector,
       cameraTargetPosition=target_pos,
     )
+    self.type = type  # for depth only; choice: rgbd, d.
     self.cam_pos = cam_pos
     self.near = near
     self.far = far
@@ -36,8 +37,16 @@ class Sensor(object):
                                   renderer=pb.ER_TINY_RENDERER)
     depth_img = np.array(image_arr[3])
     depth = self.far * self.near / (self.far - (self.far - self.near) * depth_img)
-
-    return (self.cam_pos[2] - depth).reshape(size, size)
+    depth_img = (self.cam_pos[2] - depth).reshape(size, size)
+    if self.type == 'd':
+      obs = depth_img
+    elif self.type == 'rgbd':
+      obs = np.array(image_arr[2])
+      obs = np.moveaxis(obs, -1, 0)
+      obs[-1] = depth_img
+    else:
+      raise NotImplementedError
+    return obs
 
   def getPointCloud(self, size, to_numpy=True):
     image_arr = pb.getCameraImage(width=size, height=size,
