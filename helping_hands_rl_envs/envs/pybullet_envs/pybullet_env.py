@@ -91,7 +91,8 @@ class PyBulletEnv(BaseEnv):
     cam_pos = [self.workspace[0].mean(), self.workspace[1].mean(), 10]
     target_pos = [self.workspace[0].mean(), self.workspace[1].mean(), 0]
     cam_up_vector = [-1, 0, 0]
-    self.sensor = Sensor(cam_pos, cam_up_vector, target_pos, ws_size, cam_pos[2] - 1, cam_pos[2])
+    self.sensor = Sensor(cam_pos, cam_up_vector, target_pos, ws_size,
+                         cam_pos[2] - 1, cam_pos[2], sensor_type=config['sensor_type'])
 
     # Rest pose for arm
     rot = pb.getQuaternionFromEuler([0, np.pi, 0])
@@ -357,15 +358,18 @@ class PyBulletEnv(BaseEnv):
   def _getObservation(self, action=None):
     ''''''
     old_heightmap = self.heightmap
-    self.heightmap = self._getHeightmap()
+    # self.heightmap = self._getHeightmap()
+    self.obs = self._getHeightmap()
+    # when obs is rgbd, heightmap is in the last channel
+    self.heightmap = self.obs[-1] if len(self.obs.shape) > 2 else self.obs
 
     if action is None or self._isHolding() == False:
       in_hand_img = self.getEmptyInHand()
     else:
       motion_primative, x, y, z, rot = self._decodeAction(action)
-      in_hand_img = self.getInHandImage(old_heightmap, x, y, z, rot, self.heightmap)
+      in_hand_img = self.getInHandImage(old_heightmap, x, y, z, rot, self.obs)
 
-    return self._isHolding(), in_hand_img, self.heightmap.reshape([1, self.heightmap_size, self.heightmap_size])
+    return self._isHolding(), in_hand_img, self.obs.reshape([-1, self.heightmap_size, self.heightmap_size])
 
   def _getHeightmap(self):
     return self.sensor.getHeightmap(self.heightmap_size)
