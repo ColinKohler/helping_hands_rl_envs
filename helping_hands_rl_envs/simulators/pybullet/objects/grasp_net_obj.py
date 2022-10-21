@@ -12,7 +12,7 @@ from helping_hands_rl_envs.simulators.pybullet.objects.pybullet_object import Py
 from helping_hands_rl_envs.simulators import constants
 
 root_dir = os.path.dirname(helping_hands_rl_envs.__file__)
-obj_pattern = os.path.join(root_dir, constants.URDF_PATH, 'GraspNet1B_object/0*/')
+obj_pattern = os.path.join(root_dir, constants.URDF_PATH, 'GraspNet1B_object_textured/0*/')
 found_object_directories = sorted(glob.glob(obj_pattern))
 total_num_objects = len(found_object_directories)
 
@@ -68,7 +68,22 @@ class GraspNetObject(PybulletObject):
                 obj_scale /= 0.95
                 pb.removeBody(object_id)
             else:
+                pb.removeBody(object_id)
                 break
+
+        obj_visual = pb.createVisualShape(pb.GEOM_MESH,
+                                          fileName=obj_filepath + 'textured.obj',
+                                          rgbaColor=color,
+                                          meshScale=[obj_scale, obj_scale, obj_scale])
+        obj_collision = pb.createCollisionShape(pb.GEOM_MESH,
+                                                fileName=obj_filepath + 'convex.obj',
+                                                meshScale=[obj_scale, obj_scale, obj_scale])
+
+        object_id = pb.createMultiBody(baseMass=0.15,
+                                       baseCollisionShapeIndex=obj_collision,
+                                       baseVisualShapeIndex=obj_visual,
+                                       basePosition=pos,
+                                       baseOrientation=rot)
 
         pb.changeDynamics(object_id,
                           -1,
