@@ -53,6 +53,7 @@ class RandomHouseholdPickingClutterFullObsEnv(PyBulletEnv):
         # self.exhibit_env_obj = True
         self.z_heuristic = config['z_heuristic']
         self.bin_size = config['bin_size']
+        self.alpha = config['alpha']
         self.gripper_depth = 0.04
         self.gripper_clearance = 0.01
 
@@ -204,7 +205,7 @@ class RandomHouseholdPickingClutterFullObsEnv(PyBulletEnv):
                         #                            pos=[randpos], padding=self.min_boarder_padding,
                         #                            min_distance=self.min_object_distance, model_id=-1)
 
-                        obj = self._generateShapes(constants.GRASP_NET_OBJ, 1,
+                        obj = self._generateShapes(constants.GRASP_NET_OBJ, 1, alpha=self.alpha,
                                                    random_orientation=self.random_orientation,
                                                    pos=[randpos], padding=self.min_boarder_padding,
                                                    min_distance=self.min_object_distance, model_id=-1)

@@ -461,7 +461,7 @@ class PyBulletEnv(BaseEnv):
   def _getExistingXYPositions(self):
     return [o.getXYPosition() for o in self.objects]
 
-  def _generateShapes(self, shape_type=0, num_shapes=1, scale=None, pos=None, rot=None,
+  def _generateShapes(self, shape_type=0, num_shapes=1, scale=None, pos=None, rot=None, alpha=None,
                            min_distance=None, padding=None, random_orientation=False, z_scale=1, model_id=1):
     ''''''
     # if padding is not set, use the default padding
@@ -533,7 +533,7 @@ class PyBulletEnv(BaseEnv):
       elif shape_type == constants.SWAB:
         handle = pb_obj_generation.generateSwab(position, orientation, scale, model_id=None)
       elif shape_type == constants.GRASP_NET_OBJ:
-        handle = pb_obj_generation.generateGraspNetObject(position, orientation, scale, model_id)
+        handle = pb_obj_generation.generateGraspNetObject(position, orientation, scale, model_id, alpha)
 
       else:
         raise NotImplementedError

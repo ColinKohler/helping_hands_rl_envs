@@ -12,7 +12,7 @@ from helping_hands_rl_envs.simulators.pybullet.objects.pybullet_object import Py
 from helping_hands_rl_envs.simulators import constants
 
 root_dir = os.path.dirname(helping_hands_rl_envs.__file__)
-obj_pattern = os.path.join(root_dir, constants.URDF_PATH, 'GraspNet1B_object_textured/0*/')
+# obj_pattern = os.path.join(root_dir, constants.URDF_PATH, 'GraspNet1B_object_textured/0*/')
 obj_pattern = os.path.join(root_dir, constants.URDF_PATH, 'GraspNet1B_object/0*/')
 found_object_directories = sorted(glob.glob(obj_pattern))
 total_num_objects = len(found_object_directories)
@@ -24,7 +24,7 @@ def get_immediate_subdirectories(a_dir):
 
 
 class GraspNetObject(PybulletObject):
-    def __init__(self, pos, rot, scale, index=-1):
+    def __init__(self, pos, rot, scale, index=-1, alpha=None):
 
         if index >= 0:
             obj_filepath = found_object_directories[index]
@@ -33,7 +33,7 @@ class GraspNetObject(PybulletObject):
             obj_filepath = found_object_directories[index]
 
         color = np.random.uniform(0.6, 1, (4,))
-        color[-1] = 1
+        color[-1] = 1 if alpha is None else alpha
         self.center = [0, 0, 0]
         obj_edge_max = 0.15 * scale  # the maximum edge size of an obj before scaling
         obj_edge_min = 0.014 * scale  # the minimum edge size of an obj before scaling

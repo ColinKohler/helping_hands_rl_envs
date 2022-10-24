@@ -16,20 +16,32 @@ class Sensor(object):
     self.fov = np.degrees(2 * np.arctan((target_size / 2) / self.far))
     self.proj_matrix = pb.computeProjectionMatrixFOV(self.fov, 1, self.near, self.far)
 
+  def normalize_256(self, img):
+      """
+
+      :param img: in shape b x 3 x h x w
+      :return:
+      """
+      img = img / 255
+      img -= img.reshape(img.shape[0], -1).mean(-1).reshape(img.shape[0], 1, 1)
+      return img
+
   def getHeightmap(self, size):
+    renderer = pb.ER_TINY_RENDERER if self.sensor_type == 'd' else pb.ER_BULLET_HARDWARE_OPENGL
     image_arr = pb.getCameraImage(width=size, height=size,
                                   viewMatrix=self.view_matrix,
                                   projectionMatrix=self.proj_matrix,
-                                  renderer=pb.ER_TINY_RENDERER)
+                                  renderer=renderer)
     depth_img = np.array(image_arr[3])
     depth = self.far * self.near / (self.far - (self.far - self.near) * depth_img)
     depth_img = np.abs(depth - np.max(depth)).reshape(size, size)
     if self.sensor_type == 'd':
       obs = depth_img
     elif self.sensor_type == 'rgbd':
-      obs = np.array(image_arr[2])
+      obs = np.array(image_arr[2]).astype(float)
       obs = np.moveaxis(obs, -1, 0)
       obs[-1] = depth_img
+      obs[:-1] = self.normalize_256(obs[:-1])
     else:
       raise NotImplementedError
     return obs
