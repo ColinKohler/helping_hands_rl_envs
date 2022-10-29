@@ -16,14 +16,15 @@ class Sensor(object):
     self.fov = np.degrees(2 * np.arctan((target_size / 2) / self.far))
     self.proj_matrix = pb.computeProjectionMatrixFOV(self.fov, 1, self.near, self.far)
 
-  def normalize_256(self, img):
+  def normalize_256(self, img, channel_normalize):
       """
 
       :param img: in shape b x 3 x h x w
       :return:
       """
       img = img / 255
-      img -= img.reshape(img.shape[0], -1).mean(-1).reshape(img.shape[0], 1, 1)
+      img -= 0.5
+      img = img / 10 if channel_normalize else img
       return img
 
   def getHeightmap(self, size):
@@ -37,11 +38,15 @@ class Sensor(object):
     depth_img = np.abs(depth - np.max(depth)).reshape(size, size)
     if self.sensor_type == 'd':
       obs = depth_img
-    elif self.sensor_type == 'rgbd':
+    elif self.sensor_type in ['rgbd', 'nrgbd']:
       obs = np.array(image_arr[2]).astype(float)
       obs = np.moveaxis(obs, -1, 0)
       obs[-1] = depth_img
-      obs[:-1] = self.normalize_256(obs[:-1])
+      obs[:-1] = self.normalize_256(obs[:-1], self.sensor_type=='nrgbd')
+    elif self.sensor_type == '000d':
+      obs = np.zeros_like(image_arr[2]).astype(float)
+      obs = np.moveaxis(obs, -1, 0)
+      obs[-1] = depth_img
     else:
       raise NotImplementedError
     return obs
