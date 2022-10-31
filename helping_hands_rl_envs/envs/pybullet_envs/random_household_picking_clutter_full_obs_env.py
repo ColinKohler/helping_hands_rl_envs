@@ -154,6 +154,9 @@ class RandomHouseholdPickingClutterFullObsEnv(PyBulletEnv):
         #     self._removeObject(obj)
 
         obs = self._getObservation(action)
+        if obs[2].shape[0] == 4 and self.alpha < 1:
+            obs[2][3] = 0
+
         done = self._checkTermination()
         if self.reward_type == 'dense':
             reward = 1.0 if self.obj_grasped > pre_obj_grasped else 0.0
