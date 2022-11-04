@@ -69,8 +69,8 @@ def generateRandomHouseHoldObj(pos, rot, scale, index):
 def generateRandomHouseHoldObj200(pos, rot, scale, index):
   return RandomHouseHoldObject200(pos, rot, scale, index)
 
-def generateGraspNetObject(pos, rot, scale, index, alpha):
-  return GraspNetObject(pos, rot, scale, index, alpha)
+def generateGraspNetObject(pos, rot, scale, index, alpha, colors):
+  return GraspNetObject(pos, rot, scale, index, alpha, colors)
 
 def generateSpoon(pos, rot, scale):
   return Spoon(pos, rot, scale)
