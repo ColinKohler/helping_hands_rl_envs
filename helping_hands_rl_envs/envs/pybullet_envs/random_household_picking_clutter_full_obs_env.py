@@ -89,6 +89,8 @@ class RandomHouseholdPickingClutterFullObsEnv(PyBulletEnv):
             z = self.getPatch_z(x, y, rz, z=action[z_idx])
         elif z_idx != -1:
             z = action[z_idx]
+        elif self.z_heuristic == 'constant':
+            z = self.workspace[2, 0] + self.gripper_clearance
         else:
             z = self.getPatch_z(x, y, rz)
 

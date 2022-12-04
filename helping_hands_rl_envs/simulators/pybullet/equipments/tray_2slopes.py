@@ -26,7 +26,8 @@ class Tray2:
         botton_half_thick = 0.05
         half_thickness = 0.001
         pos[2] -= botton_half_thick - 2 * half_thickness
-        color_inner = [0.9, 0.6, 0.6, 1]
+        # color_inner = [0.9, 0.6, 0.6, 1]
+        color_inner = color
         size[0] -= tray_shrink
         size[1] -= tray_shrink
         size_inner = size.copy()
