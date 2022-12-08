@@ -28,6 +28,10 @@ class Sensor(object):
         img = img / 10 if channel_normalize else img
         return img
 
+    def gray_scal(self, img):
+        img[:] = np.expand_dims(img[:].mean(0), 0)
+        return img
+
     def getHeightmap(self, size):
         renderer = pb.ER_TINY_RENDERER if self.sensor_type == 'd' else pb.ER_BULLET_HARDWARE_OPENGL
         image_arr = pb.getCameraImage(width=size, height=size,
@@ -39,11 +43,13 @@ class Sensor(object):
         depth_img = np.abs(depth - np.max(depth)).reshape(size, size)
         if self.sensor_type == 'd':
             obs = depth_img
-        elif self.sensor_type in ['rgbd', 'nrgbd', 'nrgb0', 'rgb0']:
+        elif self.sensor_type in ['rgbd', 'nrgbd', 'nrgb0', 'rgb0', 'nggg0', 'ngggd']:
             obs = np.array(image_arr[2]).astype(float)
             obs = np.moveaxis(obs, -1, 0)
-            obs[-1] = depth_img if self.sensor_type in ['rgbd', 'nrgbd'] else 0
-            obs[:-1] = self.normalize_256(obs[:-1], self.sensor_type in ['nrgbd', 'nrgb0'])
+            obs[-1] = depth_img if self.sensor_type in ['rgbd', 'nrgbd', 'ngggd'] else 0
+            obs[:-1] = self.normalize_256(obs[:-1], self.sensor_type in ['nrgbd', 'nrgb0', 'nggg0', 'ngggd'])
+            if self.sensor_type in ['nggg0', 'ngggd']:
+                obs[:-1] = self.gray_scal(obs[:-1])
         elif self.sensor_type == '000d':
             obs = np.zeros_like(image_arr[2]).astype(float)
             obs = np.moveaxis(obs, -1, 0)

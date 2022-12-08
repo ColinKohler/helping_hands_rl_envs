@@ -27,7 +27,7 @@ class TestBulletBlockStacking(unittest.TestCase):
     #               }
     env_config = {'workspace': workspace, 'max_steps': 30, 'obs_size': obs_size, 'render': False, 'fast_mode': True,
                   'seed': 0, 'action_sequence': 'pxyr', 'num_objects': 15, 'random_orientation': True,
-                  'reward_type': 'dense', 'sensor_type': 'nrgb0', 'simulate_grasp': True, 'perfect_grasp': True, 'robot': 'kuka',
+                  'reward_type': 'dense', 'sensor_type': 'nggg0', 'simulate_grasp': True, 'perfect_grasp': True, 'robot': 'kuka',
                   'workspace_check': 'point', 'object_scale_range': (1, 1), 'z_heuristic': 'patch_center',
                   'min_object_distance': 0., 'min_boarder_padding': 0.15, 'adjust_gripper_after_lift': True,
                   'in_hand_size': 32, 'bin_size': bin_size, 'bin_type': 'Normal', 'alpha': 1, 'colors': 'assigned'}
