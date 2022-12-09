@@ -55,13 +55,19 @@ class RandomHouseholdPickingClutterFullObsEnv(PyBulletEnv):
         self.bin_size = config['bin_size']
         self.alpha = config['alpha']
         self.colors = config['colors']
+        if config['tray_color'] == 'gray':
+            self.tray_color = [0.8, 0.8, 0.8, 1]
+        elif config['tray_color'] == 'black':
+            self.tray_color = [0, 0, 0, 1]
+        elif config['tray_color'] == 'white':
+            self.tray_color = [1, 1, 1, 1]
         self.gripper_depth = 0.04
         self.gripper_clearance = 0.01
 
     def initialize(self):
         super().initialize()
         self.tray.initialize(pos=[self.workspace[0].mean(), self.workspace[1].mean(), 0],
-                             size=[self.bin_size + 0.03, self.bin_size + 0.03, 0.1])
+                             size=[self.bin_size + 0.03, self.bin_size + 0.03, 0.1], color=[0, 0, 0, 1])
 
     def _decodeAction(self, action):
         """

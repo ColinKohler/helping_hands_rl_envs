@@ -11,7 +11,7 @@ class Tray2:
         self.root_dir = os.path.dirname(helping_hands_rl_envs.__file__)
         self.id = None
 
-    def initialize(self, pos=(0, 0, 0), rot=(0, 0, 0, 1), size=(0.2, 0.2, 0.2), color=[0.8, 0.8, 0.8, 1]):
+    def initialize(self, pos=(0, 0, 0), rot=(0, 0, 0, 1), size=(0.2, 0.2, 0.2), color=None):
         '''
     :param pos:
     :param rot:
@@ -21,6 +21,8 @@ class Tray2:
              Box: inclination 90
              Plate: inclination 0
     '''
+        if color is None:
+            color = [0.8, 0.8, 0.8, 1]
         tray_shrink = 0.03
         slopes_d = 0.03
         botton_half_thick = 0.05
