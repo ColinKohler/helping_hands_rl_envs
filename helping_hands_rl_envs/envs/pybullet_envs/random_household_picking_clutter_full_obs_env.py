@@ -67,7 +67,7 @@ class RandomHouseholdPickingClutterFullObsEnv(PyBulletEnv):
     def initialize(self):
         super().initialize()
         self.tray.initialize(pos=[self.workspace[0].mean(), self.workspace[1].mean(), 0],
-                             size=[self.bin_size + 0.03, self.bin_size + 0.03, 0.1], color=[0, 0, 0, 1])
+                             size=[self.bin_size + 0.03, self.bin_size + 0.03, 0.1], color=self.tray_color)
 
     def _decodeAction(self, action):
         """
