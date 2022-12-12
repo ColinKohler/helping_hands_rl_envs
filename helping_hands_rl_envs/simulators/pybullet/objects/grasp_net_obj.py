@@ -139,6 +139,8 @@ class GraspNetObject(PybulletObject):
             color = COLORS[0]
         elif colors == 'assigned':
             color = COLORS[index]
+        elif colors == 'white':
+            color = [1, 1, 1, 1]
         else:
             raise NotImplementedError(colors)
         color[-1] = 1 if alpha is None else alpha
