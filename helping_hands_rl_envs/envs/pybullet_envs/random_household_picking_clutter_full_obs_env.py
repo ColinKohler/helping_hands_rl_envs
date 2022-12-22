@@ -61,6 +61,7 @@ class RandomHouseholdPickingClutterFullObsEnv(PyBulletEnv):
             self.tray_color = [0, 0, 0, 1]
         elif config['tray_color'] == 'white':
             self.tray_color = [1, 1, 1, 1]
+        self.collision_penalty = config['collision_penalty']
         self.gripper_depth = 0.04
         self.gripper_clearance = 0.01
 
@@ -171,6 +172,9 @@ class RandomHouseholdPickingClutterFullObsEnv(PyBulletEnv):
             reward = 1.0 if self.obj_grasped > pre_obj_grasped else 0.0
         else:
             reward = 1.0 if done else 0.0
+
+        if self.collision_penalty:
+           reward *= 0.9 * self.robot.collision_during_grasping
 
         if not done:
             done = self.current_episode_steps >= self.max_steps or not self.isSimValid()

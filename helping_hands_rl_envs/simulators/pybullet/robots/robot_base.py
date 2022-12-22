@@ -33,7 +33,7 @@ class RobotBase:
       'holding_obj': self.holding_obj,
       'gripper_closed': self.gripper_closed
     }
-
+    self.collision_during_grasping = False
     self.position_gain = 0.02
     self.adjust_gripper_after_lift = False
 
@@ -51,7 +51,12 @@ class RobotBase:
     else:
       self.openGripper()
 
+  def getContactPoints(self):
+    pb.stepSimulation()
+    return pb.getContactPoints(self.id)
+
   def getPickedObj(self, objects):
+    pb.stepSimulation()
     if not objects:
       return None
     for obj in objects:
@@ -93,7 +98,7 @@ class RobotBase:
     self.moveTo(pre_pos, pre_rot, dynamic)
     if simulate_grasp:
       self.moveTo(pos, rot, True, pos_th=1e-3, rot_th=1e-3)
-
+      self.collision_during_grasping = self.getContactPoints() != ()
       # Close gripper, if fully closed (nothing grasped), open gripper
       gripper_fully_closed = self.closeGripper()
       if gripper_fully_closed:
