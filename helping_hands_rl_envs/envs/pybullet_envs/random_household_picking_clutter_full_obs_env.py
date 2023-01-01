@@ -173,8 +173,8 @@ class RandomHouseholdPickingClutterFullObsEnv(PyBulletEnv):
         else:
             reward = 1.0 if done else 0.0
 
-        if self.collision_penalty:
-           reward *= 0.9 * self.robot.collision_during_grasping
+        if self.collision_penalty and self.robot.collision_during_grasping:
+           reward *= self.collision_penalty
 
         if not done:
             done = self.current_episode_steps >= self.max_steps or not self.isSimValid()

@@ -27,8 +27,10 @@ class TestBulletBlockStacking(unittest.TestCase):
     #               }
     env_config = {'workspace': workspace, 'max_steps': 30, 'obs_size': obs_size, 'render': False, 'fast_mode': True,
                   'seed': 0, 'action_sequence': 'pxyr', 'num_objects': 15, 'random_orientation': True,
-                  'reward_type': 'dense', 'sensor_type': 'nrgb0', 'simulate_grasp': True, 'perfect_grasp': True, 'robot': 'kuka',
+                  'reward_type': 'dense', 'sensor_type': 'nrgb0', 'simulate_grasp': True, 'perfect_grasp': True,
+                  'robot': 'kuka',
                   'workspace_check': 'point', 'object_scale_range': (1, 1), 'z_heuristic': 'patch_center',
+                  'collision_penalty': 0.5,
                   'min_object_distance': 0., 'min_boarder_padding': 0.15, 'adjust_gripper_after_lift': True,
                   'in_hand_size': 32, 'bin_size': bin_size, 'bin_type': 'Normal', 'alpha': 1, 'colors': 'white',
                   'tray_color': 'black'}
@@ -70,7 +72,7 @@ class TestBulletBlockStacking(unittest.TestCase):
                 sr = float(s) / total if total != 0 else 0
 
             pbar.set_description(
-                '{:.2f}/{}, avg: {:.3f}, plan time: {:.2f}, action time: {:.2f}, avg step time: {:.2f}'
-                    .format(s, steps, sr, t_plan, t_action, np.mean(step_times))
+                '{:.2f}/{}, avg: {:.3f}, r: {:} plan time: {:.2f}, action time: {:.2f}, avg step time: {:.2f}'
+                    .format(s, steps, sr, rewards, t_plan, t_action, np.mean(step_times))
             )
         env.close()
