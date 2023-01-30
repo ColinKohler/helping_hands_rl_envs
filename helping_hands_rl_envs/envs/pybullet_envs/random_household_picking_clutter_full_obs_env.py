@@ -61,6 +61,8 @@ class RandomHouseholdPickingClutterFullObsEnv(PyBulletEnv):
             self.tray_color = [0, 0, 0, 1]
         elif config['tray_color'] == 'white':
             self.tray_color = [1, 1, 1, 1]
+        else:
+            self.tray_color = [float(config['tray_color']), ] * 3 + [1,]
         self.collision_penalty = config['collision_penalty']
         self.gripper_depth = 0.04
         self.gripper_clearance = 0.01

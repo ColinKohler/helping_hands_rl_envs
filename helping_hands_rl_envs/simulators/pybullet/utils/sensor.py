@@ -33,7 +33,8 @@ class Sensor(object):
         return img
 
     def getHeightmap(self, size):
-        renderer = pb.ER_TINY_RENDERER if self.sensor_type == 'd' else pb.ER_BULLET_HARDWARE_OPENGL
+        # renderer = pb.ER_TINY_RENDERER if self.sensor_type == 'd' else pb.ER_BULLET_HARDWARE_OPENGL
+        renderer = pb.ER_TINY_RENDERER
         image_arr = pb.getCameraImage(width=size, height=size,
                                       viewMatrix=self.view_matrix,
                                       projectionMatrix=self.proj_matrix,
